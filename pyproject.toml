@@ -22,3 +22,6 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python"
 ]
+
+[tool.setuptools.package-data]
+"pymetis.example_files" = ["*.yml"]
