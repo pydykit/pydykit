@@ -4,7 +4,10 @@ import numpy as np
 import pymetis
 import pymetis.examples
 
-PATH_THIS_FILE_DIR = Path(__file__).parent.absolute()
+if __name__ != "__main__":
+    PATH_THIS_FILE_DIR = Path(__file__).parent.absolute()
+else:
+    PATH_THIS_FILE_DIR = Path.cwd().joinpath("test")
 A_TOL = 1e-5
 R_TOL = 1e-5
 
@@ -25,8 +28,8 @@ class TestMWE:
 
         reference_x = load_result_of_metis_simulation(
             path=PATH_THIS_FILE_DIR.joinpath(
-                "metis_references",
-                "single_analysis_pendulum.m",
+                "metis_reference_results",
+                "single_analysis_pendulum.mat",
             )
         )
 
