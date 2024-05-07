@@ -10,7 +10,7 @@ configuration:
   solver:
     class_name: Newton
     kwargs:
-      newton_epsilon: 1e-7
+      newton_epsilon: 1.e-07
   integrator:
     class_name: Midpoint
     kwargs:
