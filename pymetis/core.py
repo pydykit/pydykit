@@ -2,7 +2,7 @@ import importlib
 
 import numpy as np
 
-from . import integrators, solvers, systems, utils
+from . import utils
 
 
 class Manager:
@@ -38,9 +38,15 @@ class Manager:
             )
 
             kwargs = {} if (parameters["kwargs"] is None) else parameters["kwargs"]
+            kwargs.update(dict(manager=self))
 
             setattr(
                 self,
                 attribute_name,
                 cls(**kwargs),
             )
+
+    def manage(self):
+        return self.solver.solve(
+            state_initial=np.array(self.system.initial_state),
+        )

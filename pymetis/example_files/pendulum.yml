@@ -19,4 +19,4 @@ configuration:
     kwargs:
       stepsize: 0.05
       start: 0.0
-      end: 3.0
+      end: 2.2
