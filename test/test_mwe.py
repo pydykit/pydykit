@@ -22,20 +22,21 @@ def load_result_of_metis_simulation(path):
 class TestMWE:
     def test_run(self):
         config = pymetis.examples.get(name="single_analysis_pendulum")
-        manager = pymetis.Manager(config=config)
-        manager.solver.solve()
-        result = manager.solver.result
+        manager = pymetis.Manager(content_config_file=config)
+        # manager.solver.solve()
+        # result = manager.solver.result
 
-        reference_x = load_result_of_metis_simulation(
+        reference = load_result_of_metis_simulation(
             path=PATH_THIS_FILE_DIR.joinpath(
                 "metis_reference_results",
                 "single_analysis_pendulum.mat",
             )
         )
+        reference_coordinates = reference["coordinates"]
 
         np.allclose(
-            result.x,
-            reference_x,
+            result.coordinates,
+            reference_coordinates,
             rtol=R_TOL,
             atol=A_TOL,
         )

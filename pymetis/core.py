@@ -6,9 +6,18 @@ from . import integrators, solvers, systems, utils
 
 
 class Manager:
-    def __init__(self, path_config_file):
-        self.path_config_file = path_config_file
-        self.content_config_file = self.read_config_file()
+    def __init__(self, path_config_file=None, content_config_file=None):
+
+        if path_config_file is not None:
+            self.path_config_file = path_config_file
+            self.content_config_file = self.read_config_file()
+        elif content_config_file is not None:
+            self.content_config_file = content_config_file
+        else:
+            raise utils.PymetisException(
+                "Did not receive kwargs. "
+                + "Supply either path_config_file or content_config_file"
+            )
 
         self.name = self.content_config_file["name"]
         self.configuration = self.content_config_file["configuration"]
