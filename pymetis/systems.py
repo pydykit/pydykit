@@ -3,7 +3,7 @@ from collections import namedtuple
 
 import numpy as np
 
-from . import utils
+from . import states, utils
 
 
 class System(abc.ABC):
@@ -56,7 +56,7 @@ class Pendulum(System):
         return np.diag([1, self.mass * self.length**2])
 
     def initialize(self):
-        self.states = utils.States(
+        self.states = states.States(
             nbr_states=self.manager.time_stepper.nbr_timesteps + 2,
             dim_state=2,
         )
