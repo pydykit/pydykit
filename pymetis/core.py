@@ -1,3 +1,37 @@
+import importlib
+
+import numpy as np
+
+from . import integrators, solvers, systems, utils
+
+
 class Manager:
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, path_config_file):
+        self.path_config_file = path_config_file
+        self.content_config_file = self.read_config_file()
+
+        self.name = self.content_config_file["name"]
+        self.configuration = self.content_config_file["configuration"]
+
+        self.instantiate_classes()
+
+    def read_config_file(self):
+        return utils.load_yaml_file(path=self.path_config_file)
+
+    def instantiate_classes(self):
+        for attribute_name, parameters in self.configuration.items():
+            cls = getattr(
+                importlib.import_module(
+                    name=f".{attribute_name}s",
+                    package="pymetis",
+                ),
+                parameters["class_name"],
+            )
+
+            kwargs = parameters["kwargs"] if (parameters["kwargs"] is not None) else {}
+
+            setattr(
+                self,
+                attribute_name,
+                cls(**kwargs),
+            )

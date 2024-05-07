@@ -1,14 +1,13 @@
 from importlib.resources import files
 
-import yaml
+from . import utils
 
 
 def load_examples():
     """Load content of all examples_files which have been shipped with package pymetis"""
     examples = {}
     for path in files("pymetis.example_files").iterdir():
-        with open(path, "r") as file:
-            content = yaml.safe_load(file)
+        content = utils.load_yaml_file(path=path)
         examples[content["name"]] = content
     return examples
 

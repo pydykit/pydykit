@@ -1,0 +1,22 @@
+name: pendulum
+configuration:
+  system:
+    class_name: Pendulum
+    kwargs:
+      mass: 1.0
+      gravity: 9.81
+      length: 1.0
+      initial_state: [0.0, 1.0]
+  solver:
+    class_name: Newton
+    kwargs:
+      newton_epsilon: 1e-7
+  integrator:
+    class_name: Midpoint
+    kwargs:
+  time_stepper:
+    class_name: FixedIncrement
+    kwargs:
+      stepsize: 0.05
+      start: 0.0
+      end: 3.0

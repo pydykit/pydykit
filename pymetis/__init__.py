@@ -1,2 +1,2 @@
-from . import integrator, solver, system
+from . import integrators, solvers, systems
 from .core import *
