@@ -28,7 +28,7 @@ class Manager:
                 parameters["class_name"],
             )
 
-            kwargs = parameters["kwargs"] if (parameters["kwargs"] is not None) else {}
+            kwargs = {} if (parameters["kwargs"] is None) else parameters["kwargs"]
 
             setattr(
                 self,
