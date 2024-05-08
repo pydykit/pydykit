@@ -1,4 +1,4 @@
-name: single_analysis_pendulum
+name: pendulum3dcartesian
 configuration:
   system:
     class_name: Pendulum3DCartesian
