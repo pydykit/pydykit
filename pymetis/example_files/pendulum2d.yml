@@ -1,7 +1,7 @@
-name: pendulum
+name: pendulum2d
 configuration:
   system:
-    class_name: Pendulum
+    class_name: Pendulum2D
     kwargs:
       mass: 1.0
       gravity: 9.81
