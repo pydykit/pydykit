@@ -7,6 +7,9 @@ name = "pymetis"
 version = "0.0.0"
 dependencies = [
   "numpy",
+  "pandas",
+  "plotly",
+  "scipy",
 ]
 requires-python = ">=3.11"
 authors = [
