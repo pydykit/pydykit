@@ -20,7 +20,7 @@ def load_result_of_metis_simulation(path):
 
 
 class TestMWE:
-    def test_run(self):
+    def tesiiiiiiiiiiiiii_run(self):
         config = pymetis.examples.Manager().get_example(name="single_analysis_pendulum")
         manager = pymetis.Manager(content_config_file=config)
         # manager.solver.solve()
