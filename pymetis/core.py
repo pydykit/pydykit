@@ -1,3 +1,4 @@
+import copy
 import importlib
 
 import numpy as np
@@ -37,7 +38,12 @@ class Manager:
                 parameters["class_name"],
             )
 
-            kwargs = {} if (parameters["kwargs"] is None) else parameters["kwargs"]
+            kwargs = (
+                {}
+                if (parameters["kwargs"] is None)
+                else copy.deepcopy(parameters["kwargs"])
+            )
+            # Add manager to all classes to be able to access other class instances through manager
             kwargs.update(dict(manager=self))
 
             setattr(
