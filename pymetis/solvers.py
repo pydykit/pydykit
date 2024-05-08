@@ -17,14 +17,16 @@ class Solver(abc.ABC):
 
 class Newton(Solver):
 
-    def solve(self, state_initial):
+    def solve(self):
         system = self.manager.system
         time_stepper = self.manager.time_stepper
 
         system.initialize()
         states = system.states
 
-        states.state_n = states.state_n1 = states.state[0, :] = state_initial
+        states.state_n = states.state_n1 = states.state[0, :] = np.array(
+            system.initial_state
+        )
 
         #  time-stepping
         time = time_stepper.start

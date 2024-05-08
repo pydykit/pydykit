@@ -54,6 +54,4 @@ class Manager:
             )
 
     def manage(self):
-        return self.solver.solve(
-            state_initial=np.array(self.system.initial_state),
-        )
+        return self.solver.solve()
