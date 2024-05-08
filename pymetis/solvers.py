@@ -24,10 +24,6 @@ class Newton(Solver):
         system.initialize()
         states = system.states
 
-        states.state_n = states.state_n1 = states.state[0, :] = np.array(
-            system.initial_state
-        )
-
         #  time-stepping
         time = time_stepper.start
 

@@ -32,7 +32,7 @@ class System(abc.ABC):
         pass
 
 
-class Pendulum(System):
+class Pendulum2D(System):
 
     def decompose_state(self, state):
         decomposed_state = namedtuple("state", "q v")
@@ -59,4 +59,7 @@ class Pendulum(System):
         self.states = states.States(
             nbr_states=self.manager.time_stepper.nbr_timesteps + 2,
             dim_state=2,
+        )
+        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = np.array(
+            self.initial_state
         )
