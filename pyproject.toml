@@ -10,6 +10,7 @@ dependencies = [
   "pandas",
   "plotly",
   "scipy",
+  "pyyaml",
 ]
 requires-python = ">=3.11"
 authors = [
