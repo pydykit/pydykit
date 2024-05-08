@@ -3,6 +3,7 @@
 1. Activate local environment
 2. Ensure that package is installed (`pip install -e .`)
 3. Run pytest against installed version of package
-   ```bash
-   pytest
-   ```
+
+```bash
+pytest -vv
+```
