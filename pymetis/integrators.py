@@ -3,6 +3,8 @@ from collections import namedtuple
 
 import numpy as np
 
+from . import utils
+
 
 class PortHamiltoniaIntegrator(abc.ABC):
     integrator_output = namedtuple("integrator_output", "residuum tangent")
@@ -124,14 +126,11 @@ class MultiBodyIntegrator(abc.ABC):
 
 class MPStd(MultiBodyIntegrator):
 
-    def calc_residuum_tangent(self):
-        system = self.manager.system
-        states = system.states
+    @staticmethod
+    def calc_residuum(system, state_n, state_n1):
 
-        state_n = states.state_n
-        state_n1 = states.state_n1
+        stepsize = system.manager.time_stepper.stepsize
 
-        stepsize = self.manager.time_stepper.stepsize
         q_n, p_n, lambd_n = system.decompose_state(state=state_n)
         q_n1, p_n1, lambd_n1 = system.decompose_state(state=state_n1)
         q_n05, p_n05, lambd_n05 = system.decompose_state(
@@ -141,7 +140,6 @@ class MPStd(MultiBodyIntegrator):
         mass_matrix_n05 = system.get_mass_matrix(q=q_n05)
         inv_mass_matrix_n05 = np.linalg.inv(mass_matrix_n05)
 
-        G_n1 = system.constraint_gradient(q=q_n1)
         G_n05 = system.constraint_gradient(q=q_n05)
 
         g_n1 = system.constraint(q=q_n1)
@@ -170,7 +168,27 @@ class MPStd(MultiBodyIntegrator):
             axis=0,
         )
 
-        tangent = None
+        return residuum
+
+    def calc_residuum_tangent(self):
+        system = self.manager.system
+        states = system.states
+
+        state_n = states.state_n
+        state_n1 = states.state_n1
+
+        residuum = self.calc_residuum(
+            system=system,
+            state_n=state_n.copy(),
+            state_n1=state_n1.copy(),
+        )
+
+        tangent = utils.get_numerical_tangent(
+            func=self.calc_residuum,
+            system=system,
+            state_1=state_n.copy(),
+            state_2=state_n1.copy(),
+        )
 
         return self.integrator_output(
             residuum=residuum,
