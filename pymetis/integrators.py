@@ -2,7 +2,7 @@ import abc
 from collections import namedtuple
 
 
-class Integrator(abc.ABC):
+class PortHamiltoniaIntegrator(abc.ABC):
     integrator_output = namedtuple("integrator_output", "residuum tangent")
 
     def __init__(self, manager, **kwargs):
@@ -14,7 +14,7 @@ class Integrator(abc.ABC):
         pass
 
 
-class Midpoint(Integrator):
+class Midpoint(PortHamiltoniaIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states
@@ -45,7 +45,7 @@ class Midpoint(Integrator):
         )
 
 
-class EulerImplicit(Integrator):
+class EulerImplicit(PortHamiltoniaIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states
@@ -78,7 +78,7 @@ class EulerImplicit(Integrator):
         )
 
 
-class EulerExplicit(Integrator):
+class EulerExplicit(PortHamiltoniaIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states

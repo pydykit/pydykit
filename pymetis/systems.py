@@ -6,7 +6,7 @@ import numpy as np
 from . import states, utils
 
 
-class System(abc.ABC):
+class PortHamiltonianSystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
@@ -32,7 +32,7 @@ class System(abc.ABC):
         pass
 
 
-class Pendulum2D(System):
+class Pendulum2D(PortHamiltonianSystem):
 
     def decompose_state(self, state):
         decomposed_state = namedtuple("state", "q v")
