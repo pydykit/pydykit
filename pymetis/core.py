@@ -38,6 +38,7 @@ class Manager:
                 parameters["class_name"],
             )
 
+            # Handle empty kwargs
             kwargs = (
                 {}
                 if (parameters["kwargs"] is None)
