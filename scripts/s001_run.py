@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pymetis
 
-manager = pymetis.Manager(path_config_file="./pymetis/example_files/pendulum.yml")
+manager = pymetis.Manager(path_config_file="./pymetis/example_files/pendulum2d.yml")
 result = manager.manage()
 
 
