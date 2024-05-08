@@ -46,11 +46,17 @@ class TestCompareWithMetis:
                 f"{name}.mat",
             )
         )
-        reference_coordinates = reference["coordinates"]
+        reference = reference["coordinates"]
+        new = result.state[:, [0, 1, 2]]
+        difference = new - reference
 
-        np.allclose(
-            result.state[:, [0, 1, 2]],
-            reference_coordinates,
+        print(f"new.shape={new.shape}")
+        print(f"reference.shape={reference.shape}")
+        print(f"difference = {difference}")
+
+        assert np.allclose(
+            new,
+            reference,
             rtol=constants.R_TOL,
             atol=constants.A_TOL,
         )

@@ -29,6 +29,7 @@ class Newton(Solver):
 
         time_index = 0
         while time < time_stepper.end:
+            print(f"time={time}")
             states.time[time_index] = time
             states.state_n = states.state_n1
 
@@ -37,9 +38,6 @@ class Newton(Solver):
 
             time = time + time_stepper.stepsize
             time_index = time_index + 1
-
-            print(f"time={time}")
-            print(f"states.state_n1={states.state_n1}")
 
         return states
 
@@ -56,6 +54,5 @@ class Newton(Solver):
             state_delta = -np.linalg.inv(tangent_matrix) @ residual
             states.state_n1 = states.state_n1 + state_delta
             residual_norm = np.linalg.norm(residual)
-            print(f"residual_norm={residual_norm}")
 
         return states.state_n1
