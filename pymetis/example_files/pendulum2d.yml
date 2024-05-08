@@ -11,6 +11,7 @@ configuration:
     class_name: Newton
     kwargs:
       newton_epsilon: 1.e-07
+      max_iterations: 40
   integrator:
     class_name: Midpoint
     kwargs:

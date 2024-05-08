@@ -47,7 +47,11 @@ class Newton(Solver):
         states = self.manager.system.states
 
         residual_norm = 1e5
-        while residual_norm >= self.newton_epsilon:
+        index_iteration = 0
+        while (residual_norm >= self.newton_epsilon) and (
+            index_iteration < self.max_iterations
+        ):
+            index_iteration += 1
             residual, tangent_matrix = self.manager.integrator.calc_residuum_tangent()
             state_delta = -np.linalg.inv(tangent_matrix) @ residual
             states.state_n1 = states.state_n1 + state_delta
