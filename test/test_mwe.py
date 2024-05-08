@@ -4,12 +4,12 @@ import numpy as np
 import pymetis
 import pymetis.examples
 
+from . import constants
+
 if __name__ != "__main__":
-    PATH_THIS_FILE_DIR = Path(__file__).parent.absolute()
+    PATH_THIS_FILE_DIR = constants.PATH_TEST_DIRECTORY
 else:
     PATH_THIS_FILE_DIR = Path.cwd().joinpath("test")
-A_TOL = 1e-5
-R_TOL = 1e-5
 
 
 def load_result_of_metis_simulation(path):
@@ -37,6 +37,6 @@ class TestMWE:
         np.allclose(
             result.coordinates,
             reference_coordinates,
-            rtol=R_TOL,
-            atol=A_TOL,
+            rtol=constants.R_TOL,
+            atol=constants.A_TOL,
         )
