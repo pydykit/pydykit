@@ -3,6 +3,7 @@ from pathlib import Path
 import numpy as np
 import pymetis
 import pymetis.examples
+import pytest
 
 from . import constants
 
@@ -19,23 +20,36 @@ def load_result_of_metis_simulation(path):
     return mat
 
 
-class TestMWE:
-    def tesiiiiiiiiiiiiii_run(self):
-        config = pymetis.examples.Manager().get_example(name="single_analysis_pendulum")
-        manager = pymetis.Manager(content_config_file=config)
-        # manager.solver.solve()
-        # result = manager.solver.result
+example_manager = pymetis.examples.Manager()
+
+
+class TestCompareWithMetis:
+    @pytest.mark.parametrize(
+        ("content_config_file", "name"),
+        (
+            pytest.param(
+                example_manager.get_example(name=key),
+                key,
+                id=key,
+            )
+            for key in ["pendulum3dcartesian_full_time"]
+        ),
+    )
+    def test_run(self, content_config_file, name):
+
+        manager = pymetis.Manager(content_config_file=content_config_file)
+        result = manager.manage()
 
         reference = load_result_of_metis_simulation(
             path=PATH_THIS_FILE_DIR.joinpath(
                 "metis_reference_results",
-                "single_analysis_pendulum.mat",
+                f"{name}.mat",
             )
         )
         reference_coordinates = reference["coordinates"]
 
         np.allclose(
-            result.coordinates,
+            result.state[:, [0, 1, 2]],
             reference_coordinates,
             rtol=constants.R_TOL,
             atol=constants.A_TOL,

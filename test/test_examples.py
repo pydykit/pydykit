@@ -20,6 +20,7 @@ class TestExamples:
                 id=key,
             )
             for key in example_manager.list_examples()
+            if key not in ["pendulum3dcartesian_full_time"]
         ),
     )
     def test_run(self, content_config_file, expected_result):
