@@ -1,6 +1,6 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 import pymetis
 
 manager = pymetis.Manager(
@@ -8,26 +8,10 @@ manager = pymetis.Manager(
 )
 result = manager.manage()
 
-
-print(result)
-
-
-import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-
-x, y, z = result.state[:, 0], result.state[:, 1], result.state[:, 2]
+print("Success, start plotting")
 
 df = pd.DataFrame(data=result.state[:, [0, 1, 2]], columns=["x", "y", "z"])
 df["time"] = result.time
-
-# fig = px.line_3d(
-#     df,
-#     x="x",
-#     y="y",
-#     z="z",
-#     color="time",
-# )
 
 
 fig = go.Figure(
