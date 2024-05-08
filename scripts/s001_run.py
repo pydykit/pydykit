@@ -11,7 +11,15 @@ print(result)
 
 fig, ax = plt.subplots()
 
-ax.plot(result.time[:], result.state[:, 0])
-ax.plot(result.time[:], result.state[:, 1])
+ax.plot(
+    result.time[:],
+    result.state[:, 0],
+    marker="x",
+)
+ax.plot(
+    result.time[:],
+    result.state[:, 1],
+    marker="x",
+)
 
 plt.show()
