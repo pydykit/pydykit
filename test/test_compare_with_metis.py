@@ -5,9 +5,6 @@ import pytest
 
 from . import constants, utils
 
-PATH_THIS_FILE_DIR = constants.PATH_TEST_DIRECTORY
-
-
 example_manager = pymetis.examples.Manager()
 
 
@@ -30,8 +27,8 @@ class TestCompareWithMetis:
         result = manager.manage()
 
         reference = utils.load_result_of_metis_simulation(
-            path=PATH_THIS_FILE_DIR.joinpath(
-                "metis_reference_results",
+            path=constants.PATH_REFERENCE_RESULTS.joinpath(
+                "metis",
                 f"{name}.mat",
             )
         )
