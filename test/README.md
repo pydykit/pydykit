@@ -7,3 +7,9 @@
 ```bash
 pytest -vv
 ```
+
+Include slow tests with flag `--runslow`
+
+```bash
+pytest -vv --runslow
+```
