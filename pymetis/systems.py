@@ -129,7 +129,15 @@ class Pendulum3DCartesian(MultiBodySystem):
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_timesteps,
             dim_state=2 * self.nbr_spatial_dimensions + self.nbr_constraints,
-            columns=["x", "y", "z", "dx", "dy", "dz", "lambda"],
+            columns=[
+                "x",
+                "y",
+                "z",
+                "dx",
+                "dy",
+                "dz",
+                "lambda",
+            ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator?
         )
 
         self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
