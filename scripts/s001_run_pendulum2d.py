@@ -4,7 +4,10 @@ import pymetis
 
 manager = pymetis.Manager(path_config_file="./pymetis/example_files/pendulum2d.yml")
 result = manager.manage()
-
+df = result.to_df(
+    indices=[0, 1],
+    columns=["x", "y"],
+)
 
 print(result)
 
