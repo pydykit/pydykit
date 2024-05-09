@@ -36,7 +36,7 @@ class TestCompareWithMetis:
             )
         )
         reference = reference["coordinates"]
-        new = result.state[:, [0, 1, 2]]
+        new = result.state[:-1, [0, 1, 2]]
         difference = new - reference
 
         print(f"new.shape={new.shape}")
