@@ -1,5 +1,4 @@
 import abc
-from collections import namedtuple
 
 import numpy as np
 
@@ -24,20 +23,28 @@ class Newton(Solver):
         system.initialize()
         states = system.states
 
-        #  time-stepping
-        time = time_stepper.start
+        # Initialze the time stepper
+        steps = time_stepper.make_steps()
 
-        time_index = 0
-        while time < time_stepper.end:
-            print(f"time={time}")
-            states.time[time_index] = time
+        # Write first time to state.
+        # Note: Initial state of system is already logged as well.
+        step = next(steps)
+        states.time[step.index] = step.time
+
+        # Do remaining steps, until stepper stopps
+        for step in steps:
+
+            # Update system for NEW time based on previous state
             states.state_n = states.state_n1
+            states.state_n1 = (
+                self.newton_update()  # Note: current time step size can be access through time_stepper.current_step.last_increment
+            )
 
-            states.state_n1 = self.newton_update()
-            states.state[time_index + 1, :] = states.state_n1
+            # Store results
+            states.time[step.index] = step.time
+            states.state[step.index, :] = states.state_n1
 
-            time = time + time_stepper.stepsize
-            time_index = time_index + 1
+            print(f"time={step.time}")
 
         return states
 

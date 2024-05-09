@@ -12,7 +12,7 @@ class PymetisException(Exception):
     pass
 
 
-def get_numerical_tangent(func, system, state_1, state_2, epsilon=1e-10):
+def get_numerical_tangent(func, state_1, state_2, epsilon=1e-10):
 
     state_1 = state_1.copy()
     state_2 = state_2.copy()
@@ -28,7 +28,6 @@ def get_numerical_tangent(func, system, state_1, state_2, epsilon=1e-10):
         state_2[j] = xsave + delp
 
         R1 = func(
-            system=system,
             state_n=state_1,
             state_n1=state_2,
         )
@@ -36,7 +35,6 @@ def get_numerical_tangent(func, system, state_1, state_2, epsilon=1e-10):
         state_2[j] = xsave - delp
 
         R2 = func(
-            system=system,
             state_n=state_1,
             state_n1=state_2,
         )

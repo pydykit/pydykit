@@ -7,3 +7,15 @@
 ```bash
 pytest -vv
 ```
+
+Include slow tests with flag `--runslow`
+
+```bash
+pytest -vv --runslow
+```
+
+Enter Python Debugger after fail:
+
+```bash
+pytest -vv --pdb
+```

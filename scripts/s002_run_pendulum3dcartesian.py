@@ -10,9 +10,8 @@ result = manager.manage()
 
 print("Success, start plotting")
 
-df = pd.DataFrame(data=result.state[:, [0, 1, 2]], columns=["x", "y", "z"])
-df["time"] = result.time
-
+df = result.to_df()
+# df.to_csv("test/reference_results/pendulum3dcartesian.csv")
 
 fig = go.Figure(
     data=go.Scatter3d(

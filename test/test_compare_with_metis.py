@@ -1,24 +1,9 @@
-from pathlib import Path
-
 import numpy as np
 import pymetis
 import pymetis.examples
 import pytest
 
-from . import constants
-
-if __name__ != "__main__":
-    PATH_THIS_FILE_DIR = constants.PATH_TEST_DIRECTORY
-else:
-    PATH_THIS_FILE_DIR = Path.cwd().joinpath("test")
-
-
-def load_result_of_metis_simulation(path):
-    import scipy.io
-
-    mat = scipy.io.loadmat(path)
-    return mat
-
+from . import constants, utils
 
 example_manager = pymetis.examples.Manager()
 
@@ -35,28 +20,26 @@ class TestCompareWithMetis:
             for key in ["pendulum3dcartesian_full_time"]
         ),
     )
+    @pytest.mark.slow
     def test_run(self, content_config_file, name):
 
         manager = pymetis.Manager(content_config_file=content_config_file)
         result = manager.manage()
 
-        reference = load_result_of_metis_simulation(
-            path=PATH_THIS_FILE_DIR.joinpath(
-                "metis_reference_results",
+        reference = utils.load_result_of_metis_simulation(
+            path=constants.PATH_REFERENCE_RESULTS.joinpath(
+                "metis",
                 f"{name}.mat",
             )
         )
-        reference = reference["coordinates"]
+        old = reference["coordinates"]
         new = result.state[:, [0, 1, 2]]
-        difference = new - reference
 
-        print(f"new.shape={new.shape}")
-        print(f"reference.shape={reference.shape}")
-        print(f"difference = {difference}")
+        utils.print_compare(old=old, new=new)
 
         assert np.allclose(
             new,
-            reference,
+            old,
             rtol=constants.R_TOL,
             atol=constants.A_TOL,
         )

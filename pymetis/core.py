@@ -1,15 +1,18 @@
 import copy
 import importlib
 
-import numpy as np
-
 from . import utils
 
 
 class Manager:
     def __init__(self, path_config_file=None, content_config_file=None):
 
-        if path_config_file is not None:
+        if (path_config_file is not None) and (content_config_file is not None):
+            raise utils.PymetisException(
+                "Did receive both path_config_file and content_config_file. "
+                + "Supply either path_config_file or content_config_file, not both"
+            )
+        elif path_config_file is not None:
             self.path_config_file = path_config_file
             self.content_config_file = self.read_config_file()
         elif content_config_file is not None:
