@@ -25,6 +25,7 @@ class TestCompareWithMetis:
             for key in ["pendulum3dcartesian_full_time"]
         ),
     )
+    @pytest.mark.slow
     def test_run(self, content_config_file, name):
 
         manager = pymetis.Manager(content_config_file=content_config_file)

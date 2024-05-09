@@ -23,6 +23,6 @@ class TestExamples:
             if key not in ["pendulum3dcartesian_full_time"]
         ),
     )
-    def test_run(self, content_config_file, expected_result):
+    def test_run_examples(self, content_config_file, expected_result):
         manager = pymetis.Manager(content_config_file=content_config_file)
         manager.manage()
