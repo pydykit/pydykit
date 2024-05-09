@@ -11,9 +11,7 @@ class States:
 
         self.time = np.zeros(nbr_states)
 
-    def to_df(
-        self,
-    ):
+    def to_df(self):
         df = pd.DataFrame(
             data=self.state,
             columns=self.columns,
