@@ -5,19 +5,9 @@ import pymetis
 import pymetis.examples
 import pytest
 
-from . import constants
+from . import constants, utils
 
-if __name__ != "__main__":
-    PATH_THIS_FILE_DIR = constants.PATH_TEST_DIRECTORY
-else:
-    PATH_THIS_FILE_DIR = Path.cwd().joinpath("test")
-
-
-def load_result_of_metis_simulation(path):
-    import scipy.io
-
-    mat = scipy.io.loadmat(path)
-    return mat
+PATH_THIS_FILE_DIR = constants.PATH_TEST_DIRECTORY
 
 
 example_manager = pymetis.examples.Manager()
@@ -40,7 +30,7 @@ class TestCompareWithMetis:
         manager = pymetis.Manager(content_config_file=content_config_file)
         result = manager.manage()
 
-        reference = load_result_of_metis_simulation(
+        reference = utils.load_result_of_metis_simulation(
             path=PATH_THIS_FILE_DIR.joinpath(
                 "metis_reference_results",
                 f"{name}.mat",
