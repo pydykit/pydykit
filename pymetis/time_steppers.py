@@ -20,10 +20,10 @@ class TimeStepper(abc.ABC):
     def make_steps(self) -> Iterator[TimeStep]:
         """Returns a Python generator which returns TimeStep objects"""
 
-    # @property
-    # @abc.abstractmethod
-    # def current_step(self) -> TimeStep:
-    #     pass
+    @property
+    @abc.abstractmethod
+    def current_step(self) -> TimeStep:
+        pass
 
 
 class FixedIncrementHittingEnd(TimeStepper):
@@ -43,9 +43,9 @@ class FixedIncrementHittingEnd(TimeStepper):
             )
             yield self._current_step
 
-    # @property
-    # def current_step(self):
-    #     return self._current_step
+    @property
+    def current_step(self):
+        return self._current_step
 
     def identify_times(self):
         tmp = np.arange(

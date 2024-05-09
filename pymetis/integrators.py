@@ -15,18 +15,19 @@ class PortHamiltoniaIntegrator(abc.ABC):
         self.__dict__.update(kwargs)
 
     @abc.abstractmethod
-    def calc_residuum_tangent(self, time_step):
+    def calc_residuum_tangent(self):
         pass
 
 
 class Midpoint(PortHamiltoniaIntegrator):
-    def calc_residuum_tangent(self, time_step):
+    def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states
 
         state_n = states.state_n
         state_n1 = states.state_n1
-        time_step_size = time_step.last_increment
+
+        time_step_size = self.manager.time_stepper.current_step.last_increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -50,13 +51,13 @@ class Midpoint(PortHamiltoniaIntegrator):
 
 
 class EulerImplicit(PortHamiltoniaIntegrator):
-    def calc_residuum_tangent(self, time_step):
+    def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states
 
         state_n = states.state_n
         state_n1 = states.state_n1
-        time_step_size = time_step.last_increment
+        time_step_size = self.manager.time_stepper.current_step.last_increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -82,13 +83,13 @@ class EulerImplicit(PortHamiltoniaIntegrator):
 
 
 class EulerExplicit(PortHamiltoniaIntegrator):
-    def calc_residuum_tangent(self, time_step):
+    def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states
 
         state_n = states.state_n
         state_n1 = states.state_n1
-        time_step_size = time_step.last_increment
+        time_step_size = self.manager.time_stepper.current_step.last_increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -118,16 +119,16 @@ class MultiBodyIntegrator(abc.ABC):
         self.__dict__.update(kwargs)
 
     @abc.abstractmethod
-    def calc_residuum_tangent(self, time_step):
+    def calc_residuum_tangent(self):
         pass
 
 
 class MPStd(MultiBodyIntegrator):
 
     @staticmethod
-    def calc_residuum(system, state_n, state_n1, time_step):
+    def calc_residuum(system, time_stepper, state_n, state_n1):
 
-        stepsize = time_step.last_increment
+        stepsize = time_stepper.current_step.last_increment
 
         q_n, p_n, lambd_n = system.decompose_state(state=state_n)
         q_n1, p_n1, lambd_n1 = system.decompose_state(state=state_n1)
@@ -168,7 +169,7 @@ class MPStd(MultiBodyIntegrator):
 
         return residuum
 
-    def calc_residuum_tangent(self, time_step):
+    def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states
 
@@ -177,17 +178,17 @@ class MPStd(MultiBodyIntegrator):
 
         residuum = self.calc_residuum(
             system=system,
+            time_stepper=self.manager.time_stepper,
             state_n=state_n.copy(),
             state_n1=state_n1.copy(),
-            time_step=time_step,
         )
 
         tangent = utils.get_numerical_tangent(
             func=partial(  # Bind some arguments to values
                 self.calc_residuum,
-                time_step=time_step,
+                system=system,
+                time_stepper=self.manager.time_stepper,
             ),
-            system=system,
             state_1=state_n.copy(),
             state_2=state_n1.copy(),
         )
