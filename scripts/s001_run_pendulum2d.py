@@ -5,7 +5,7 @@ import pymetis
 manager = pymetis.Manager(path_config_file="./pymetis/example_files/pendulum2d.yml")
 result = manager.manage()
 df = result.to_df()
-df.to_csv("test/reference_results/pendulum2d.csv")
+# df.to_csv("test/reference_results/pendulum2d.csv")
 
 print(result)
 
