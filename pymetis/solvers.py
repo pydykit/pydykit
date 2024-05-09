@@ -23,25 +23,32 @@ class Newton(Solver):
         system.initialize()
         states = system.states
 
-        #  time-stepping
-        time = time_stepper.start
-        time_index = 0
-        states.time[time_index] = time
+        # Initialze the time stepper
+        steps = time_stepper.make_steps()
 
-        while time < time_stepper.end:
-            print(f"time={time}")
+        # Write first time to state.
+        # Note: Initial state of system is already logged as well.
+        step = next(steps)
+        states.time[step.index] = step.time
+
+        # Do remaining steps, until stepper stopps
+        for step in steps:
+
+            # Update system for NEW time based on previous state
             states.state_n = states.state_n1
-            states.state_n1 = self.newton_update()
+            states.state_n1 = self.newton_update(
+                time_step=step,  # TODO: Discuss whether passing this value explicitly is beneficial, or whether the integrator should access, e.g., manager.time_stepper.current_step. Note: We probably have to distinguish between physical time of the system, defined by time_stepper and the numerical time, used within the solver's iterations, which might be best controlled by the solver itself... Or is the time_stepper ment to manage the numerical time?
+            )
 
-            time_index = time_index + 1
-            time = time + time_stepper.stepsize
+            # Store results
+            states.time[step.index] = step.time
+            states.state[step.index, :] = states.state_n1
 
-            states.time[time_index] = time
-            states.state[time_index, :] = states.state_n1
+            print(f"time={step.time}")
 
         return states
 
-    def newton_update(self):
+    def newton_update(self, time_step):
         states = self.manager.system.states
 
         residual_norm = 1e5
@@ -50,7 +57,9 @@ class Newton(Solver):
             index_iteration < self.max_iterations
         ):
             index_iteration += 1
-            residual, tangent_matrix = self.manager.integrator.calc_residuum_tangent()
+            residual, tangent_matrix = self.manager.integrator.calc_residuum_tangent(
+                time_step=time_step,
+            )
             state_delta = -np.linalg.inv(tangent_matrix) @ residual
             states.state_n1 = states.state_n1 + state_delta
             residual_norm = np.linalg.norm(residual)

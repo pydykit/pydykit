@@ -1,5 +1,6 @@
 import abc
 from collections import namedtuple
+from functools import partial
 
 import numpy as np
 
@@ -14,17 +15,18 @@ class PortHamiltoniaIntegrator(abc.ABC):
         self.__dict__.update(kwargs)
 
     @abc.abstractmethod
-    def calc_residuum_tangent(self):
+    def calc_residuum_tangent(self, time_step):
         pass
 
 
 class Midpoint(PortHamiltoniaIntegrator):
-    def calc_residuum_tangent(self):
+    def calc_residuum_tangent(self, time_step):
         system = self.manager.system
         states = system.states
 
         state_n = states.state_n
         state_n1 = states.state_n1
+        time_step_size = time_step.last_increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -37,11 +39,9 @@ class Midpoint(PortHamiltoniaIntegrator):
         j_matrix = system.get_j_matrix()
 
         residuum = (
-            e_n1 @ state_n1
-            - e_n @ state_n
-            - self.manager.time_stepper.stepsize * j_matrix @ z_vector
+            e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
         )
-        tangent = e_n1 - self.manager.time_stepper.stepsize * j_matrix @ jacobian
+        tangent = e_n1 - time_step_size * j_matrix @ jacobian
 
         return self.integrator_output(
             residuum=residuum,
@@ -50,12 +50,13 @@ class Midpoint(PortHamiltoniaIntegrator):
 
 
 class EulerImplicit(PortHamiltoniaIntegrator):
-    def calc_residuum_tangent(self):
+    def calc_residuum_tangent(self, time_step):
         system = self.manager.system
         states = system.states
 
         state_n = states.state_n
         state_n1 = states.state_n1
+        time_step_size = time_step.last_increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -70,11 +71,9 @@ class EulerImplicit(PortHamiltoniaIntegrator):
         j_matrix = system.get_j_matrix()
 
         residuum = (
-            e_n1 @ state_n1
-            - e_n @ state_n
-            - self.manager.time_stepper.stepsize * j_matrix @ z_vector
+            e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
         )
-        tangent = e_n1 - self.manager.time_stepper.stepsize * j_matrix @ jacobian
+        tangent = e_n1 - time_step_size * j_matrix @ jacobian
 
         return self.integrator_output(
             residuum=residuum,
@@ -83,12 +82,13 @@ class EulerImplicit(PortHamiltoniaIntegrator):
 
 
 class EulerExplicit(PortHamiltoniaIntegrator):
-    def calc_residuum_tangent(self):
+    def calc_residuum_tangent(self, time_step):
         system = self.manager.system
         states = system.states
 
         state_n = states.state_n
         state_n1 = states.state_n1
+        time_step_size = time_step.last_increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -100,9 +100,7 @@ class EulerExplicit(PortHamiltoniaIntegrator):
         j_matrix = system.get_j_matrix()
 
         residuum = (
-            e_n1 @ state_n1
-            - e_n @ state_n
-            - self.manager.time_stepper.stepsize * j_matrix @ z_vector
+            e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
         )
         tangent = e_n1
 
@@ -120,16 +118,16 @@ class MultiBodyIntegrator(abc.ABC):
         self.__dict__.update(kwargs)
 
     @abc.abstractmethod
-    def calc_residuum_tangent(self):
+    def calc_residuum_tangent(self, time_step):
         pass
 
 
 class MPStd(MultiBodyIntegrator):
 
     @staticmethod
-    def calc_residuum(system, state_n, state_n1):
+    def calc_residuum(system, state_n, state_n1, time_step):
 
-        stepsize = system.manager.time_stepper.stepsize
+        stepsize = time_step.last_increment
 
         q_n, p_n, lambd_n = system.decompose_state(state=state_n)
         q_n1, p_n1, lambd_n1 = system.decompose_state(state=state_n1)
@@ -170,7 +168,7 @@ class MPStd(MultiBodyIntegrator):
 
         return residuum
 
-    def calc_residuum_tangent(self):
+    def calc_residuum_tangent(self, time_step):
         system = self.manager.system
         states = system.states
 
@@ -181,10 +179,14 @@ class MPStd(MultiBodyIntegrator):
             system=system,
             state_n=state_n.copy(),
             state_n1=state_n1.copy(),
+            time_step=time_step,
         )
 
         tangent = utils.get_numerical_tangent(
-            func=self.calc_residuum,
+            func=partial(  # Bind some arguments to values
+                self.calc_residuum,
+                time_step=time_step,
+            ),
             system=system,
             state_1=state_n.copy(),
             state_2=state_n1.copy(),
