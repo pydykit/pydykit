@@ -3,7 +3,7 @@ from collections import namedtuple
 
 import numpy as np
 
-from . import states, utils
+from . import states
 
 
 class PortHamiltonianSystem(abc.ABC):

@@ -1,8 +1,6 @@
 import copy
 import importlib
 
-import numpy as np
-
 from . import utils
 
 
