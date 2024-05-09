@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-class States:
+class State:
     def __init__(self, nbr_states, dim_state, columns):
         self.columns = columns
         self.state = np.zeros((nbr_states, dim_state))
