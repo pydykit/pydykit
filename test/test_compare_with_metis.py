@@ -33,13 +33,13 @@ class TestCompareWithMetis:
             )
         )
         old = reference["coordinates"]
-        new = result.state[:-1, [0, 1, 2]]
+        new = result.state[:, [0, 1, 2]]
 
         utils.print_compare(old=old, new=new)
 
         assert np.allclose(
             new,
-            reference,
+            old,
             rtol=constants.R_TOL,
             atol=constants.A_TOL,
         )
