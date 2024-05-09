@@ -25,18 +25,19 @@ class Newton(Solver):
 
         #  time-stepping
         time = time_stepper.start
-
         time_index = 0
+        states.time[time_index] = time
+
         while time < time_stepper.end:
             print(f"time={time}")
-            states.time[time_index] = time
             states.state_n = states.state_n1
-
             states.state_n1 = self.newton_update()
-            states.state[time_index + 1, :] = states.state_n1
 
-            time = time + time_stepper.stepsize
             time_index = time_index + 1
+            time = time + time_stepper.stepsize
+
+            states.time[time_index] = time
+            states.state[time_index, :] = states.state_n1
 
         return states
 
