@@ -63,7 +63,7 @@ class FixedIncrement(TimeStepper):
 
         if (
             tmp[-1] < self.end
-        ):  # do not fix last step nice if necesarry, but throw error
+        ):  # do not fix last step size if necesarry, but throw error
             raise ValueError(
                 "Specified end time is not a multiple of chosen time step size."
             )
