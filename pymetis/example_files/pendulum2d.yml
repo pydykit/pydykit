@@ -18,6 +18,6 @@ configuration:
   time_stepper:
     class_name: FixedIncrementHittingEnd
     kwargs:
-      stepsize: 0.15
+      step_size: 0.15
       start: 0.0
       end: 2.2
