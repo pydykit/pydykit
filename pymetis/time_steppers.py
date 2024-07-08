@@ -3,12 +3,16 @@ from typing import Iterator
 
 import numpy as np
 
+from . import utils
+
 
 class TimeStep:
     def __init__(self, index, time, increment):
         self.index = index
         self.time = time
-        self.increment = increment # this is next point in time minus current point in time
+        self.increment = (
+            increment  # this is next point in time minus current point in time
+        )
 
 
 class TimeStepper(abc.ABC):
@@ -25,6 +29,7 @@ class TimeStepper(abc.ABC):
     def current_step(self) -> TimeStep:
         pass
 
+
 class FixedIncrement(TimeStepper):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -35,17 +40,17 @@ class FixedIncrement(TimeStepper):
     @property
     def current_step(self):
         return self._current_step
-    
+
     def make_steps(self):
         for index, time in enumerate(self.times):
 
             self._current_step = TimeStep(
                 index=index,
                 time=time,
-                increment=self.stepsize, # fixed time step size
+                increment=self.stepsize,  # fixed time step size
             )
             yield self._current_step
-    
+
     def identify_times(self):
         tmp = np.arange(
             start=self.start,
@@ -56,10 +61,15 @@ class FixedIncrement(TimeStepper):
 
         tmp = np.append(tmp, self.end)
 
-        if tmp[-1] < self.end: # do not fix last step nice if necesarry, but throw error
-            raise ValueError('Specified end time is not a multiple of chosen time step size.')
-    
+        if (
+            tmp[-1] < self.end
+        ):  # do not fix last step nice if necesarry, but throw error
+            raise ValueError(
+                "Specified end time is not a multiple of chosen time step size."
+            )
+
         return tmp
+
 
 class FixedIncrementHittingEnd(TimeStepper):
     def __init__(self, **kwargs):
@@ -74,7 +84,7 @@ class FixedIncrementHittingEnd(TimeStepper):
             self._current_step = TimeStep(
                 index=index,
                 time=time,
-                increment=time - self.times[index - 1], # variable time step size
+                increment=time - self.times[index - 1],  # variable time step size
             )
             yield self._current_step
 
@@ -89,6 +99,11 @@ class FixedIncrementHittingEnd(TimeStepper):
             step=self.stepsize,
             dtype=np.float64,
         )
+
         if tmp[-1] < self.end:
-            tmp = np.append(tmp, self.end) # fix last step nice if necesarry
-        return tmp
+            # If expected end time is not reached, add it as last step
+            tmp = np.append(tmp, self.end)
+        elif np.isclose(tmp[-1], self.end):
+            pass
+        else:
+            raise utils.PymetisException("Unkown case")
