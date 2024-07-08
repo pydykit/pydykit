@@ -1,7 +1,7 @@
 import numpy as np
 from pymetis import time_steppers
 
-stepper = time_steppers.FixedIncrement(
+stepper = time_steppers.FixedIncrementKinon(
     start=1.0,
     end=2.2,
     stepsize=0.15,

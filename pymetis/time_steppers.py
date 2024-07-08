@@ -1,4 +1,5 @@
 import abc
+from itertools import pairwise
 from typing import Iterator
 
 import numpy as np
@@ -30,7 +31,7 @@ class TimeStepper(abc.ABC):
         pass
 
 
-class FixedIncrement(TimeStepper):
+class FixedIncrementKinon(TimeStepper):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -67,6 +68,55 @@ class FixedIncrement(TimeStepper):
             )
 
         return tmp
+
+
+class FixedIncrement(TimeStepper):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        assert ("number_of_steps" in kwargs.keys()) and (
+            "stepsize" not in kwargs.keys()
+        ), "Please check the signature of this class."
+
+        self.times = self.identify_times()
+        self.nbr_timesteps = len(self.times)
+        self.stepsize = self.get_step_size()
+
+    @property
+    def current_step(self):
+        return self._current_step
+
+    def make_steps(self):
+        for index, time in enumerate(self.times):
+
+            self._current_step = TimeStep(
+                index=index,
+                time=time,
+                increment=self.stepsize,  # fixed time step size
+            )
+            yield self._current_step
+
+    def identify_times(self):
+        return np.linspace(
+            start=self.start,
+            stop=self.end,
+            num=self.number_of_steps,
+            endpoint=True,
+            dtype=np.float64,
+        )
+
+    def get_step_size(self):
+
+        step_sizes = np.array([n1 - n for n, n1 in pairwise(self.times)])
+        step_size = step_sizes[0]
+
+        step_sizes_all_equal = np.all(np.isclose(step_sizes, step_size))
+
+        assert (
+            step_sizes_all_equal
+        ), "Implementation should yield homogeneous time steps"
+
+        return step_size
 
 
 class FixedIncrementHittingEnd(TimeStepper):
