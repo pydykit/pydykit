@@ -61,9 +61,7 @@ class FixedIncrement(TimeStepper):
 
         tmp = np.append(tmp, self.end)
 
-        if (
-            tmp[-1] < self.end
-        ):  # do not fix last step size if necesarry, but throw error
+        if tmp[-1] < self.end:  # do not adjust last step size but throw error
             raise ValueError(
                 "Specified end time is not a multiple of chosen time step size."
             )
