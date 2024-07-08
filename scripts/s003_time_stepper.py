@@ -5,7 +5,7 @@ def print_time_step(time_step):
     print(
         time_step.index,
         time_step.time,
-        time_step.last_increment,
+        time_step.increment,
     )
 
 
