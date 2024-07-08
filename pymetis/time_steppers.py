@@ -107,3 +107,5 @@ class FixedIncrementHittingEnd(TimeStepper):
             pass
         else:
             raise utils.PymetisException("Unkown case")
+
+        return tmp
