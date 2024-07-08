@@ -19,7 +19,7 @@ configuration:
     class_name: MPStd
     kwargs:
   time_stepper:
-    class_name: FixedIncrementHittingEnd
+    class_name: FixedIncrement
     kwargs:
       stepsize: 0.2
       start: 0.0

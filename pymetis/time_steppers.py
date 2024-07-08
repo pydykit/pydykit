@@ -25,6 +25,41 @@ class TimeStepper(abc.ABC):
     def current_step(self) -> TimeStep:
         pass
 
+class FixedIncrement(TimeStepper):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.times = self.identify_times()
+        self.nbr_timesteps = len(self.times)
+
+    @property
+    def current_step(self):
+        return self._current_step
+    
+    def make_steps(self):
+        for index, time in enumerate(self.times):
+
+            self._current_step = TimeStep(
+                index=index,
+                time=time,
+                increment=self.stepsize, # fixed time step size
+            )
+            yield self._current_step
+    
+    def identify_times(self):
+        tmp = np.arange(
+            start=self.start,
+            stop=self.end,
+            step=self.stepsize,
+            dtype=np.float64,
+        )
+
+        tmp = np.append(tmp, self.end)
+
+        if tmp[-1] < self.end: # do not fix last step nice if necesarry, but throw error
+            raise ValueError('Specified end time is not a multiple of chosen time step size.')
+    
+        return tmp
 
 class FixedIncrementHittingEnd(TimeStepper):
     def __init__(self, **kwargs):
@@ -39,7 +74,7 @@ class FixedIncrementHittingEnd(TimeStepper):
             self._current_step = TimeStep(
                 index=index,
                 time=time,
-                increment=time - self.times[index - 1],
+                increment=time - self.times[index - 1], # variable time step size
             )
             yield self._current_step
 
@@ -55,5 +90,5 @@ class FixedIncrementHittingEnd(TimeStepper):
             dtype=np.float64,
         )
         if tmp[-1] < self.end:
-            tmp = np.append(tmp, self.end)
+            tmp = np.append(tmp, self.end) # fix last step nice if necesarry
         return tmp
