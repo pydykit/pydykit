@@ -5,10 +5,10 @@ import numpy as np
 
 
 class TimeStep:
-    def __init__(self, index, time, last_increment):
+    def __init__(self, index, time, increment):
         self.index = index
         self.time = time
-        self.last_increment = last_increment
+        self.increment = increment # this is next point in time minus current point in time
 
 
 class TimeStepper(abc.ABC):
@@ -39,7 +39,7 @@ class FixedIncrementHittingEnd(TimeStepper):
             self._current_step = TimeStep(
                 index=index,
                 time=time,
-                last_increment=time - self.times[index - 1],
+                increment=time - self.times[index - 1],
             )
             yield self._current_step
 

@@ -27,7 +27,7 @@ class Midpoint(PortHamiltoniaIntegrator):
         state_n = states.state_n
         state_n1 = states.state_n1
 
-        time_step_size = self.manager.time_stepper.current_step.last_increment
+        time_step_size = self.manager.time_stepper.current_step.increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -57,7 +57,7 @@ class EulerImplicit(PortHamiltoniaIntegrator):
 
         state_n = states.state_n
         state_n1 = states.state_n1
-        time_step_size = self.manager.time_stepper.current_step.last_increment
+        time_step_size = self.manager.time_stepper.current_step.increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -89,7 +89,7 @@ class EulerExplicit(PortHamiltoniaIntegrator):
 
         state_n = states.state_n
         state_n1 = states.state_n1
-        time_step_size = self.manager.time_stepper.current_step.last_increment
+        time_step_size = self.manager.time_stepper.current_step.increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -128,7 +128,7 @@ class MPStd(MultiBodyIntegrator):
     @staticmethod
     def calc_residuum(system, time_stepper, state_n, state_n1):
 
-        stepsize = time_stepper.current_step.last_increment
+        stepsize = time_stepper.current_step.increment
 
         q_n, p_n, lambd_n = system.decompose_state(state=state_n)
         q_n1, p_n1, lambd_n1 = system.decompose_state(state=state_n1)
