@@ -2,7 +2,7 @@ import numpy as np
 from pymetis import time_steppers
 
 stepper = time_steppers.FixedIncrement(
-    start=1,
+    start=1.0,
     end=2.2,
     stepsize=0.15,
     manager=None,
