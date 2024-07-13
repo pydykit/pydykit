@@ -9,9 +9,7 @@ current_parent_path = pathlib.Path(__file__).parent.resolve()
 relative_config_file_path = "../pymetis/example_files/pendulum3dcartesian.yml"
 absolute_config_file_path = (current_parent_path / relative_config_file_path).resolve()
 
-manager = pymetis.Manager(
-    path_config_file=absolute_config_file_path
-)
+manager = pymetis.Manager(path_config_file=absolute_config_file_path)
 result = manager.manage()
 
 print("Success, start plotting")
