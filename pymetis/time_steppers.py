@@ -79,7 +79,7 @@ class FixedIncrement(TimeStepper):
         ), "Please check the signature of this class."
 
         self.times = self.identify_times()
-        self.nbr_timesteps = len(self.times)
+        self.nbr_sampling_points = len(self.times)
         self.step_size = self.get_step_size()
 
     @property
