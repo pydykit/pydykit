@@ -35,12 +35,15 @@ class FixedIncrement(TimeStepper):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        assert ("nbr_steps" in kwargs.keys()) and (
-            "step_size" not in kwargs.keys()
-        ), "Please check the signature of this class."
+        # assert ("nbr_steps" in kwargs.keys()) and (
+        #     "step_size" not in kwargs.keys()
+        # ), "Please check the signature of this class."
+
+        self.nbr_steps = int((self.end - self.start)/self.step_size)
+        self.nbr_sampling_points = self.nbr_steps + 1
 
         self.times = self.identify_times()
-        self.nbr_sampling_points = len(self.times)
+
         self.step_size = self.get_step_size()
 
     @property
@@ -61,7 +64,7 @@ class FixedIncrement(TimeStepper):
         return np.linspace(
             start=self.start,
             stop=self.end,
-            num=self.nbr_steps+1,
+            num=self.nbr_sampling_points,
             endpoint=True,
             dtype=np.float64,
         )
