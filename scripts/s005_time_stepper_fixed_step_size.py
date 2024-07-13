@@ -1,10 +1,17 @@
 import numpy as np
 from pymetis import time_steppers
 
-stepper = time_steppers.FixedIncrementKinon(
+# stepper = time_steppers.FixedIncrementKinon(
+#     start=1.0,
+#     end=2.2,
+#     step_size=0.15,
+#     manager=None,
+# )
+
+stepper = time_steppers.FixedIncrement(
     start=1.0,
     end=2.2,
-    step_size=0.15,
+    number_of_steps=12,
     manager=None,
 )
 
@@ -15,7 +22,7 @@ from itertools import pairwise
 increments = np.array([n1 - n for n, n1 in pairwise(stepper.times)])
 
 increments_equal_step_size = np.isclose(increments, stepper.step_size)
-
+print(increments)
 print(increments_equal_step_size)
 
 assert all(

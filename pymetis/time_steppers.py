@@ -100,7 +100,7 @@ class FixedIncrement(TimeStepper):
         return np.linspace(
             start=self.start,
             stop=self.end,
-            num=self.number_of_steps,
+            num=self.number_of_steps+1,
             endpoint=True,
             dtype=np.float64,
         )
