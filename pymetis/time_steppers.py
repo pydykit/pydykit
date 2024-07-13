@@ -36,7 +36,7 @@ class FixedIncrementKinon(TimeStepper):
         super().__init__(**kwargs)
 
         self.times = self.identify_times()
-        self.nbr_timesteps = len(self.times)
+        self.nbr_steps = len(self.times)
 
     @property
     def current_step(self):
@@ -74,7 +74,7 @@ class FixedIncrement(TimeStepper):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        assert ("number_of_steps" in kwargs.keys()) and (
+        assert ("nbr_steps" in kwargs.keys()) and (
             "step_size" not in kwargs.keys()
         ), "Please check the signature of this class."
 
@@ -100,7 +100,7 @@ class FixedIncrement(TimeStepper):
         return np.linspace(
             start=self.start,
             stop=self.end,
-            num=self.number_of_steps+1,
+            num=self.nbr_steps+1,
             endpoint=True,
             dtype=np.float64,
         )
@@ -124,7 +124,7 @@ class FixedIncrementHittingEnd(TimeStepper):
         super().__init__(**kwargs)
 
         self.times = self.identify_times()
-        self.nbr_timesteps = len(self.times)
+        self.nbr_steps = len(self.times)
 
     def make_steps(self):
         for index, time in enumerate(self.times):
