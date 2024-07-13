@@ -36,7 +36,8 @@ class FixedIncrementKinon(TimeStepper):
         super().__init__(**kwargs)
 
         self.times = self.identify_times()
-        self.nbr_steps = len(self.times)
+        self.nbr_sampling_points = len(self.times)
+        self.nbr_steps = self.nbr_sampling_points - 1
 
     @property
     def current_step(self):
@@ -124,7 +125,8 @@ class FixedIncrementHittingEnd(TimeStepper):
         super().__init__(**kwargs)
 
         self.times = self.identify_times()
-        self.nbr_steps = len(self.times)
+        self.nbr_sampling_points = len(self.times)
+        self.nbr_steps = self.nbr_sampling_points - 1
 
     def make_steps(self):
         for index, time in enumerate(self.times):
