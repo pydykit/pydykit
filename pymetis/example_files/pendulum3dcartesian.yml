@@ -22,6 +22,6 @@ configuration:
     class_name: FixedIncrement
     kwargs:
       # step_size: 0.2
-      nbr_steps: 11
+      nbr_steps: 10
       start: 0.0
       end: 2.0
