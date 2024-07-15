@@ -32,12 +32,16 @@ class TimeStepper(abc.ABC):
 
 
 class FixedIncrement(TimeStepper):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, start, end, step_size, manager):
 
-        # assert ("nbr_steps" in kwargs.keys()) and (
-        #     "step_size" not in kwargs.keys()
-        # ), "Please check the signature of this class."
+        super().__init__(
+            dict(
+                start=start,
+                end=end,
+                step_size=step_size,
+                manager=manager,
+            )
+        )
 
         self.nbr_steps = int((self.end - self.start)/self.step_size)
         self.nbr_sampling_points = self.nbr_steps + 1
