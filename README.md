@@ -18,6 +18,4 @@ pip install --editable .
 
 ### Run tests against installed code
 
-```bash
-pytest
-```
+See [test/README.md](./test/README.md)
