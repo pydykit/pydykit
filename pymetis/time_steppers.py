@@ -88,8 +88,16 @@ class FixedIncrement(TimeStepper):
 
 
 class FixedIncrementHittingEnd(TimeStepper):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, start, end, step_size, manager):
+
+        super().__init__(
+            dict(
+                start=start,
+                end=end,
+                step_size=step_size,
+                manager=manager,
+            )
+        )
 
         self.times = self.identify_times()
         self.nbr_sampling_points = len(self.times)
