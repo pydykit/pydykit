@@ -43,8 +43,8 @@ class FixedIncrement(TimeStepper):
             )
         )
 
-        self.nbr_steps = int((self.end - self.start)/self.step_size)
-        self.nbr_sampling_points = self.nbr_steps + 1
+        self.nbr_steps = int((self.end - self.start) / self.step_size)
+        self.nbr_time_points = self.nbr_steps + 1
 
         self.times = self.identify_times()
 
@@ -68,7 +68,7 @@ class FixedIncrement(TimeStepper):
         return np.linspace(
             start=self.start,
             stop=self.end,
-            num=self.nbr_sampling_points,
+            num=self.nbr_time_points,
             endpoint=True,
             dtype=np.float64,
         )
@@ -100,8 +100,8 @@ class FixedIncrementHittingEnd(TimeStepper):
         )
 
         self.times = self.identify_times()
-        self.nbr_sampling_points = len(self.times)
-        self.nbr_steps = self.nbr_sampling_points - 1
+        self.nbr_time_points = len(self.times)
+        self.nbr_steps = self.nbr_time_points - 1
 
     def make_steps(self):
         for index, time in enumerate(self.times):
