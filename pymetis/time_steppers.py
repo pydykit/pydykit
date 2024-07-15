@@ -35,12 +35,10 @@ class FixedIncrement(TimeStepper):
     def __init__(self, start, end, step_size, manager):
 
         super().__init__(
-            dict(
-                start=start,
-                end=end,
-                step_size=step_size,
-                manager=manager,
-            )
+            start=start,
+            end=end,
+            step_size=step_size,
+            manager=manager,
         )
 
         self.nbr_steps = int((self.end - self.start) / self.step_size)
@@ -91,12 +89,10 @@ class FixedIncrementHittingEnd(TimeStepper):
     def __init__(self, start, end, step_size, manager):
 
         super().__init__(
-            dict(
-                start=start,
-                end=end,
-                step_size=step_size,
-                manager=manager,
-            )
+            start=start,
+            end=end,
+            step_size=step_size,
+            manager=manager,
         )
 
         self.times = self.identify_times()
