@@ -27,7 +27,7 @@ class Midpoint(PortHamiltoniaIntegrator):
         state_n = states.state_n
         state_n1 = states.state_n1
 
-        time_step_size = self.manager.time_stepper.current_step.last_increment
+        time_step_size = self.manager.time_stepper.current_step.increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -57,7 +57,7 @@ class EulerImplicit(PortHamiltoniaIntegrator):
 
         state_n = states.state_n
         state_n1 = states.state_n1
-        time_step_size = self.manager.time_stepper.current_step.last_increment
+        time_step_size = self.manager.time_stepper.current_step.increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -89,7 +89,7 @@ class EulerExplicit(PortHamiltoniaIntegrator):
 
         state_n = states.state_n
         state_n1 = states.state_n1
-        time_step_size = self.manager.time_stepper.current_step.last_increment
+        time_step_size = self.manager.time_stepper.current_step.increment
 
         e_n = system.get_e_matrix(state_n)
         e_n1 = system.get_e_matrix(state_n1)
@@ -128,7 +128,7 @@ class MPStd(MultiBodyIntegrator):
     @staticmethod
     def calc_residuum(system, time_stepper, state_n, state_n1):
 
-        stepsize = time_stepper.current_step.last_increment
+        step_size = time_stepper.current_step.increment
 
         q_n, p_n, lambd_n = system.decompose_state(state=state_n)
         q_n1, p_n1, lambd_n1 = system.decompose_state(state=state_n1)
@@ -153,14 +153,14 @@ class MPStd(MultiBodyIntegrator):
         residuum_p = (
             p_n1
             - p_n
-            + stepsize * (DV_int_n05 + DV_ext_n05)
-            + stepsize * DTq_n05
-            + (stepsize * G_n05.T @ lambd_n05[np.newaxis]).flatten()
+            + step_size * (DV_int_n05 + DV_ext_n05)
+            + step_size * DTq_n05
+            + (step_size * G_n05.T @ lambd_n05[np.newaxis]).flatten()
         )
 
         residuum = np.concatenate(
             [
-                q_n1 - q_n - stepsize * inv_mass_matrix_n05 @ p_n05,
+                q_n1 - q_n - step_size * inv_mass_matrix_n05 @ p_n05,
                 residuum_p,
                 np.array([g_n1]),
             ],

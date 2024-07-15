@@ -37,7 +37,7 @@ class Newton(Solver):
             # Update system for NEW time based on previous state
             states.state_n = states.state_n1
             states.state_n1 = (
-                self.newton_update()  # Note: current time step size can be access through time_stepper.current_step.last_increment
+                self.newton_update()  # Note: current time step size can be access through time_stepper.current_step.increment
             )
 
             # Store results

@@ -37,7 +37,7 @@ class Pendulum2D(PortHamiltonianSystem):
     def initialize(self):
 
         self.states = states.State(
-            nbr_states=self.manager.time_stepper.nbr_timesteps,
+            nbr_states=self.manager.time_stepper.nbr_time_points,
             dim_state=2,
             columns=["angle", "velocity"],
         )
@@ -127,7 +127,7 @@ class Pendulum3DCartesian(MultiBodySystem):
         self.ext_acc = np.array(self.ext_acc)
 
         self.states = states.State(
-            nbr_states=self.manager.time_stepper.nbr_timesteps,
+            nbr_states=self.manager.time_stepper.nbr_time_points,
             dim_state=2 * self.nbr_spatial_dimensions + self.nbr_constraints,
             columns=[
                 "x",

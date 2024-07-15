@@ -5,14 +5,14 @@ def print_time_step(time_step):
     print(
         time_step.index,
         time_step.time,
-        time_step.next_increment,
+        time_step.increment,
     )
 
 
 stepper = time_steppers.FixedIncrementHittingEnd(
     start=1,
     end=2.2,
-    stepsize=0.15,
+    step_size=0.15,
     manager=None,
 )
 
