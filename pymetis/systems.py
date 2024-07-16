@@ -118,10 +118,6 @@ class MultiBodySystem(abc.ABC):
 
 class Pendulum3DCartesian(MultiBodySystem):
 
-    def __init__(self, manager, **kwargs):
-        self.manager = manager
-        self.__dict__.update(kwargs)
-
     def initialize(self):
         self.length = np.linalg.norm(self.initial_state["Q"])
         self.ext_acc = np.array(self.ext_acc)
