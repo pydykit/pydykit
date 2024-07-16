@@ -223,6 +223,18 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         #     )
         # )
 
+    def get_skew_matrix(vector):
+
+        assert len(vector) == 4, "Expect vector to be of length four"
+
+        return np.array(
+            [
+                [0.0, -vector[3], vector[2]],
+                [vector[3], 0.0, -vector[1]],
+                [-vector[2], vector[1], 0.0],
+            ]
+        )
+
     def decompose_state(self, state):
         pass
         # dim = self.nbr_spatial_dimensions
