@@ -3,17 +3,17 @@
 Following this [stackoverflow contribution](https://stackoverflow.com/a/7554457/8935243)
 we can use
 [`pyreverse`](https://pylint.readthedocs.io/en/stable/pyreverse.html)
-which ships with
+which ships with `pylint`. Additionally we will need `graphviz` to create png-files.
 
 ```bash
-conda install pylint
+conda install pylint graphviz
 ```
 
 to visualize our package `pydykit`.
 Therefore, we navigate into the package
 
 ```bash
-cd python/pydykit/pydykit
+cd pydykit
 ```
 
 and execute
