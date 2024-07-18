@@ -10,7 +10,7 @@ def load_result_of_metis_simulation(path):
     return mat
 
 
-def load_result_of_pymetis_simulation(path):
+def load_result_of_pydykit_simulation(path):
     return pd.read_csv(
         path,
         index_col=0,
