@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-import pymetis
+import pydykit
 
-manager = pymetis.Manager(
-    path_config_file="./pymetis/example_files/pendulum3dcartesian_full_time.yml"
+manager = pydykit.Manager(
+    path_config_file="./pydykit/example_files/pendulum3dcartesian_full_time.yml"
 )
 result = manager.manage()
 

@@ -1,5 +1,5 @@
 import numpy as np
-from pymetis import time_steppers
+from pydykit import time_steppers
 
 # stepper = time_steppers.FixedIncrementKinon(
 #     start=1.0,
