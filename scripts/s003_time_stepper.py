@@ -1,4 +1,4 @@
-from pymetis import time_steppers
+from pydykit import time_steppers
 
 
 def print_time_step(time_step):

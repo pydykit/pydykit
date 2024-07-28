@@ -1,11 +1,11 @@
 import numpy as np
-import pymetis
-import pymetis.examples
+import pydykit
+import pydykit.examples
 import pytest
 
 from . import constants, utils
 
-example_manager = pymetis.examples.Manager()
+example_manager = pydykit.examples.Manager()
 
 
 class TestCompareWithMetis:
@@ -23,7 +23,7 @@ class TestCompareWithMetis:
     @pytest.mark.slow
     def test_run(self, content_config_file, name):
 
-        manager = pymetis.Manager(content_config_file=content_config_file)
+        manager = pydykit.Manager(content_config_file=content_config_file)
         result = manager.manage()
 
         reference = utils.load_result_of_metis_simulation(

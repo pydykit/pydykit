@@ -8,7 +8,7 @@ class Manager:
     def __init__(self, path_config_file=None, content_config_file=None):
 
         if (path_config_file is not None) and (content_config_file is not None):
-            raise utils.PymetisException(
+            raise utils.pydykitException(
                 "Did receive both path_config_file and content_config_file. "
                 + "Supply either path_config_file or content_config_file, not both"
             )
@@ -18,7 +18,7 @@ class Manager:
         elif content_config_file is not None:
             self.content_config_file = content_config_file
         else:
-            raise utils.PymetisException(
+            raise utils.pydykitException(
                 "Did not receive kwargs. "
                 + "Supply either path_config_file or content_config_file"
             )
@@ -36,7 +36,7 @@ class Manager:
             cls = getattr(
                 importlib.import_module(
                     name=f".{attribute_name}s",
-                    package="pymetis",
+                    package="pydykit",
                 ),
                 parameters["class_name"],
             )

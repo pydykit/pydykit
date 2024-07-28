@@ -127,6 +127,6 @@ class FixedIncrementHittingEnd(TimeStepper):
         elif np.isclose(tmp[-1], self.end):
             pass
         else:
-            raise utils.PymetisException("Unkown case")
+            raise utils.PydykitException("Unkown case")
 
         return tmp

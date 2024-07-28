@@ -8,7 +8,7 @@ def load_yaml_file(path):
     return content
 
 
-class PymetisException(Exception):
+class PydykitException(Exception):
     pass
 
 

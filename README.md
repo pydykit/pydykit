@@ -10,7 +10,7 @@ source .venv/bin/activate
 pip install -r requirements_dev.txt
 ```
 
-### Install Python package `pymetis` in editable-/develoment-mode
+### Install Python package `pydykit` in editable-/develoment-mode
 
 ```bash
 pip install --editable .
