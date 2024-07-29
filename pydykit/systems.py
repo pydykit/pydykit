@@ -3,7 +3,7 @@ from collections import namedtuple
 
 import numpy as np
 
-from . import states
+from . import operators, states
 
 
 class PortHamiltonianSystem(abc.ABC):
@@ -194,6 +194,9 @@ class Pendulum3DCartesian(MultiBodySystem):
         return q.T[np.newaxis, :] / self.length**2
 
 
+# operators
+
+
 class RigidBodyRotatingQuaternions(MultiBodySystem):
 
     def initialize(self):
@@ -222,18 +225,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         #         lambd=np.zeros(self.nbr_constraints),
         #     )
         # )
-
-    def get_skew_matrix(vector):
-
-        assert len(vector) == 4, "Expect vector to be of length four"
-
-        return np.array(
-            [
-                [0.0, -vector[3], vector[2]],
-                [vector[3], 0.0, -vector[1]],
-                [-vector[2], vector[1], 0.0],
-            ]
-        )
 
     def decompose_state(self, state):
         pass
