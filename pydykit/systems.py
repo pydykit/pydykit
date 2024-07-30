@@ -200,7 +200,7 @@ class Pendulum3DCartesian(MultiBodySystem):
 class RigidBodyRotatingQuaternions(MultiBodySystem):
 
     def initialize(self):
-        pass
+        self.inertias_matrix = np.diag(self.inertias)
         # self.length = np.linalg.norm(self.initial_state["Q"])
         # self.ext_acc = np.array(self.ext_acc)
 
@@ -252,19 +252,31 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
     def get_mass_matrix(self, q):
         quat = q[0:4]
-        G_q = operators.get_convective_transformation_matrix(quat=quat)
-        inertias = np.diag(self.inertias)
-        return 4.0 * G_q.T @ inertias @ G_q
+        G_q = operators.get_convective_transformation_matrix(
+            quat=quat,
+        )
+        return operators.combine_G_inertias(
+            g_matrix=G_q,
+            inertias=self.inertias_matrix,
+        )
 
         # return self.mass * np.eye(self.nbr_spatial_dimensions)
 
     def kinetic_energy_gradient_from_momentum(self, q, p):
-        pass
-        # return np.zeros(q.shape)
+        return np.zeros(3)
 
     def kinetic_energy_gradient_from_velocity(self, q, v):
-        pass
-        # return np.zeros(q.shape)
+        tmp = v[:4]
+
+        G_v = operators.get_convective_transformation_matrix(
+            quat=tmp,
+        )
+        M_4_hat = operators.combine_G_inertias(
+            g_matrix=G_v,
+            inertias=self.inertias_matrix,
+        )
+
+        return M_4_hat @ q
 
     def external_potential(self, q):
         pass
