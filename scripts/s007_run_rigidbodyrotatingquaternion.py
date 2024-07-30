@@ -6,6 +6,7 @@ import pydykit
 manager = pydykit.Manager(
     path_config_file="./pydykit/example_files/rigidbodyrotatingquaternion.yml"
 )
+manager.system.initialize()
 tmp = manager.system.get_mass_matrix(
     q=np.array(
         [
