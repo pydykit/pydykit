@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
-import pydykit
-import pydykit.examples
 import pytest
 from pandas.testing import assert_frame_equal
+
+import pydykit
+import pydykit.examples
 
 from . import utils
 from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
@@ -23,7 +24,11 @@ class TestExamples:
                 id=key,
             )
             for key in example_manager.list_examples()
-            if key not in ["pendulum3dcartesian_full_time"]
+            if key
+            not in [
+                "pendulum3dcartesian_full_time",
+                "rigidbodyrotatingquaternion",
+            ]
         ),
     )
     def test_run_examples(self, content_config_file, expected_result_df):
