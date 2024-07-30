@@ -12,6 +12,18 @@ class PortHamiltonianSystem(abc.ABC):
         self.__dict__.update(kwargs)
 
     @abc.abstractmethod
+    def initialize(self):
+        pass
+
+    @abc.abstractmethod
+    def decompose_state(self):
+        pass
+
+    @abc.abstractmethod
+    def compose_state(self):
+        pass
+
+    @abc.abstractmethod
     def get_z_vector(self, state):
         pass
 
@@ -25,10 +37,6 @@ class PortHamiltonianSystem(abc.ABC):
 
     @abc.abstractmethod
     def get_e_matrix(self, state):
-        pass
-
-    @abc.abstractmethod
-    def initialize(self):
         pass
 
 
@@ -52,6 +60,9 @@ class Pendulum2D(PortHamiltonianSystem):
             v=state[1],
         )
 
+    def compose_state(self):
+        pass
+
     def get_z_vector(self, state):
         q, v = self.decompose_state(state=state)
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
@@ -74,6 +85,14 @@ class MultiBodySystem(abc.ABC):
 
     @abc.abstractmethod
     def initialize(self):
+        pass
+
+    @abc.abstractmethod
+    def decompose_state(self):
+        pass
+
+    @abc.abstractmethod
+    def compose_state(self):
         pass
 
     @abc.abstractmethod
