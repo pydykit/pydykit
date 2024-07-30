@@ -260,8 +260,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             inertias=self.inertias_matrix,
         )
 
-        # return self.mass * np.eye(self.nbr_spatial_dimensions)
-
     def kinetic_energy_gradient_from_momentum(self, q, p):
         return np.zeros(3)
 
@@ -279,25 +277,19 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return M_4_hat @ q
 
     def external_potential(self, q):
-        pass
-        # return -(self.get_mass_matrix(q=q) @ self.ext_acc).T @ q
+        return 0.0
 
     def external_potential_gradient(self, q):
-        pass
-        # return -self.get_mass_matrix(q=q) @ self.ext_acc
+        return np.zeros(4)
 
     def internal_potential(self):
-        pass
-        # return 0.0
+        return 0.0
 
     def internal_potential_gradient(self, q):
-        pass
-        # return np.zeros(q.shape)
+        return np.zeros(3)
 
     def constraint(self, q):
-        pass
-        # return 0.5 * (q.T @ q / self.length**2 - 1.0)
+        return 0.5 * (q.T @ q - 1.0)
 
     def constraint_gradient(self, q):
-        pass
-        # return q.T[np.newaxis, :] / self.length**2
+        return q.T
