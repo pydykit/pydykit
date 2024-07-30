@@ -1,0 +1,26 @@
+name: rigidbodyrotatingquaternion
+configuration:
+  system:
+    class_name: RigidBodyRotatingQuaternions
+    kwargs:
+      nbr_spatial_dimensions: 3
+      nbr_constraints: 1
+      mass: 1.0
+      ext_acc: [0.0, 0.0, 0.0]
+      initial_state:
+        Q: [1.0, 0.0, 0.0, 0.0]
+        V: [10.0, 20.0, 20.0]
+  solver:
+    class_name: Newton
+    kwargs:
+      newton_epsilon: 1.e-07
+      max_iterations: 40
+  integrator:
+    class_name: EML
+    kwargs:
+  time_stepper:
+    class_name: FixedIncrement
+    kwargs:
+      step_size: 0.2
+      start: 0.0
+      end: 2.0
