@@ -278,10 +278,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         G_q = operators.get_convective_transformation_matrix(
             quat=quat,
         )
-        return operators.combine_G_inertias(
-            g_matrix=G_q,
-            inertias=self.inertias_matrix,
-        )
+        return 4.0 * G_q.T @ self.inertias_matrix @ G_q
 
     def kinetic_energy_gradient_from_momentum(self, q, p):
         return np.zeros(3)

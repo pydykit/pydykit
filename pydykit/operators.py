@@ -47,7 +47,3 @@ def get_transf_matrix_sym(quat, sign=1.0):
     convective = get_convective_transformation_matrix(quat=quat)
 
     return spatial @ convective.T
-
-
-def combine_G_inertias(g_matrix, inertias):
-    return 4.0 * g_matrix.T @ inertias @ g_matrix
