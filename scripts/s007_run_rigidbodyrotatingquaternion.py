@@ -20,5 +20,6 @@ tmp = manager.system.get_mass_matrix(
     ),
 )
 
+results = manager.manage()
 
 print(tmp)
