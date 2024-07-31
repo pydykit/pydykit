@@ -9,5 +9,3 @@ manager = pydykit.Manager(
 manager.system.initialize()
 
 results = manager.manage()
-
-print(tmp)
