@@ -152,7 +152,7 @@ class Pendulum3DCartesian(MultiBodySystem):
                 "dy",
                 "dz",
                 "lambda",
-            ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator?
+            ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
         )
 
         self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
