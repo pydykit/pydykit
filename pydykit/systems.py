@@ -220,54 +220,58 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
     def initialize(self):
         self.inertias_matrix = np.diag(self.inertias)
-        # self.length = np.linalg.norm(self.initial_state["Q"])
-        # self.ext_acc = np.array(self.ext_acc)
 
-        # self.states = states.State(
-        #     nbr_states=self.manager.time_stepper.nbr_time_points,
-        #     dim_state=2 * self.nbr_spatial_dimensions + self.nbr_constraints,
-        #     columns=[
-        #         "x",
-        #         "y",
-        #         "z",
-        #         "dx",
-        #         "dy",
-        #         "dz",
-        #         "lambda",
-        #     ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator?
-        # )
+        self.ext_acc = np.array(self.ext_acc)
 
-        # self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
-        #     self.compose_state(
-        #         q=np.array(self.initial_state["Q"]),
-        #         p=self.get_mass_matrix(q=None) @ np.array(self.initial_state["V"]),
-        #         lambd=np.zeros(self.nbr_constraints),
-        #     )
-        # )
+        self.states = states.State(
+            nbr_states=self.manager.time_stepper.nbr_time_points,
+            dim_state=2 * self.nbr_dof + self.nbr_constraints,
+            columns=[
+                "q0",
+                "q1",
+                "q2",
+                "q3",
+                "q4",
+                "p0",
+                "p1",
+                "p2",
+                "p3",
+                "p4",
+                "lambda",
+            ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        )
+        q0 = np.array(self.initial_state["Q"])
+        G_q0 = operators.get_convective_transformation_matrix(quat=q0)
+        v0 = 0.5 * G_q0.T @ np.array(self.initial_state["V"])
+
+        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
+            self.compose_state(
+                q=q0,
+                p=self.get_mass_matrix(q=np.array(self.initial_state["Q"])) @ v0,
+                lambd=np.zeros(self.nbr_constraints),
+            )
+        )
 
     def decompose_state(self, state):
-        pass
-        # dim = self.nbr_spatial_dimensions
 
-        # assert len(state) == 2 * dim + self.nbr_constraints
+        assert len(state) == 2 * self.nbr_dof + self.nbr_constraints
 
-        # decomposed_state = namedtuple("state", "q p lambd")
-        # return decomposed_state(
-        #     q=state[0:dim],
-        #     p=state[dim : 2 * dim],
-        #     lambd=state[2 * dim :],
-        # )
+        decomposed_state = namedtuple("state", "q p lambd")
+        return decomposed_state(
+            q=state[0 : self.nbr_dof],
+            p=state[self.nbr_dof : 2 * self.nbr_dof],
+            lambd=state[2 * self.nbr_dof :],
+        )
 
     def compose_state(self, q, p, lambd):
-        pass
-        # return np.concatenate(
-        #     [
-        #         q,
-        #         p,
-        #         lambd,
-        #     ],
-        #     axis=0,
-        # )
+        return np.concatenate(
+            [
+                q,
+                p,
+                lambd,
+            ],
+            axis=0,
+        )
 
     def get_mass_matrix(self, q):
         quat = q[0:4]

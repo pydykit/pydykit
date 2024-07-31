@@ -4,6 +4,7 @@ configuration:
     class_name: RigidBodyRotatingQuaternions
     kwargs:
       nbr_spatial_dimensions: 3
+      nbr_dof: 4
       nbr_constraints: 1
       mass: 1.0
       ext_acc: [0.0, 0.0, 0.0]
