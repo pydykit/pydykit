@@ -67,4 +67,11 @@ class Newton(Solver):
             residual_norm = np.linalg.norm(residual)
             utils.print_residual_norm(value=residual_norm)
 
+        if residual_norm < self.newton_epsilon:
+            pass
+        else:
+            raise utils.PydykitException(
+                f"Newton convergence not succesful in step with index {self.manager.time_stepper.current_step.index}."
+            )
+
         return states.state_n1
