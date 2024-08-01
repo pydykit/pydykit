@@ -3,13 +3,25 @@ from collections import namedtuple
 
 import numpy as np
 
-from . import states
+from . import operators, states
 
 
 class PortHamiltonianSystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
+
+    @abc.abstractmethod
+    def initialize(self):
+        pass
+
+    @abc.abstractmethod
+    def decompose_state(self):
+        pass
+
+    @abc.abstractmethod
+    def compose_state(self):
+        pass
 
     @abc.abstractmethod
     def get_z_vector(self, state):
@@ -25,10 +37,6 @@ class PortHamiltonianSystem(abc.ABC):
 
     @abc.abstractmethod
     def get_e_matrix(self, state):
-        pass
-
-    @abc.abstractmethod
-    def initialize(self):
         pass
 
 
@@ -52,6 +60,9 @@ class Pendulum2D(PortHamiltonianSystem):
             v=state[1],
         )
 
+    def compose_state(self):
+        pass
+
     def get_z_vector(self, state):
         q, v = self.decompose_state(state=state)
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
@@ -74,6 +85,14 @@ class MultiBodySystem(abc.ABC):
 
     @abc.abstractmethod
     def initialize(self):
+        pass
+
+    @abc.abstractmethod
+    def decompose_state(self):
+        pass
+
+    @abc.abstractmethod
+    def compose_state(self):
         pass
 
     @abc.abstractmethod
@@ -118,10 +137,6 @@ class MultiBodySystem(abc.ABC):
 
 class Pendulum3DCartesian(MultiBodySystem):
 
-    def __init__(self, manager, **kwargs):
-        self.manager = manager
-        self.__dict__.update(kwargs)
-
     def initialize(self):
         self.length = np.linalg.norm(self.initial_state["Q"])
         self.ext_acc = np.array(self.ext_acc)
@@ -137,7 +152,7 @@ class Pendulum3DCartesian(MultiBodySystem):
                 "dy",
                 "dz",
                 "lambda",
-            ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator?
+            ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
         )
 
         self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
@@ -196,3 +211,131 @@ class Pendulum3DCartesian(MultiBodySystem):
 
     def constraint_gradient(self, q):
         return q.T[np.newaxis, :] / self.length**2
+
+
+# operators
+
+
+class RigidBodyRotatingQuaternions(MultiBodySystem):
+
+    def initialize(self):
+        self.inertias_matrix = np.diag(self.inertias)
+
+        self.ext_acc = np.array(self.ext_acc)
+
+        self.states = states.State(
+            nbr_states=self.manager.time_stepper.nbr_time_points,
+            dim_state=2 * self.nbr_dof + self.nbr_constraints,
+            columns=[
+                "q0",
+                "q1",
+                "q2",
+                "q3",
+                "q4",
+                "p0",
+                "p1",
+                "p2",
+                "p3",
+                "p4",
+                "lambda",
+            ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        )
+        q0 = np.array(self.initial_state["Q"])
+        G_q0 = operators.get_convective_transformation_matrix(quat=q0)
+        v0 = 0.5 * G_q0.T @ np.array(self.initial_state["V"])
+
+        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
+            self.compose_state(
+                q=q0,
+                p=self.get_mass_matrix(q=np.array(self.initial_state["Q"])) @ v0,
+                lambd=np.zeros(self.nbr_constraints),
+            )
+        )
+
+    def decompose_state(self, state):
+
+        assert len(state) == 2 * self.nbr_dof + self.nbr_constraints
+
+        decomposed_state = namedtuple("state", "q p lambd")
+        return decomposed_state(
+            q=state[0 : self.nbr_dof],
+            p=state[self.nbr_dof : 2 * self.nbr_dof],
+            lambd=state[2 * self.nbr_dof :],
+        )
+
+    def compose_state(self, q, p, lambd):
+        return np.concatenate(
+            [
+                q,
+                p,
+                lambd,
+            ],
+            axis=0,
+        )
+
+    def get_mass_matrix(self, q):
+        quat = q[0:4]
+        G_q = operators.get_convective_transformation_matrix(
+            quat=quat,
+        )
+
+        singular_mass_matrix = 4.0 * G_q.T @ self.inertias_matrix @ G_q
+        regular_mass_matrix = singular_mass_matrix + 2 * np.trace(
+            self.inertias_matrix
+        ) * np.outer(quat, quat)
+
+        return regular_mass_matrix
+
+    def get_inverse_mass_matrix(self, q):
+        quat = q[0:4]
+        Ql_q = operators.get_left_multiplation_matrix(quat)
+        J0 = 0.5 * np.trace(self.inertias_matrix)
+        inverse_inertias = 1.0 / np.diag(self.inertias_matrix)
+        inverse_extended_inertias_matrix = np.diag(np.append(1 / J0, inverse_inertias))
+
+        return 0.25 * Ql_q @ inverse_extended_inertias_matrix @ Ql_q.T
+
+    def kinetic_energy_gradient_from_momentum(self, q, p):
+
+        # extended inertia tensor
+        J0 = np.trace(self.inertias_matrix)
+        extended_inertias = np.block(
+            [[J0, np.zeros((1, 3))], [np.zeros((3, 1)), self.inertias_matrix]]
+        )
+
+        inverse_extended_inertias = np.linalg.inv(extended_inertias)
+
+        Ql_p = operators.get_left_multiplation_matrix(p)
+
+        return 0.25 * Ql_p @ inverse_extended_inertias @ Ql_p.T @ q
+
+    def kinetic_energy_gradient_from_velocity(self, q, v):
+        tmp = v[:4]
+
+        G_v = operators.get_convective_transformation_matrix(
+            quat=tmp,
+        )
+        M_4_hat = operators.combine_G_inertias(
+            g_matrix=G_v,
+            inertias=self.inertias_matrix,
+        )
+
+        return M_4_hat @ q
+
+    def external_potential(self, q):
+        return 0.0
+
+    def external_potential_gradient(self, q):
+        return np.zeros(4)
+
+    def internal_potential(self):
+        return 0.0
+
+    def internal_potential_gradient(self, q):
+        return np.zeros(4)
+
+    def constraint(self, q):
+        return 0.5 * (q.T @ q - 1.0)
+
+    def constraint_gradient(self, q):
+        return q.T
