@@ -17,7 +17,7 @@ class TestCompareWithMetis:
                 key,
                 id=key,
             )
-            for key in ["pendulum3dcartesian_full_time"]
+            for key in ["pendulum3dcartesian_full_time","rigidbodyrotatingquaternion"]
         ),
     )
     @pytest.mark.slow
@@ -34,7 +34,14 @@ class TestCompareWithMetis:
             )
         )
         old = reference["coordinates"]
-        new = result.state[:, [0, 1, 2]]
+
+        if name == "pendulum3dcartesian_full_time":
+            new = result.state[:, [0, 1, 2]]
+        elif name == "rigidbodyrotatingquaternion":
+            new = result.state[:, [0, 1, 2, 3]]
+        else:
+            print(f"{name} is not a mat file.")
+
 
         utils.print_compare(old=old, new=new)
 
