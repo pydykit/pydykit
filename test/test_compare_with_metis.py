@@ -1,7 +1,8 @@
 import numpy as np
+import pytest
+
 import pydykit
 import pydykit.examples
-import pytest
 
 from . import constants, utils
 
@@ -17,14 +18,13 @@ class TestCompareWithMetis:
                 key,
                 id=key,
             )
-            for key in ["pendulum3dcartesian_full_time","rigidbodyrotatingquaternion"]
+            for key in ["pendulum3dcartesian_full_time", "rigidbodyrotatingquaternion"]
         ),
     )
     @pytest.mark.slow
     def test_run(self, content_config_file, name):
 
         manager = pydykit.Manager(content_config_file=content_config_file)
-        manager.set_test_flag()
         result = manager.manage()
 
         reference = utils.load_result_of_metis_simulation(
@@ -41,7 +41,6 @@ class TestCompareWithMetis:
             new = result.state[:, [0, 1, 2, 3]]
         else:
             print(f"{name} is not a mat file.")
-
 
         utils.print_compare(old=old, new=new)
 
