@@ -1,27 +1,40 @@
 import numpy as np
+import pytest
+
 import pydykit
 import pydykit.examples
-import pytest
 
 from . import constants, utils
 
 example_manager = pydykit.examples.Manager()
 
+example_worklist = [
+    dict(
+        name="pendulum3dcartesian_full_time",
+        result_indices=[0, 1, 2],
+    ),
+    dict(
+        name="rigidbodyrotatingquaternion",
+        result_indices=[0, 1, 2, 3],
+    ),
+]
+
 
 class TestCompareWithMetis:
     @pytest.mark.parametrize(
-        ("content_config_file", "name"),
+        ("content_config_file", "name", "result_indices"),
         (
             pytest.param(
-                example_manager.get_example(name=key),
-                key,
-                id=key,
+                example_manager.get_example(name=example["name"]),
+                example["name"],
+                example["result_indices"],
+                id=example["name"],
             )
-            for key in ["pendulum3dcartesian_full_time","rigidbodyrotatingquaternion"]
+            for example in example_worklist
         ),
     )
     @pytest.mark.slow
-    def test_run(self, content_config_file, name):
+    def test_run(self, content_config_file, name, result_indices):
 
         manager = pydykit.Manager(content_config_file=content_config_file)
         manager.set_test_flag()
@@ -35,13 +48,7 @@ class TestCompareWithMetis:
         )
         old = reference["coordinates"]
 
-        if name == "pendulum3dcartesian_full_time":
-            new = result.state[:, [0, 1, 2]]
-        elif name == "rigidbodyrotatingquaternion":
-            new = result.state[:, [0, 1, 2, 3]]
-        else:
-            print(f"{name} is not a mat file.")
-
+        new = result.state[:, result_indices]
 
         utils.print_compare(old=old, new=new)
 
