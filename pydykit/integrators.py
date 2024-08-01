@@ -136,8 +136,11 @@ class MPStd(MultiBodyIntegrator):
             state=0.5 * (state_n + state_n1)
         )
 
-        mass_matrix_n05 = system.get_mass_matrix(q=q_n05)
-        inv_mass_matrix_n05 = np.linalg.inv(mass_matrix_n05)
+        try:
+            inv_mass_matrix_n05 = system.get_inverse_mass_matrix(q=q_n05)
+        except AttributeError:
+            mass_matrix_n05 = system.get_mass_matrix(q=q_n05)
+            inv_mass_matrix_n05 = np.linalg.inv(mass_matrix_n05)
 
         G_n05 = system.constraint_gradient(q=q_n05)
 
