@@ -44,3 +44,18 @@ def get_numerical_tangent(func, state_1, state_2, epsilon=1e-10):
         tang_num[:, j] = (R1 - R2) / (2.0 * delp)
 
     return tang_num
+
+
+def print_current_step(step):
+
+    print(
+        "****** ",
+        f"time = {step.time:.8},",
+        f" step index {step.index}",
+        " ******",
+    )
+
+
+def print_residual_norm(value):
+
+    print(f"residual norm = {value:.4E}")

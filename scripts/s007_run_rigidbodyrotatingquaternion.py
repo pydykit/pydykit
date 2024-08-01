@@ -8,18 +8,4 @@ manager = pydykit.Manager(
 )
 manager.system.initialize()
 
-
-tmp = manager.system.get_mass_matrix(
-    q=np.array(
-        [
-            1,
-            1,
-            0,
-            0,
-        ]
-    ),
-)
-
 results = manager.manage()
-
-print(tmp)

@@ -47,3 +47,14 @@ def get_transf_matrix_sym(quat, sign=1.0):
     convective = get_convective_transformation_matrix(quat=quat)
 
     return spatial @ convective.T
+
+
+def get_left_multiplation_matrix(quat):
+
+    G_q = get_convective_transformation_matrix(quat)
+
+    tmp = np.block([np.array([quat]).T, G_q.T])
+
+    assert tmp.shape == (4, 4)
+
+    return tmp

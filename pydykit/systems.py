@@ -278,10 +278,36 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         G_q = operators.get_convective_transformation_matrix(
             quat=quat,
         )
-        return 4.0 * G_q.T @ self.inertias_matrix @ G_q
+
+        singular_mass_matrix = 4.0 * G_q.T @ self.inertias_matrix @ G_q
+        regular_mass_matrix = singular_mass_matrix + 2 * np.trace(
+            self.inertias_matrix
+        ) * np.outer(quat, quat)
+
+        return regular_mass_matrix
+
+    def get_inverse_mass_matrix(self, q):
+        quat = q[0:4]
+        Ql_q = operators.get_left_multiplation_matrix(quat)
+        J0 = 0.5 * np.trace(self.inertias_matrix)
+        inverse_inertias = 1.0 / np.diag(self.inertias_matrix)
+        inverse_extended_inertias_matrix = np.diag(np.append(1 / J0, inverse_inertias))
+
+        return 0.25 * Ql_q @ inverse_extended_inertias_matrix @ Ql_q.T
 
     def kinetic_energy_gradient_from_momentum(self, q, p):
-        return np.zeros(3)
+
+        # extended inertia tensor
+        J0 = np.trace(self.inertias_matrix)
+        extended_inertias = np.block(
+            [[J0, np.zeros((1, 3))], [np.zeros((3, 1)), self.inertias_matrix]]
+        )
+
+        inverse_extended_inertias = np.linalg.inv(extended_inertias)
+
+        Ql_p = operators.get_left_multiplation_matrix(p)
+
+        return 0.25 * Ql_p @ inverse_extended_inertias @ Ql_p.T @ q
 
     def kinetic_energy_gradient_from_velocity(self, q, v):
         tmp = v[:4]
@@ -306,7 +332,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return 0.0
 
     def internal_potential_gradient(self, q):
-        return np.zeros(3)
+        return np.zeros(4)
 
     def constraint(self, q):
         return 0.5 * (q.T @ q - 1.0)
