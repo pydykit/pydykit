@@ -51,10 +51,7 @@ class Newton(Solver):
             states.time[step.index] = step.time
             states.state[step.index, :] = states.state_n1
 
-            if not self.manager.called_from_test:
-                utils.print_current_step(step)
-            else:
-                pass
+utils.print_current_step(step)
 
         return states
 
