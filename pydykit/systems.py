@@ -286,6 +286,15 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
         return regular_mass_matrix
 
+    def get_inverse_mass_matrix(self, q):
+        quat = q[0:4]
+        Ql_q = operators.get_left_multiplation_matrix(quat)
+        J0 = 0.5 * np.trace(self.inertias_matrix)
+        inverse_inertias = 1.0 / np.diag(self.inertias_matrix)
+        inverse_extended_inertias_matrix = np.diag(np.append(1 / J0, inverse_inertias))
+
+        return 0.25 * Ql_q @ inverse_extended_inertias_matrix @ Ql_q.T
+
     def kinetic_energy_gradient_from_momentum(self, q, p):
 
         # extended inertia tensor
