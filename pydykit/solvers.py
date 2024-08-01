@@ -2,6 +2,8 @@ import abc
 
 import numpy as np
 
+from . import utils
+
 
 class Solver(abc.ABC):
 
@@ -31,6 +33,8 @@ class Newton(Solver):
         step = next(steps)
         states.time[step.index] = step.time
 
+        utils.print_current_step(step)
+
         # Do remaining steps, until stepper stopps
         for step in steps:
 
@@ -44,7 +48,7 @@ class Newton(Solver):
             states.time[step.index] = step.time
             states.state[step.index, :] = states.state_n1
 
-            print(f"time={step.time}")
+            utils.print_current_step(step)
 
         return states
 
@@ -61,5 +65,6 @@ class Newton(Solver):
             state_delta = -np.linalg.inv(tangent_matrix) @ residual
             states.state_n1 = states.state_n1 + state_delta
             residual_norm = np.linalg.norm(residual)
+            utils.print_residual_norm(value=residual_norm)
 
         return states.state_n1
