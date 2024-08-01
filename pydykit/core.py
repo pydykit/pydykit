@@ -28,8 +28,6 @@ class Manager:
 
         self.instantiate_classes()
 
-        self.called_from_test = False
-
     def read_config_file(self):
         return utils.load_yaml_file(path=self.path_config_file)
 
@@ -60,6 +58,3 @@ class Manager:
 
     def manage(self):
         return self.solver.solve()
-    
-    def set_test_flag(self):
-        self.called_from_test = True
