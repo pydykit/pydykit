@@ -51,7 +51,7 @@ class Newton(Solver):
             states.time[step.index] = step.time
             states.state[step.index, :] = states.state_n1
 
-utils.print_current_step(step)
+            utils.print_current_step(step)
 
         return states
 
@@ -68,11 +68,8 @@ utils.print_current_step(step)
             state_delta = -np.linalg.inv(tangent_matrix) @ residual
             states.state_n1 = states.state_n1 + state_delta
             residual_norm = np.linalg.norm(residual)
-            if not self.manager.called_from_test:
-                utils.print_residual_norm(value=residual_norm)
-            else:
-                pass
-            
+
+            utils.print_residual_norm(value=residual_norm)
 
         if residual_norm < self.newton_epsilon:
             pass
