@@ -1,29 +1,36 @@
-# About `pydykit`
+# `pydykit`: A *Py*thon-based *dy*namics simulation tool*kit*
 
-## Development
+`pydykit` provides a basic framework for the simulation of dynamical systems.
+The package is based on time stepping methods,
+which are discrete versions of the corresponding dynamics equations - either ordinary differential equations (ODEs) or differential-algebraic equations (DAEs).
 
-### Start on new machine
+## How to start
 
-```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements_dev.txt
-```
+1. Starting on a new machine, create a new virtual environment and activate it. We recommend using `venv`:
 
-### Install Python package `pydykit` in editable-/develoment-mode
+   ```bash
+   python3.12 -m venv .venv
+   source .venv/bin/activate
+   ```
 
-Using venv:
+2. Install the local python package `pydykit` in editable-/develoment-mode:
 
-```bash
-pip install --editable .
-```
+   ```bash
+   pip install --editable .
+   ```
 
-Using conda:
+   In the unlikely case that this installation of the package without dedicated dependency-version numbers fails, install the dependencies directly:
 
-```bash
-pathto/anaconda/envs/venv_name/bin/pip install --editable .
-```
+   ```bash
+   pip install -r requirements_dev.txt
+   ```
 
-### Run tests against installed code
+3. Run your first script, e.g.
+
+   ```bash
+   python scripts/s*.py
+   ```
+
+## Running tests against installed code
 
 See [test/README.md](./test/README.md)
