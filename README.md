@@ -26,7 +26,7 @@ The target of `pydykit` is to provide a basic framework for the simulation of dy
 4. Run your first script, e.g.
 
    ```bash
-   python scripts/s<no>_<name>.py
+   python scripts/s*.py
    ```
 
 ## Running tests against installed code
