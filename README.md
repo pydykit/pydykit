@@ -19,6 +19,12 @@ which are discrete versions of the corresponding dynamics equations - either ord
    pip install --editable .
    ```
 
+   In the unlikely case that this installation of the package without dedicated dependency-version numbers fails, install the dependencies directly:
+
+   ```bash
+   pip install -r requirements_dev.txt
+   ```
+
 3. Run your first script, e.g.
 
    ```bash
