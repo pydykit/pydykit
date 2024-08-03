@@ -13,19 +13,13 @@ which are discrete versions of the corresponding dynamics equations - either ord
    source .venv/bin/activate
    ```
 
-2. Install the requirements for `pydykit`, which can be found in the `.txt`-file:
-
-   ```bash
-   pip install -r requirements_dev.txt
-   ```
-
-3. Install the local python package `pydykit` in editable-/develoment-mode:
+2. Install the local python package `pydykit` in editable-/develoment-mode:
 
    ```bash
    pip install --editable .
    ```
 
-4. Run your first script, e.g.
+3. Run your first script, e.g.
 
    ```bash
    python scripts/s<no>_<name>.py
