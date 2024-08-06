@@ -78,6 +78,30 @@ class Pendulum2D(PortHamiltonianSystem):
         return np.diag([1, self.mass * self.length**2])
 
 
+class PortHamiltonianFourParticleSystem(PortHamiltonianSystem):
+
+    def initialize(self):
+        pass
+
+    def decompose_state(self, state):
+        pass
+
+    def compose_state(self):
+        pass
+
+    def get_costates(self, state):
+        pass
+
+    def get_hamiltonian_gradient(self, state):
+        pass
+
+    def get_structure_matrix(self):
+        pass
+
+    def get_descriptor_matrix(self, state):
+        pass
+
+
 class MultiBodySystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
@@ -132,12 +156,6 @@ class MultiBodySystem(abc.ABC):
 
     @abc.abstractmethod
     def constraint_gradient(self, q):
-        pass
-
-
-class PortHamiltonianMultibodySystem(PortHamiltonianSystem):
-
-    def initialize(self, MultiBodySystem):
         pass
 
 
@@ -345,3 +363,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
     def constraint_gradient(self, q):
         return q.T
+
+
+class FourParticleSystem(MultiBodySystem):
+    pass
