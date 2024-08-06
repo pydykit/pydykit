@@ -135,6 +135,12 @@ class MultiBodySystem(abc.ABC):
         pass
 
 
+class PortHamiltonianMultibodySystem(PortHamiltonianSystem):
+
+    def initialize(self, MultiBodySystem):
+        pass
+
+
 class Pendulum3DCartesian(MultiBodySystem):
 
     def initialize(self):
