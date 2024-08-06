@@ -24,19 +24,19 @@ class PortHamiltonianSystem(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_z_vector(self, state):
+    def get_costates(self, state):
         pass
 
     @abc.abstractmethod
-    def get_jacobian(self, state):
+    def get_hamiltonian_gradient(self, state):
         pass
 
     @abc.abstractmethod
-    def get_j_matrix(self):
+    def get_structure_matrix(self):
         pass
 
     @abc.abstractmethod
-    def get_e_matrix(self, state):
+    def get_descriptor_matrix(self, state):
         pass
 
 
@@ -63,18 +63,18 @@ class Pendulum2D(PortHamiltonianSystem):
     def compose_state(self):
         pass
 
-    def get_z_vector(self, state):
+    def get_costates(self, state):
         q, v = self.decompose_state(state=state)
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
 
-    def get_jacobian(self, state):
+    def get_hamiltonian_gradient(self, state):
         q, v = self.decompose_state(state=state)
         return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
 
-    def get_j_matrix(self):
+    def get_structure_matrix(self):
         return np.array([[0, 1], [-1, 0]])
 
-    def get_e_matrix(self, state):
+    def get_descriptor_matrix(self, state):
         return np.diag([1, self.mass * self.length**2])
 
 

@@ -29,15 +29,15 @@ class Midpoint(PortHamiltoniaIntegrator):
 
         time_step_size = self.manager.time_stepper.current_step.increment
 
-        e_n = system.get_e_matrix(state_n)
-        e_n1 = system.get_e_matrix(state_n1)
+        e_n = system.get_descriptor_matrix(state_n)
+        e_n1 = system.get_descriptor_matrix(state_n1)
 
-        z_vector = system.get_z_vector(
+        z_vector = system.get_costates(
             state=0.5 * (state_n + state_n1),
         )
-        jacobian = 0.5 * system.get_jacobian(state=state_n1)
+        jacobian = 0.5 * system.get_hamiltonian_gradient(state=state_n1)
 
-        j_matrix = system.get_j_matrix()
+        j_matrix = system.get_structure_matrix()
 
         residuum = (
             e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
@@ -59,17 +59,17 @@ class EulerImplicit(PortHamiltoniaIntegrator):
         state_n1 = states.state_n1
         time_step_size = self.manager.time_stepper.current_step.increment
 
-        e_n = system.get_e_matrix(state_n)
-        e_n1 = system.get_e_matrix(state_n1)
+        e_n = system.get_descriptor_matrix(state_n)
+        e_n1 = system.get_descriptor_matrix(state_n1)
 
-        z_vector = system.get_z_vector(
+        z_vector = system.get_costates(
             state=state_n1,
         )
-        jacobian = 0.5 * system.get_jacobian(
+        jacobian = 0.5 * system.get_hamiltonian_gradient(
             state=state_n1,
         )
 
-        j_matrix = system.get_j_matrix()
+        j_matrix = system.get_structure_matrix()
 
         residuum = (
             e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
@@ -91,14 +91,14 @@ class EulerExplicit(PortHamiltoniaIntegrator):
         state_n1 = states.state_n1
         time_step_size = self.manager.time_stepper.current_step.increment
 
-        e_n = system.get_e_matrix(state_n)
-        e_n1 = system.get_e_matrix(state_n1)
+        e_n = system.get_descriptor_matrix(state_n)
+        e_n1 = system.get_descriptor_matrix(state_n1)
 
-        z_vector = system.get_z_vector(
+        z_vector = system.get_costates(
             state=state_n,
         )
 
-        j_matrix = system.get_j_matrix()
+        j_matrix = system.get_structure_matrix()
 
         residuum = (
             e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
