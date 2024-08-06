@@ -28,6 +28,7 @@ class TestExamples:
             not in [
                 "pendulum3dcartesian_full_time",
                 "rigidbodyrotatingquaternion",
+                "porthamiltonianfourparticlesystem",
             ]
         ),
     )
