@@ -1,3 +1,7 @@
+<p align="center">
+  <a href="https://github.com/pydykit/pydykit"><img alt="pydykit" src="docs/assets/banner.png" width="50%"></a>
+</p>
+
 # `pydykit`: A *Py*thon-based *dy*namics simulation tool*kit*
 
 `pydykit` provides a basic framework for the simulation of dynamical systems.
