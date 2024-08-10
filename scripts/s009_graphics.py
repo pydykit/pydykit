@@ -15,6 +15,7 @@ print("Success, start plotting")
 
 df = result.to_df()
 
-fig = px.line(df, x="x", y="y", markers=True, labels={"x": "$x$", "y": "$y$"})
 
+# Export using tikzplotlib, see https://pypi.org/project/tikzplotly/
+fig = px.line(df, x="x", y="y", markers=True, labels={"x": "$x$", "y": "$y$"})
 tikzplotly.save("docs/tex_export/example.tex", fig)
