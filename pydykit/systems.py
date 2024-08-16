@@ -76,7 +76,7 @@ class Pendulum2D(PortHamiltonianSystem):
         q, v = self.decompose_state(state=state)
         return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
 
-    def get_structure_matrix(self):
+    def get_structure_matrix(self, state):
         return np.array([[0, 1], [-1, 0]])
 
     def get_descriptor_matrix(self, state):
@@ -149,6 +149,7 @@ class MultiBodySystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
+        self.already_initialized = False
 
     @abc.abstractmethod
     def initialize(self):
@@ -402,10 +403,10 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return np.zeros(4)
 
     def constraint(self, q):
-        return 0.5 * (q.T @ q - 1.0)
+        return np.array([0.5 * (q.T @ q - 1.0)])
 
     def constraint_gradient(self, q):
-        return q.T
+        return q.T[np.newaxis, :]
 
 
 class FourParticleSystem(MultiBodySystem):
