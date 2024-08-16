@@ -1,18 +1,23 @@
 name: porthamiltonianfourparticlesystem
 configuration:
   system:
-    class_name: PortHamiltonianFourParticleSystem
+    class_name: FourParticleSystem
     kwargs:
       nbr_spatial_dimensions: 3
       nbr_dof: 12
-      nbr_constraints: 4
+      nbr_constraints: 2
       masses: [1.0, 1.0, 1.0, 1.0]
       ext_acc: [0.0, 0.0, 0.0]
       initial_state:
         Q: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
         V: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0]
-
-      inertias: [6.0, 8.0, 3.0]
+      rigid_constraint_length_12: 1
+      rigid_constraint_length_34: 1
+      natural_spring_length_13: 1
+      natural_spring_length_24: 1
+      spring_stiffness_parameter_13: 50
+      spring_stiffness_parameter_24: 500
+      damper_viscosity_parameter_23: 10
   solver:
     class_name: Newton
     kwargs:
@@ -24,6 +29,6 @@ configuration:
   time_stepper:
     class_name: FixedIncrement
     kwargs:
-      step_size: 0.01
+      step_size: 0.05
       start: 0.0
-      end: 2.0
+      end: 10.0
