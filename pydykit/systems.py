@@ -3,13 +3,16 @@ from collections import namedtuple
 
 import numpy as np
 
-from . import operators, states
+from scipy.linalg import block_diag
+
+from . import operators, states, utils
 
 
 class PortHamiltonianSystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
+        self.already_initialized = False
 
     @abc.abstractmethod
     def initialize(self):
@@ -53,6 +56,8 @@ class Pendulum2D(PortHamiltonianSystem):
             self.initial_state
         )
 
+        self.already_initialized = True
+
     def decompose_state(self, state):
         decomposed_state = namedtuple("state", "q v")
         return decomposed_state(
@@ -78,28 +83,66 @@ class Pendulum2D(PortHamiltonianSystem):
         return np.diag([1, self.mass * self.length**2])
 
 
-class PortHamiltonianFourParticleSystem(PortHamiltonianSystem):
+class PortHamiltonianMBS(PortHamiltonianSystem):
 
-    def initialize(self):
-        pass
+    def initialize(self, MultiBodySystem):
+
+        self.MBS = MultiBodySystem
+
+        self.states = MultiBodySystem.states
+
+        self.already_initialized = True
 
     def decompose_state(self, state):
+        utils.pydykitException("not implemented")
         pass
 
     def compose_state(self):
+        utils.pydykitException("not implemented")
         pass
 
     def get_costates(self, state):
-        pass
+        decomposed_state = self.MBS.decompose_state(state)
+        potential_forces = self.MBS.external_potential_gradient(
+            decomposed_state.q
+        ) + self.MBS.internal_potential_gradient(decomposed_state.q)
+
+        return np.hstack([potential_forces, decomposed_state.p, decomposed_state.lambd])
 
     def get_hamiltonian_gradient(self, state):
-        pass
+        decomposed_state = self.MBS.decompose_state(state)
 
-    def get_structure_matrix(self):
-        pass
+        return self.MBS.external_potential_gradient(
+            decomposed_state.q
+        ) + self.MBS.internal_potential_gradient(decomposed_state.q)
+
+    def get_structure_matrix(self, state):
+        decomposed_state = self.MBS.decompose_state(state)
+        q = decomposed_state.q
+        v = decomposed_state.p
+        lambd = decomposed_state.lambd
+        G = self.MBS.constraint_gradient(q)
+
+        return np.block(
+            [
+                [
+                    np.zeros((len(q), len(q))),
+                    np.eye(len(q)),
+                    np.zeros((len(q), len(lambd))),
+                ],
+                [-np.eye(len(v)), np.zeros((len(v), len(v))), -G.T],
+                [np.zeros((len(lambd), len(q))), G, np.zeros((len(lambd), len(lambd)))],
+            ]
+        )
 
     def get_descriptor_matrix(self, state):
-        pass
+        identity_mat = np.eye(self.MBS.nbr_dof)
+        decomposed_state = self.MBS.decompose_state(state)
+        mass_matrix = self.MBS.get_mass_matrix(decomposed_state.q)
+        zeros_matrix = np.zeros((self.MBS.nbr_constraints, self.MBS.nbr_constraints))
+        descriptor_matrix = block_diag(identity_mat, mass_matrix, zeros_matrix)
+
+        return descriptor_matrix
 
 
 class MultiBodySystem(abc.ABC):
