@@ -17,6 +17,10 @@ example_worklist = [
         name="rigidbodyrotatingquaternion",
         result_indices=[0, 1, 2, 3],
     ),
+    dict(
+        name="fourparticlesystem",
+        result_indices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    ),
 ]
 
 
@@ -30,7 +34,6 @@ class TestCompareWithMetis:
                 example["result_indices"],
                 id=example["name"],
             )
-
             for example in example_worklist
         ),
     )
