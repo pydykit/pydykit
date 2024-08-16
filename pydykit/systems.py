@@ -91,10 +91,24 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
         self.states = MultiBodySystem.states
 
+        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
+            self.MBS.compose_state(
+                q=np.array(self.MBS.initial_state["Q"]),
+                p=np.array(self.MBS.initial_state["V"]),
+                lambd=np.zeros(self.MBS.nbr_constraints),
+            )
+        )
+
         self.already_initialized = True
 
     def decompose_state(self, state):
-        utils.pydykitException("not implemented")
+        decomposed_MBS_state = self.MBS.decompose_state(state)
+        decomposed_state = namedtuple("state", "q v lambd")
+        return decomposed_state(
+            q=decomposed_MBS_state.q,
+            v=decomposed_MBS_state.p,
+            lambd=decomposed_MBS_state.lambd,
+        )
         pass
 
     def compose_state(self):
@@ -102,24 +116,24 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         pass
 
     def get_costates(self, state):
-        decomposed_state = self.MBS.decompose_state(state)
+        decomposed_state = self.decompose_state(state)
         potential_forces = self.MBS.external_potential_gradient(
             decomposed_state.q
         ) + self.MBS.internal_potential_gradient(decomposed_state.q)
 
-        return np.hstack([potential_forces, decomposed_state.p, decomposed_state.lambd])
+        return np.hstack([potential_forces, decomposed_state.v, decomposed_state.lambd])
 
     def get_hamiltonian_gradient(self, state):
-        decomposed_state = self.MBS.decompose_state(state)
+        decomposed_state = self.decompose_state(state)
 
         return self.MBS.external_potential_gradient(
             decomposed_state.q
         ) + self.MBS.internal_potential_gradient(decomposed_state.q)
 
     def get_structure_matrix(self, state):
-        decomposed_state = self.MBS.decompose_state(state)
+        decomposed_state = self.decompose_state(state)
         q = decomposed_state.q
-        v = decomposed_state.p
+        v = decomposed_state.v
         lambd = decomposed_state.lambd
         G = self.MBS.constraint_gradient(q)
 
@@ -137,7 +151,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
     def get_descriptor_matrix(self, state):
         identity_mat = np.eye(self.MBS.nbr_dof)
-        decomposed_state = self.MBS.decompose_state(state)
+        decomposed_state = self.decompose_state(state)
         mass_matrix = self.MBS.get_mass_matrix(decomposed_state.q)
         zeros_matrix = np.zeros((self.MBS.nbr_constraints, self.MBS.nbr_constraints))
         descriptor_matrix = block_diag(identity_mat, mass_matrix, zeros_matrix)
