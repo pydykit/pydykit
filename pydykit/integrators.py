@@ -27,7 +27,32 @@ class Midpoint(PortHamiltoniaIntegrator):
         state_n = states.state_n
         state_n1 = states.state_n1
 
-        time_step_size = self.manager.time_stepper.current_step.increment
+        residuum = self.calc_residuum(
+            system=system,
+            time_stepper=self.manager.time_stepper,
+            state_n=state_n.copy(),
+            state_n1=state_n1.copy(),
+        )
+
+        tangent = utils.get_numerical_tangent(
+            func=partial(  # Bind some arguments to values
+                self.calc_residuum,
+                system=system,
+                time_stepper=self.manager.time_stepper,
+            ),
+            state_1=state_n.copy(),
+            state_2=state_n1.copy(),
+        )
+
+        return self.integrator_output(
+            residuum=residuum,
+            tangent=tangent,
+        )
+
+    @staticmethod
+    def calc_residuum(system, time_stepper, state_n, state_n1):
+
+        time_step_size = time_stepper.current_step.increment
 
         e_n = system.get_descriptor_matrix(state_n)
         e_n1 = system.get_descriptor_matrix(state_n1)
@@ -35,19 +60,14 @@ class Midpoint(PortHamiltoniaIntegrator):
         z_vector = system.get_costates(
             state=0.5 * (state_n + state_n1),
         )
-        jacobian = 0.5 * system.get_hamiltonian_gradient(state=state_n1)
 
-        j_matrix = system.get_structure_matrix()
+        j_matrix = system.get_structure_matrix(state=0.5 * (state_n + state_n1))
 
         residuum = (
             e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
         )
-        tangent = e_n1 - time_step_size * j_matrix @ jacobian
 
-        return self.integrator_output(
-            residuum=residuum,
-            tangent=tangent,
-        )
+        return residuum
 
 
 class EulerImplicit(PortHamiltoniaIntegrator):
