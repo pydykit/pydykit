@@ -366,4 +366,165 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
 
 class FourParticleSystem(MultiBodySystem):
-    pass
+    def initialize(self):
+
+        self.ext_acc = np.repeat(self.ext_acc, repeats=4, axis=0)
+
+        self.states = states.State(
+            nbr_states=self.manager.time_stepper.nbr_time_points,
+            dim_state=2 * self.nbr_spatial_dimensions * 4 + self.nbr_constraints,
+            columns=[
+                "x1",
+                "y1",
+                "z1",
+                "x2",
+                "y2",
+                "z2",
+                "x3",
+                "y3",
+                "z3",
+                "x4",
+                "y4",
+                "z4",
+                "dx1",
+                "dy1",
+                "dz1",
+                "dx2",
+                "dy2",
+                "dz2",
+                "dx3",
+                "dy3",
+                "dz3",
+                "dx4",
+                "dy4",
+                "dz4",
+                "lambda1",
+                "lambda2",
+            ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        )
+
+        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
+            self.compose_state(
+                q=np.array(self.initial_state["Q"]),
+                p=self.get_mass_matrix(q=None) @ np.array(self.initial_state["V"]),
+                lambd=np.zeros(self.nbr_constraints),
+            )
+        )
+
+    def decompose_state(self, state):
+        dim = self.nbr_spatial_dimensions * 4
+
+        assert len(state) == 2 * dim + self.nbr_constraints
+
+        decomposed_state = namedtuple("state", "q p lambd")
+        return decomposed_state(
+            q=state[0:dim],
+            p=state[dim : 2 * dim],
+            lambd=state[2 * dim :],
+        )
+
+    def compose_state(self, q, p, lambd):
+        return np.concatenate(
+            [
+                q,
+                p,
+                lambd,
+            ],
+            axis=0,
+        )
+
+    def get_mass_matrix(self, q):
+        diagonal_elements = np.concatenate(
+            (
+                self.masses[0] * np.ones(self.nbr_spatial_dimensions),
+                self.masses[1] * np.ones(self.nbr_spatial_dimensions),
+                self.masses[2] * np.ones(self.nbr_spatial_dimensions),
+                self.masses[3] * np.ones(self.nbr_spatial_dimensions),
+            )
+        )
+        return np.diag(diagonal_elements)
+
+    def kinetic_energy_gradient_from_momentum(self, q, p):
+        return np.zeros(q.shape)
+
+    def kinetic_energy_gradient_from_velocity(self, q, v):
+        return np.zeros(q.shape)
+
+    def external_potential(self, q):
+        return -(self.get_mass_matrix(q=None) @ self.ext_acc).T @ q
+
+    def external_potential_gradient(self, q):
+        return -self.get_mass_matrix(q=None) @ self.ext_acc
+
+    def internal_potential(self, q):
+        q_1, q_2, q_3, q_4 = self.get_elements_for_all_masses(q)
+
+        contribution_first_spring = (
+            0.5
+            * self.spring_stiffness_parameter_13
+            * ((q_3 - q_1).T @ (q_3 - q_1) - self.natural_spring_length_13**2) ** 2
+        )
+
+        contribution_second_spring = (
+            0.5
+            * self.spring_stiffness_parameter_24
+            * ((q_4 - q_2).T @ (q_4 - q_2) - self.natural_spring_length_24**2) ** 2
+        )
+
+        return contribution_first_spring + contribution_second_spring
+
+    def internal_potential_gradient(self, q):
+        q_1, q_2, q_3, q_4 = self.get_elements_for_all_masses(q)
+
+        contribution_first_spring = (
+            self.spring_stiffness_parameter_13
+            * ((q_3 - q_1).T @ (q_3 - q_1) - self.natural_spring_length_13**2)
+            * np.hstack([-2 * (q_3 - q_1), np.zeros(3), 2 * (q_3 - q_1), np.zeros(3)])
+        )
+
+        contribution_second_spring = (
+            self.spring_stiffness_parameter_24
+            * ((q_4 - q_2).T @ (q_4 - q_2) - self.natural_spring_length_24**2)
+            * np.hstack([np.zeros(3), -2 * (q_4 - q_2), np.zeros(3), 2 * (q_4 - q_2)])
+        )
+
+        return contribution_first_spring + contribution_second_spring
+
+    def constraint(self, q):
+        q_1, q_2, q_3, q_4 = self.get_elements_for_all_masses(q)
+        first_constraint = 0.5 * (
+            (q_2 - q_1).T @ (q_2 - q_1) - self.rigid_constraint_length_12**2
+        )
+        second_constraint = 0.5 * (
+            (q_4 - q_3).T @ (q_4 - q_3) - self.rigid_constraint_length_34**2
+        )
+
+        return np.hstack([first_constraint, second_constraint])
+
+    def constraint_gradient(self, q):
+        q_1, q_2, q_3, q_4 = self.get_elements_for_all_masses(q)
+
+        first_constraint_gradient = np.hstack(
+            [-(q_2 - q_1), (q_2 - q_1), np.zeros(3), np.zeros(3)]
+        )
+        second_constraint_gradient = np.hstack(
+            [np.zeros(3), np.zeros(3), -(q_4 - q_3), (q_4 - q_3)]
+        )
+        return np.vstack([first_constraint_gradient, second_constraint_gradient])
+
+    def get_element_for_mass(self, vector, no):
+
+        assert len(vector) == 4 * self.nbr_spatial_dimensions
+
+        return vector[
+            (no - 1) * self.nbr_spatial_dimensions : no * self.nbr_spatial_dimensions
+        ]
+
+    def get_elements_for_all_masses(self, vector):
+
+        return (
+            self.get_element_for_mass(vector, 1),
+            self.get_element_for_mass(vector, 2),
+            self.get_element_for_mass(vector, 3),
+            self.get_element_for_mass(vector, 4),
+        )
