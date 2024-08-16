@@ -15,6 +15,29 @@ manager.system = PHS
 
 result = manager.manage()
 
+# import scipy.io
+
+# path = "./test/reference_results/metis/porthamiltonianfourparticlesystem.mat"
+# reference = scipy.io.loadmat(path)
+# old = reference["coordinates"]
+
+
+# result_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+# new = result.state[:, result_indices]
+
+# """Print useful views on old and new data"""
+# difference = new - old
+# print(f"new.shape={new.shape}")
+# print(f"old.shape={old.shape}")
+# print(f"difference, i.e., new - old = {difference}")
+# import numpy as np
+
+# assert np.allclose(
+#     new,
+#     old,
+#     rtol=1e-5,
+#     atol=1e-5,
+# )
 
 df = result.to_df()
 
