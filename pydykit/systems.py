@@ -231,7 +231,7 @@ class Pendulum3DCartesian(MultiBodySystem):
         return np.zeros(q.shape)
 
     def constraint(self, q):
-        return 0.5 * (q.T @ q / self.length**2 - 1.0)
+        return np.array([0.5 * (q.T @ q / self.length**2 - 1.0)])
 
     def constraint_gradient(self, q):
         return q.T[np.newaxis, :] / self.length**2

@@ -158,14 +158,14 @@ class MPStd(MultiBodyIntegrator):
             - p_n
             + step_size * (DV_int_n05 + DV_ext_n05)
             + step_size * DTq_n05
-            + (step_size * np.array([G_n05]).T @ lambd_n05[np.newaxis]).flatten()
+            + step_size * G_n05.T @ lambd_n05
         )
 
         residuum = np.concatenate(
             [
                 q_n1 - q_n - step_size * inv_mass_matrix_n05 @ p_n05,
                 residuum_p,
-                np.array([g_n1]),
+                g_n1,
             ],
             axis=0,
         )
