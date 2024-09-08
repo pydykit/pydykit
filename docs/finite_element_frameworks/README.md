@@ -39,3 +39,19 @@ Large community
 - Features: heat, homogenization, linear elasticity, large deformations, 1D, 2D, 3D
 
 Looks a bit oldschool, rather messy, more engineering-focused, but [rich example collection on elasticity](https://sfepy.org/doc-devel/examples/linear_elasticity-index.html)...
+
+## Assessment
+
+From my perspective, only FEniCS and scikit-fem are real options for us.
+I would recommend to create small proof of concepts (POC) for both.
+
+The content of these POCs could be:
+
+- 2D or 3D tension test
+  - displacement-controlled tension test
+  - with straight rectangular specimen
+  - of isotropic material and
+  - prohibited lateral displacement within the clamping area
+  - assuming small deformation.
+
+This is the simplest (kind of real life) engineering-like application I can think of.
