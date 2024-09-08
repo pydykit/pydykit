@@ -58,6 +58,8 @@ This is the simplest (kind of real life) engineering-like application I can thin
 
 ### Scikit-fem
 
+#### Installation
+
 ```bash
 pip install scikit-fem
 pip install meshio
