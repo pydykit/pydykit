@@ -55,3 +55,13 @@ The content of these POCs could be:
   - assuming small deformation.
 
 This is the simplest (kind of real life) engineering-like application I can think of.
+
+### Scikit-fem
+
+```bash
+pip install scikit-fem
+pip install meshio
+```
+
+Download [Paraview](https://www.paraview.org/download/), unzip, rename top-level directory to `paraview` and execute `paraview/bin/paraview`.
+This should open paraview and allow you to open the vtk-file generated from script `scikit_fem_01.py`.
