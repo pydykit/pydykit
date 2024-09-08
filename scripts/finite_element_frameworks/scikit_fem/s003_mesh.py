@@ -1,8 +1,13 @@
+import numpy as np
 import skfem
-from skfem.visuals import matplotlib as mplt
+import utils
+from skfem.visuals import matplotlib as skfem_mpl
 
-mesh = skfem.MeshTri()
+mesh = skfem.MeshTri().refined(3)
 
-ax = mplt.plot(mesh, [0, 1, 2, 3])
+ax = skfem_mpl.plot(mesh, np.random.rand(mesh.nelements))
 
-ax.show()
+utils.dump_plt(name="random")
+
+ax = skfem_mpl.plot(mesh, np.ones(mesh.nelements))
+utils.dump_plt(name="ones")
