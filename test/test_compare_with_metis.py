@@ -21,6 +21,10 @@ example_worklist = [
         name="fourparticlesystem",
         result_indices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     ),
+    dict(
+        name="porthamiltonianfourparticlesystem",
+        result_indices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    ),
 ]
 
 
@@ -41,6 +45,16 @@ class TestCompareWithMetis:
     def test_run(self, content_config_file, name, result_indices):
 
         manager = pydykit.Manager(content_config_file=content_config_file)
+
+        manager.system.initialize()  # creates MBS named FourParticleSystem
+
+        if isinstance(manager.integrator, pydykit.integrators.PortHamiltoniaIntegrator):
+            # intermediate steps if conversion to PH system is necessary
+            PHS = pydykit.systems.PortHamiltonianMBS(manager=manager)
+            PHS.initialize(MultiBodySystem=manager.system)
+            # creates an instance of PHS with attribute MBS
+            manager.system = PHS
+
         result = manager.manage()
 
         reference = utils.load_result_of_metis_simulation(
