@@ -509,10 +509,10 @@ class FourParticleSystem(MultiBodySystem):
         return np.zeros(q.shape)
 
     def external_potential(self, q):
-        return -(self.get_mass_matrix(q=None) @ self.ext_acc).T @ q
+        return 0
 
     def external_potential_gradient(self, q):
-        return -self.get_mass_matrix(q=None) @ self.ext_acc
+        return np.zeros(q.shape)
 
     def internal_potential(self, q):
         q_1, q_2, q_3, q_4 = self.get_elements_for_all_masses(q)
