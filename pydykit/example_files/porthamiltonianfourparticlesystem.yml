@@ -42,6 +42,6 @@ configuration:
   time_stepper:
     class_name: FixedIncrement
     kwargs:
-      step_size: 0.05
+      step_size: 0.01
       start: 0.0
       end: 10.0
