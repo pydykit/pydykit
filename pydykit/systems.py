@@ -2,7 +2,6 @@ import abc
 from collections import namedtuple
 
 import numpy as np
-
 from scipy.linalg import block_diag
 
 from . import operators, states, utils
@@ -570,19 +569,8 @@ class FourParticleSystem(MultiBodySystem):
         )
         return np.vstack([first_constraint_gradient, second_constraint_gradient])
 
-    def get_element_for_mass(self, vector, no):
+    def get_elements_for_all_masses(self, vector):
 
         assert len(vector) == 4 * self.nbr_spatial_dimensions
 
-        return vector[
-            (no - 1) * self.nbr_spatial_dimensions : no * self.nbr_spatial_dimensions
-        ]
-
-    def get_elements_for_all_masses(self, vector):
-
-        return (
-            self.get_element_for_mass(vector, 1),
-            self.get_element_for_mass(vector, 2),
-            self.get_element_for_mass(vector, 3),
-            self.get_element_for_mass(vector, 4),
-        )
+        return np.split(vector, 4)
