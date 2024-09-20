@@ -59,5 +59,5 @@ class Manager:
     def manage(self):
         return self.solver.solve()
 
-    def postprocess(self, df):
-        return self.postprocessor.postprocess(df)
+    def postprocess(self):
+        return self.postprocessor.postprocess()

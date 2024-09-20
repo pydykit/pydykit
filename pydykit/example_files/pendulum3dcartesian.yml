@@ -27,4 +27,4 @@ configuration:
   postprocessor:
     class_name: Postprocessor
     kwargs:
-      quantities: Energy
+      quantity_names: [Energy, Constraints]
