@@ -1,7 +1,6 @@
 import pydykit
 import plotly.graph_objects as go
 
-
 manager = pydykit.Manager(
     path_config_file="./pydykit/example_files/fourparticlesystem.yml"
 )
