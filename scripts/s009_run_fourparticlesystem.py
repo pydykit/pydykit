@@ -1,5 +1,7 @@
 import pydykit
 import plotly.graph_objects as go
+import os
+import tikzplotly
 
 manager = pydykit.Manager(
     path_config_file="./pydykit/example_files/fourparticlesystem.yml"
@@ -39,4 +41,11 @@ pydykit.utils.plot_three_dimensional_trajectory(
     time=df["time"],
 )
 
+fig.update_layout(font_family="Serif")
+
 fig.show()
+
+if not os.path.exists("images"):
+    os.mkdir("images")
+
+tikzplotly.save("images/example.tex", fig)

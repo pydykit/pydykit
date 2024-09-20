@@ -83,5 +83,6 @@ def plot_three_dimensional_trajectory(
                 color="darkblue",
                 width=3,
             ),
+            showlegend=False,
         )
     )
