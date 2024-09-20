@@ -1,4 +1,4 @@
-name: porthamiltonianfourparticlesystem
+name: fourparticlesystem
 configuration:
   system:
     class_name: FourParticleSystem
@@ -37,7 +37,7 @@ configuration:
       newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:
-    class_name: Midpoint
+    class_name: MPStd
     kwargs:
   time_stepper:
     class_name: FixedIncrement

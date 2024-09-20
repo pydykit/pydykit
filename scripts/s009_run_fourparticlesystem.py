@@ -1,21 +1,15 @@
 import pydykit
 import plotly.graph_objects as go
-
+import os
+import tikzplotly
 
 manager = pydykit.Manager(
-    path_config_file="./pydykit/example_files/porthamiltonianfourparticlesystem.yml"
+    path_config_file="./pydykit/example_files/fourparticlesystem.yml"
 )
-manager.system.initialize()  # creates MBS named FourParticleSystem
-
-porthamiltonian_system = pydykit.systems.PortHamiltonianMBS(manager=manager)
-porthamiltonian_system.initialize(MultiBodySystem=manager.system)
-# creates an instance of PHS with attribute MBS
-manager.system = porthamiltonian_system
 
 result = manager.manage()
 
 df = result.to_df()
-
 fig = go.Figure()
 
 pydykit.utils.plot_three_dimensional_trajectory(
@@ -47,4 +41,11 @@ pydykit.utils.plot_three_dimensional_trajectory(
     time=df["time"],
 )
 
+fig.update_layout(font_family="Serif")
+
 fig.show()
+
+if not os.path.exists("images"):
+    os.mkdir("images")
+
+tikzplotly.save("images/example.tex", fig)

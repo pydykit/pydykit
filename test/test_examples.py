@@ -29,6 +29,7 @@ class TestExamples:
                 "pendulum3dcartesian_full_time",
                 "rigidbodyrotatingquaternion",
                 "porthamiltonianfourparticlesystem",
+                "fourparticlesystem",
             ]
         ),
     )
