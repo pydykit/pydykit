@@ -48,7 +48,9 @@ class TestCompareWithMetis:
 
         manager.system.initialize()  # creates MBS named FourParticleSystem
 
-        if isinstance(manager.integrator, pydykit.integrators.PortHamiltoniaIntegrator):
+        if isinstance(
+            manager.integrator, pydykit.integrators.PortHamiltonianIntegrator
+        ):
             # intermediate steps if conversion to PH system is necessary
             porthamiltonian_system = pydykit.systems.PortHamiltonianMBS(manager=manager)
             porthamiltonian_system.initialize(MultiBodySystem=manager.system)
