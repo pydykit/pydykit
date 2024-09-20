@@ -7,7 +7,7 @@ import numpy as np
 from . import utils
 
 
-class PortHamiltoniaIntegrator(abc.ABC):
+class PortHamiltonianIntegrator(abc.ABC):
     integrator_output = namedtuple("integrator_output", "residuum tangent")
 
     def __init__(self, manager, **kwargs):
@@ -19,7 +19,7 @@ class PortHamiltoniaIntegrator(abc.ABC):
         pass
 
 
-class Midpoint(PortHamiltoniaIntegrator):
+class Midpoint(PortHamiltonianIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states
@@ -70,7 +70,7 @@ class Midpoint(PortHamiltoniaIntegrator):
         return residuum
 
 
-class EulerImplicit(PortHamiltoniaIntegrator):
+class EulerImplicit(PortHamiltonianIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states
@@ -102,7 +102,7 @@ class EulerImplicit(PortHamiltoniaIntegrator):
         )
 
 
-class EulerExplicit(PortHamiltoniaIntegrator):
+class EulerExplicit(PortHamiltonianIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states

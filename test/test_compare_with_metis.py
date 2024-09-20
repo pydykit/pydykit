@@ -50,10 +50,10 @@ class TestCompareWithMetis:
 
         if isinstance(manager.integrator, pydykit.integrators.PortHamiltoniaIntegrator):
             # intermediate steps if conversion to PH system is necessary
-            PHS = pydykit.systems.PortHamiltonianMBS(manager=manager)
-            PHS.initialize(MultiBodySystem=manager.system)
+            porthamiltonian_system = pydykit.systems.PortHamiltonianMBS(manager=manager)
+            porthamiltonian_system.initialize(MultiBodySystem=manager.system)
             # creates an instance of PHS with attribute MBS
-            manager.system = PHS
+            manager.system = porthamiltonian_system
 
         result = manager.manage()
 
