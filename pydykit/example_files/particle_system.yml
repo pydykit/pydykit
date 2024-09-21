@@ -8,7 +8,7 @@ configuration:
       masses: [1.0, 3.0, 2.3, 1.7]
       initial_state:
         Q: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0] # Why is this key upper case?
-        V: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.176470588235294]
+        V: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.176470588235294] # Why is this key upper case?
       springs:
       - particle_start: 1
         particle_end: 3
@@ -40,6 +40,6 @@ configuration:
   time_stepper:
     class_name: FixedIncrement
     kwargs:
-      step_size: 0.1 # 0.1
+      step_size: 0.1# 0.01
       start: 0.0
-      end: 0.5 # 1.5
+      end: 0.5 # 10.0
