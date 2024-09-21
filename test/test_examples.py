@@ -30,6 +30,7 @@ class TestExamples:
                 "rigidbodyrotatingquaternion",
                 "porthamiltonianfourparticlesystem",
                 "fourparticlesystem",
+                "particle_system",
             ]
         ),
     )
