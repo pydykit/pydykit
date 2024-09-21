@@ -711,22 +711,6 @@ class ParticleSystem(MultiBodySystem):
 
     def internal_potential_gradient(self, q):
         position_vectors = self.decompose_into_particles(q)
-
-        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
-        contribution_first_spring = (
-            self.spring_stiffness_parameter_13
-            * ((q_3 - q_1).T @ (q_3 - q_1) - self.natural_spring_length_13**2)
-            * np.hstack([-2 * (q_3 - q_1), np.zeros(3), 2 * (q_3 - q_1), np.zeros(3)])
-        )
-
-        contribution_second_spring = (
-            self.spring_stiffness_parameter_24
-            * ((q_4 - q_2).T @ (q_4 - q_2) - self.natural_spring_length_24**2)
-            * np.hstack([np.zeros(3), -2 * (q_4 - q_2), np.zeros(3), 2 * (q_4 - q_2)])
-        )
-
-        old = contribution_first_spring + contribution_second_spring
-
         contributions = [
             self._spring_energy_gradient(
                 stiffness=spring["stiffness"],
@@ -740,32 +724,19 @@ class ParticleSystem(MultiBodySystem):
             for spring in self.springs
         ]
 
-        new = sum(contributions)
-
-        assert np.allclose(old, new, atol=1e-5)
-
-        return new
+        return sum(contributions)
 
     @staticmethod
     def _constraint(length, start, end):
         vector = end - start
-        return 0.5 * (vector.T @ vector - length**2)
+        return 0.5 * (
+            vector.T @ vector - length**2
+        )  # TODO: Define reusable functions for common operations and avoid redundancy
 
     def constraint(self, q):
-        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
-
-        first_constraint = 0.5 * (
-            (q_2 - q_1).T @ (q_2 - q_1) - self.rigid_constraint_length_12**2
-        )
-        second_constraint = 0.5 * (
-            (q_4 - q_3).T @ (q_4 - q_3) - self.rigid_constraint_length_34**2
-        )
-
-        old = np.hstack([first_constraint, second_constraint])
 
         position_vectors = self.decompose_into_particles(q)
-
-        new = [
+        return [
             self._constraint(
                 length=constraint["length"],
                 start=position_vectors[constraint["particle_start"]],
@@ -773,10 +744,6 @@ class ParticleSystem(MultiBodySystem):
             )
             for constraint in self.constraints
         ]
-
-        assert np.allclose(old, new, atol=1e-5)
-
-        return new
 
     @staticmethod
     def _constraint_gradient(
@@ -800,16 +767,6 @@ class ParticleSystem(MultiBodySystem):
         return np.hstack(structure)
 
     def constraint_gradient(self, q):
-        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
-
-        first_constraint_gradient = np.hstack(
-            [-(q_2 - q_1), (q_2 - q_1), np.zeros(3), np.zeros(3)]
-        )
-        second_constraint_gradient = np.hstack(
-            [np.zeros(3), np.zeros(3), -(q_4 - q_3), (q_4 - q_3)]
-        )
-
-        old = np.vstack([first_constraint_gradient, second_constraint_gradient])
 
         position_vectors = self.decompose_into_particles(q)
 
@@ -824,11 +781,7 @@ class ParticleSystem(MultiBodySystem):
             for constraint in self.constraints
         ]
 
-        new = np.vstack(contributions)
-
-        assert np.allclose(old, new, atol=1e-5)
-
-        return new
+        return np.vstack(contributions)
 
     def decompose_into_particles(self, vector):
 
