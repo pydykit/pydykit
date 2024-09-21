@@ -1,0 +1,52 @@
+name: particle_system
+configuration:
+  system:
+    class_name: ParticleSystem
+    kwargs:
+      nbr_spatial_dimensions: 3
+      nbr_particles: 4
+      masses: [1.0, 3.0, 2.3, 1.7]
+      initial_state:
+        Q: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0] # Why is this key upper case?
+        V: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.176470588235294]
+      springs:
+      - particle_start: 1
+        particle_end: 3
+        stiffness: 50
+        equilibrium_length: 1
+      - particle_start: 2
+        particle_end: 4
+        stiffness: 500
+        equilibrium_length: 1
+      dampers:
+      - particle_start: 2
+        particle_end: 3
+        viscosity: 0
+      constraints:
+      - particle_start: 1
+        particle_end: 2
+        length: 1
+      - particle_start: 3
+        particle_end: 4
+        length: 1
+      rigid_constraint_length_12: 1
+      rigid_constraint_length_34: 1
+      natural_spring_length_13: 1
+      natural_spring_length_24: 1
+      spring_stiffness_parameter_13: 50
+      spring_stiffness_parameter_24: 500
+      damper_viscosity_parameter_23: 0
+  solver:
+    class_name: Newton
+    kwargs:
+      newton_epsilon: 1.e-10
+      max_iterations: 40
+  integrator:
+    class_name: MPStd
+    kwargs:
+  time_stepper:
+    class_name: FixedIncrement
+    kwargs:
+      step_size: 0.1 # 0.1
+      start: 0.0
+      end: 0.5 # 1.5

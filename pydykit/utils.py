@@ -86,3 +86,11 @@ def plot_three_dimensional_trajectory(
             showlegend=False,
         )
     )
+
+
+def shift_index_python_to_literature(index):
+    return index + 1
+
+
+def shift_index_iterature_to_python(index):
+    return index - 1
