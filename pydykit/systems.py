@@ -425,11 +425,14 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 class FourParticleSystem(MultiBodySystem):
     def initialize(self):
 
+        self.nbr_particles = 4
+
         self.ext_acc = np.repeat(self.ext_acc, repeats=4, axis=0)
 
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_time_points,
-            dim_state=2 * self.nbr_spatial_dimensions * 4 + self.nbr_constraints,
+            dim_state=2 * self.nbr_spatial_dimensions * self.nbr_particles
+            + self.nbr_constraints,
             columns=[
                 "x1",
                 "y1",
@@ -469,7 +472,7 @@ class FourParticleSystem(MultiBodySystem):
         )
 
     def decompose_state(self, state):
-        dim = self.nbr_spatial_dimensions * 4
+        dim = self.nbr_spatial_dimensions * self.nbr_particles
 
         assert len(state) == 2 * dim + self.nbr_constraints
 
@@ -571,6 +574,6 @@ class FourParticleSystem(MultiBodySystem):
 
     def decompose_into_particles(self, vector):
 
-        assert len(vector) == 4 * self.nbr_spatial_dimensions
+        assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
 
-        return np.split(vector, 4)
+        return np.split(vector, self.nbr_particles)
