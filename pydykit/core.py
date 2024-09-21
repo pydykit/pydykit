@@ -33,6 +33,7 @@ class Manager:
 
     def instantiate_classes(self):
         for attribute_name, parameters in self.configuration.items():
+            # Get class from module
             cls = getattr(
                 importlib.import_module(
                     name=f".{attribute_name}s",
