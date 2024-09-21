@@ -1,6 +1,6 @@
 import numpy as np
-import yaml
 import plotly.graph_objects as go
+import yaml
 
 
 def load_yaml_file(path):
@@ -63,9 +63,9 @@ def print_residual_norm(value):
 
 
 def plot_three_dimensional_trajectory(
-    existing_figure, x_components, y_components, z_components, time
+    figure, x_components, y_components, z_components, time
 ):
-    existing_figure.add_trace(
+    figure.add_trace(
         go.Scatter3d(
             x=x_components,
             y=y_components,
