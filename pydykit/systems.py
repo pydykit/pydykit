@@ -427,7 +427,11 @@ class FourParticleSystem(MultiBodySystem):
 
         self.nbr_particles = 4
 
-        self.ext_acc = np.repeat(self.ext_acc, repeats=4, axis=0)
+        self.ext_acc = np.repeat(
+            self.ext_acc,
+            repeats=self.nbr_particles,
+            axis=0,
+        )
 
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_time_points,
