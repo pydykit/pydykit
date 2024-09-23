@@ -23,4 +23,4 @@ configuration:
     kwargs:
       step_size: 0.05
       start: 0.0
-      end: 10.0
+      end: 0.45
