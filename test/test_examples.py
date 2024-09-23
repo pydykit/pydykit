@@ -13,7 +13,7 @@ example_manager = pydykit.examples.Manager()
 
 example_worklist = [
     "pendulum3dcartesian",
-    "pendulum2d",
+    "pendulum_2d",
 ]
 
 

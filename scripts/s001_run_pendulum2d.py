@@ -1,11 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
+
 import pydykit
 
-manager = pydykit.Manager(path_config_file="./pydykit/example_files/pendulum2d.yml")
+manager = pydykit.Manager(path_config_file="./pydykit/example_files/pendulum_2d.yml")
 result = manager.manage()
 df = result.to_df()
-# df.to_csv("test/reference_results/pendulum2d.csv")
+# df.to_csv("test/reference_results/pendulum_2d.csv")
 
 print(result)
 
