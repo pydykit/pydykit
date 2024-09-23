@@ -220,7 +220,7 @@ class Pendulum3DCartesian(MultiBodySystem):
 
     def initialize(self):
         self.length = np.linalg.norm(self.initial_state["Q"])
-        self.ext_acc = np.array(self.ext_acc)
+        self.gravity = np.array(self.gravity)
 
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_time_points,
@@ -276,10 +276,10 @@ class Pendulum3DCartesian(MultiBodySystem):
         return np.zeros(q.shape)
 
     def external_potential(self, q):
-        return -(self.get_mass_matrix(q=q) @ self.ext_acc).T @ q
+        return -(self.get_mass_matrix(q=q) @ self.gravity).T @ q
 
     def external_potential_gradient(self, q):
-        return -self.get_mass_matrix(q=q) @ self.ext_acc
+        return -self.get_mass_matrix(q=q) @ self.gravity
 
     def internal_potential(self):
         return 0.0
@@ -302,7 +302,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
     def initialize(self):
         self.inertias_matrix = np.diag(self.inertias)
 
-        self.ext_acc = np.array(self.ext_acc)
+        self.gravity = np.array(self.gravity)
 
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_time_points,
@@ -427,8 +427,8 @@ class FourParticleSystem(MultiBodySystem):
 
         self.nbr_particles = 4
 
-        self.ext_acc = np.repeat(
-            self.ext_acc,
+        self.gravity_vector = np.repeat(
+            self.gravity,
             repeats=self.nbr_particles,
             axis=0,
         )

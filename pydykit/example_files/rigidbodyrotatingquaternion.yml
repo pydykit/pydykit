@@ -7,7 +7,7 @@ configuration:
       nbr_dof: 4
       nbr_constraints: 1
       mass: 1.0
-      ext_acc: [0.0, 0.0, 0.0]
+      gravity: [0.0, 0.0, 0.0]
       initial_state:
         Q: [1.0, 0.0, 0.0, 0.0]
         V: [10.0, 20.0, 20.0]
