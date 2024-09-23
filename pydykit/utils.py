@@ -1,5 +1,4 @@
 import numpy as np
-import plotly.graph_objects as go
 import yaml
 
 
@@ -60,32 +59,6 @@ def print_current_step(step):
 def print_residual_norm(value):
 
     print(f"residual norm = {value:.4E}")
-
-
-def plot_three_dimensional_trajectory(
-    figure, x_components, y_components, z_components, time
-):
-    figure.add_trace(
-        go.Scatter3d(
-            x=x_components,
-            y=y_components,
-            z=z_components,
-            marker=dict(
-                size=3,
-                color=time,
-                colorscale="Viridis",
-                colorbar=dict(
-                    thickness=20,
-                    title="time",
-                ),
-            ),
-            line=dict(
-                color="darkblue",
-                width=3,
-            ),
-            showlegend=False,
-        )
-    )
 
 
 def shift_index_python_to_literature(index):
