@@ -1,4 +1,4 @@
-name: particle_system
+name: particle_system_01
 configuration:
   system:
     class_name: ParticleSystem

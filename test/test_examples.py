@@ -14,6 +14,7 @@ example_manager = pydykit.examples.Manager()
 example_worklist = [
     "pendulum_3d_cartesian",
     "pendulum_2d",
+    "particle_system_01",
 ]
 
 
