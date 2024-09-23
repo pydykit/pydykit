@@ -40,9 +40,9 @@ for example in examples:
 
     new = dict()
     for key in [key for key in old.keys() if not key.startswith("__")]:
-        new[key] = old[key][0:20, ...]
+        new[key] = old[key][0:10, ...]
 
     print(example["name"])
     print(new["time"][-1])
 
-    io.savemat(path_old.parent.joinpath(example["name"] + "_new_.mat"), new)
+    io.savemat(path_old, new)
