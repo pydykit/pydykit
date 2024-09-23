@@ -18,7 +18,7 @@ configuration:
         particle_end: 4
         stiffness: 500
         equilibrium_length: 1
-      dampers:
+      dampers: # Currently unused
       - particle_start: 2
         particle_end: 3
         viscosity: 0

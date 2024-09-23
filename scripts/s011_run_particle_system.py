@@ -15,34 +15,17 @@ print(tmp)
 df = result.to_df()
 fig = go.Figure()
 
-pydykit.utils.plot_three_dimensional_trajectory(
-    figure=fig,
-    x_components=df["x1"],
-    y_components=df["y1"],
-    z_components=df["z1"],
-    time=df["time"],
-)
-pydykit.utils.plot_three_dimensional_trajectory(
-    figure=fig,
-    x_components=df["x2"],
-    y_components=df["y2"],
-    z_components=df["z2"],
-    time=df["time"],
-)
-pydykit.utils.plot_three_dimensional_trajectory(
-    figure=fig,
-    x_components=df["x3"],
-    y_components=df["y3"],
-    z_components=df["z3"],
-    time=df["time"],
-)
-pydykit.utils.plot_three_dimensional_trajectory(
-    figure=fig,
-    x_components=df["x4"],
-    y_components=df["y4"],
-    z_components=df["z4"],
-    time=df["time"],
-)
+for index in range(manager.system.nbr_particles):
+    index = pydykit.utils.shift_index_python_to_literature(index)
+
+    pydykit.utils.plot_three_dimensional_trajectory(
+        figure=fig,
+        x_components=df[f"x{index}"],
+        y_components=df[f"y{index}"],
+        z_components=df[f"z{index}"],
+        time=df["time"],
+    )
+
 
 fig.update_layout(font_family="Serif")
 

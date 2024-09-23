@@ -592,12 +592,13 @@ class ParticleSystem(MultiBodySystem):
 
         # TODO: Find a better solution (e.g. switching to Python indices), as this is a hacky fix of indices
         for attribute_name in ["springs", "dampers", "constraints"]:
-            attribute = getattr(self, attribute_name)
-            for entry in attribute:
-                for name in ["particle_start", "particle_end"]:
-                    value = utils.shift_index_iterature_to_python(index=entry[name])
-                    entry[name] = value
-            setattr(self, attribute_name, attribute)
+            if hasattr(self, attribute_name):
+                attribute = getattr(self, attribute_name)
+                for entry in attribute:
+                    for name in ["particle_start", "particle_end"]:
+                        value = utils.shift_index_iterature_to_python(index=entry[name])
+                        entry[name] = value
+                setattr(self, attribute_name, attribute)
 
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_time_points,
