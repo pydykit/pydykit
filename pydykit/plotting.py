@@ -29,3 +29,39 @@ def plot_3d_trajectory(
             showlegend=False,
         )
     )
+
+
+def add_3d_annotation(
+    figure,
+    text,
+    x,
+    y,
+    z,
+    ax=35,
+    ay=0,
+    xanchor="center",
+    yanchor="bottom",
+    arrowhead=1,
+):
+
+    new = dict(
+        x=x,
+        y=y,
+        z=z,
+        text=text,
+        ax=ax,
+        ay=ay,
+        xanchor=xanchor,
+        yanchor=yanchor,
+        arrowhead=arrowhead,
+    )
+
+    existing = list(figure.layout.scene.annotations)
+
+    annotations = existing + [
+        new,
+    ]
+
+    figure.update_layout(
+        scene=dict(annotations=annotations),
+    )

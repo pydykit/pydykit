@@ -26,12 +26,14 @@ for index in range(manager.system.nbr_particles):
         z_components=df[f"z{index}"],
         time=df["time"],
     )
-    pydykit.plotting.add_labels(
+
+    index_time = 0
+    pydykit.plotting.add_3d_annotation(
         figure=fig,
-        x_components=df[f"x{index}"],
-        y_components=df[f"y{index}"],
-        z_components=df[f"z{index}"],
-        index=0,
+        x=df[f"x{index}"][index_time],
+        y=df[f"y{index}"][index_time],
+        z=df[f"z{index}"][index_time],
+        text=str(index),
     )
 
 
