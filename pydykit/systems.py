@@ -587,8 +587,13 @@ class ParticleSystem(MultiBodySystem):
 
     def initialize(self):
 
-        self.nbr_dof = self.nbr_spatial_dimensions * self.nbr_particles
         self.nbr_constraints = len(self.constraints)
+        self.particles = utils.sort_list_of_dicts_based_on_special_value(
+            my_list=self.particles,
+            key="index",
+        )
+        self.nbr_particles = len(self.particles)
+        self.nbr_dof = self.nbr_spatial_dimensions * self.nbr_particles
 
         # TODO: Find a better solution (e.g. switching to Python indices), as this is a hacky fix of indices
         for attribute_name in ["springs", "dampers", "constraints"]:
@@ -615,10 +620,20 @@ class ParticleSystem(MultiBodySystem):
             ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
         )
 
+        self.initial_state_q = utils.get_flat_list_of_list_attributes(
+            items=self.particles, key="initial_position"
+        )
+
+        self.initial_state_v = utils.get_flat_list_of_list_attributes(
+            items=self.particles, key="initial_velocity"
+        )
+
+        self.masses = [particle["mass"] for particle in self.particles]
+
         self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
             self.compose_state(
-                q=np.array(self.initial_state["Q"]),
-                p=self.get_mass_matrix(q=None) @ np.array(self.initial_state["V"]),
+                q=np.array(self.initial_state_q),
+                p=self.get_mass_matrix(q=None) @ np.array(self.initial_state_v),
                 lambd=np.zeros(self.nbr_constraints),
             )
         )

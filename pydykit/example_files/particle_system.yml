@@ -4,11 +4,23 @@ configuration:
     class_name: ParticleSystem
     kwargs:
       nbr_spatial_dimensions: 3
-      nbr_particles: 4
-      masses: [1.0, 3.0, 2.3, 1.7]
-      initial_state:
-        Q: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0] # Why is this key upper case?
-        V: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.176470588235294] # Why is this key upper case?
+      particles:
+      - index: 1
+        initial_position: [0.0, 0.0, 0.0]
+        initial_velocity: [0.0, 0.0, 0.0]
+        mass: 1.0
+      - index: 2
+        initial_position: [1.0, 0.0, 0.0]
+        initial_velocity: [0.0, 0.0, 0.0]
+        mass: 3.0
+      - index: 3
+        initial_position: [0.0, 1.0, 0.0]
+        initial_velocity: [0.0, 0.0, 0.0]
+        mass: 2.3
+      - index: 4
+        initial_position: [1.0, 1.0, 0.0]
+        initial_velocity: [0.0, 0.0, 1.176470588235294]
+        mass: 1.7
       springs:
       - particle_start: 1
         particle_end: 3
