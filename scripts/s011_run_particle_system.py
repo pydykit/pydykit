@@ -2,9 +2,9 @@ import plotly.graph_objects as go
 
 import pydykit
 
-manager = pydykit.Manager(
-    path_config_file="./pydykit/example_files/particle_system.yml"
-)
+name = "particle_system_01"
+
+manager = pydykit.Manager(path_config_file=f"./pydykit/example_files/{name}.yml")
 
 result = manager.manage()
 
@@ -30,3 +30,5 @@ for index in range(manager.system.nbr_particles):
 fig.update_layout(font_family="Serif")
 
 fig.show()
+
+df.to_csv(f"test/reference_results/{name}.csv")
