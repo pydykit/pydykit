@@ -1,4 +1,4 @@
-name: pendulum3dcartesian
+name: pendulum_3d_cartesian
 configuration:
   system:
     class_name: Pendulum3DCartesian

@@ -12,7 +12,7 @@ from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
 example_manager = pydykit.examples.Manager()
 
 example_worklist = [
-    "pendulum3dcartesian",
+    "pendulum_3d_cartesian",
     "pendulum_2d",
 ]
 
