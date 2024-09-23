@@ -19,7 +19,7 @@ class PortHamiltonianIntegrator(abc.ABC):
         pass
 
 
-class Midpoint(PortHamiltonianIntegrator):
+class MidpointPH(PortHamiltonianIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states
