@@ -1,4 +1,4 @@
-name: rigidbodyrotatingquaternion
+name: rigid_body_rotating_quaternion
 configuration:
   system:
     class_name: RigidBodyRotatingQuaternions

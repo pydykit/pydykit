@@ -14,7 +14,7 @@ example_worklist = [
         result_indices=[0, 1, 2],
     ),
     dict(
-        name="rigidbodyrotatingquaternion",
+        name="rigid_body_rotating_quaternion",
         result_indices=[0, 1, 2, 3],
     ),
     dict(
