@@ -11,7 +11,7 @@ class PortHamiltonianSystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
-        self.already_initialized = False
+        self.initialized = False
 
     @abc.abstractmethod
     def initialize(self):
@@ -55,7 +55,7 @@ class Pendulum2D(PortHamiltonianSystem):
             self.initial_state
         )
 
-        self.already_initialized = True
+        self.initialized = True
 
     def decompose_state(self, state):
         decomposed_state = namedtuple("state", "q v")
@@ -86,22 +86,22 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
     def initialize(self, MultiBodySystem):
 
-        self.MBS = MultiBodySystem
+        self.mbs = MultiBodySystem
 
         self.states = MultiBodySystem.states
 
         self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
-            self.MBS.compose_state(
-                q=np.array(self.MBS.initial_state["Q"]),
-                p=np.array(self.MBS.initial_state["V"]),
-                lambd=np.zeros(self.MBS.nbr_constraints),
+            self.mbs.compose_state(
+                q=np.array(self.mbs.initial_state["Q"]),
+                p=np.array(self.mbs.initial_state["V"]),
+                lambd=np.zeros(self.mbs.nbr_constraints),
             )
         )
 
-        self.already_initialized = True
+        self.initialized = True
 
     def decompose_state(self, state):
-        decomposed_MBS_state = self.MBS.decompose_state(state)
+        decomposed_MBS_state = self.mbs.decompose_state(state)
         decomposed_state = namedtuple("state", "q v lambd")
         return decomposed_state(
             q=decomposed_MBS_state.q,
@@ -116,25 +116,25 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
     def get_costates(self, state):
         decomposed_state = self.decompose_state(state)
-        potential_forces = self.MBS.external_potential_gradient(
+        potential_forces = self.mbs.external_potential_gradient(
             decomposed_state.q
-        ) + self.MBS.internal_potential_gradient(decomposed_state.q)
+        ) + self.mbs.internal_potential_gradient(decomposed_state.q)
 
         return np.hstack([potential_forces, decomposed_state.v, decomposed_state.lambd])
 
     def get_hamiltonian_gradient(self, state):
         decomposed_state = self.decompose_state(state)
 
-        return self.MBS.external_potential_gradient(
+        return self.mbs.external_potential_gradient(
             decomposed_state.q
-        ) + self.MBS.internal_potential_gradient(decomposed_state.q)
+        ) + self.mbs.internal_potential_gradient(decomposed_state.q)
 
     def get_structure_matrix(self, state):
         decomposed_state = self.decompose_state(state)
         q = decomposed_state.q
         v = decomposed_state.v
         lambd = decomposed_state.lambd
-        G = self.MBS.constraint_gradient(q)
+        G = self.mbs.constraint_gradient(q)
 
         return np.block(
             [
@@ -149,10 +149,10 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         )
 
     def get_descriptor_matrix(self, state):
-        identity_mat = np.eye(self.MBS.nbr_dof)
+        identity_mat = np.eye(self.mbs.nbr_dof)
         decomposed_state = self.decompose_state(state)
-        mass_matrix = self.MBS.get_mass_matrix(decomposed_state.q)
-        zeros_matrix = np.zeros((self.MBS.nbr_constraints, self.MBS.nbr_constraints))
+        mass_matrix = self.mbs.get_mass_matrix(decomposed_state.q)
+        zeros_matrix = np.zeros((self.mbs.nbr_constraints, self.mbs.nbr_constraints))
         descriptor_matrix = block_diag(identity_mat, mass_matrix, zeros_matrix)
 
         return descriptor_matrix
@@ -162,7 +162,7 @@ class MultiBodySystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
-        self.already_initialized = False
+        self.initialized = False
 
     @abc.abstractmethod
     def initialize(self):
@@ -220,7 +220,7 @@ class Pendulum3DCartesian(MultiBodySystem):
 
     def initialize(self):
         self.length = np.linalg.norm(self.initial_state["Q"])
-        self.ext_acc = np.array(self.ext_acc)
+        self.gravity = np.array(self.gravity)
 
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_time_points,
@@ -276,10 +276,10 @@ class Pendulum3DCartesian(MultiBodySystem):
         return np.zeros(q.shape)
 
     def external_potential(self, q):
-        return -(self.get_mass_matrix(q=q) @ self.ext_acc).T @ q
+        return -(self.get_mass_matrix(q=q) @ self.gravity).T @ q
 
     def external_potential_gradient(self, q):
-        return -self.get_mass_matrix(q=q) @ self.ext_acc
+        return -self.get_mass_matrix(q=q) @ self.gravity
 
     def internal_potential(self):
         return 0.0
@@ -302,7 +302,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
     def initialize(self):
         self.inertias_matrix = np.diag(self.inertias)
 
-        self.ext_acc = np.array(self.ext_acc)
+        self.gravity = np.array(self.gravity)
 
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_time_points,
@@ -427,8 +427,8 @@ class FourParticleSystem(MultiBodySystem):
 
         self.nbr_particles = 4
 
-        self.ext_acc = np.repeat(
-            self.ext_acc,
+        self.gravity_vector = np.repeat(
+            self.gravity,
             repeats=self.nbr_particles,
             axis=0,
         )

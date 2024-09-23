@@ -1,4 +1,4 @@
-name: porthamiltonianfourparticlesystem
+name: four_particle_system_port_hamiltonian
 configuration:
   system:
     class_name: FourParticleSystem
@@ -7,7 +7,7 @@ configuration:
       nbr_dof: 12
       nbr_constraints: 2
       masses: [1.0, 3.0, 2.3, 1.7]
-      ext_acc: [0.0, 0.0, 0.0]
+      gravity: [0.0, 0.0, 0.0]
       initial_state:
         Q: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
         V: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.176470588235294]
@@ -24,11 +24,11 @@ configuration:
       newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:
-    class_name: Midpoint
+    class_name: MidpointPH
     kwargs:
   time_stepper:
     class_name: FixedIncrement
     kwargs:
       step_size: 0.01 # 0.1
       start: 0.0
-      end: 10.0 # 1.5
+      end: 0.09

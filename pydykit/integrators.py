@@ -19,7 +19,7 @@ class PortHamiltonianIntegrator(abc.ABC):
         pass
 
 
-class Midpoint(PortHamiltonianIntegrator):
+class MidpointPH(PortHamiltonianIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
         states = system.states
@@ -143,7 +143,7 @@ class MultiBodyIntegrator(abc.ABC):
         pass
 
 
-class MPStd(MultiBodyIntegrator):
+class Midpoint(MultiBodyIntegrator):
 
     @staticmethod
     def calc_residuum(system, time_stepper, state_n, state_n1):
