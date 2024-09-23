@@ -10,7 +10,7 @@ example_names = [
     "pendulum3dcartesian_full_time",
     "rigidbodyrotatingquaternion",
     "fourparticlesystem",
-    "porthamiltonianfourparticlesystem",
+    "four_particle_system_port_hamiltonian",
 ]
 
 examples = [dict(name=val) for val in example_names]

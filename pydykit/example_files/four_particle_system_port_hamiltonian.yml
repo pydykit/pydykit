@@ -1,4 +1,4 @@
-name: porthamiltonianfourparticlesystem
+name: four_particle_system_port_hamiltonian
 configuration:
   system:
     class_name: FourParticleSystem
