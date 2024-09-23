@@ -2,7 +2,6 @@ import abc
 from collections import namedtuple
 
 import numpy as np
-
 from scipy.linalg import block_diag
 
 from . import operators, states, utils
@@ -426,11 +425,18 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 class FourParticleSystem(MultiBodySystem):
     def initialize(self):
 
-        self.ext_acc = np.repeat(self.ext_acc, repeats=4, axis=0)
+        self.nbr_particles = 4
+
+        self.ext_acc = np.repeat(
+            self.ext_acc,
+            repeats=self.nbr_particles,
+            axis=0,
+        )
 
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_time_points,
-            dim_state=2 * self.nbr_spatial_dimensions * 4 + self.nbr_constraints,
+            dim_state=2 * self.nbr_spatial_dimensions * self.nbr_particles
+            + self.nbr_constraints,
             columns=[
                 "x1",
                 "y1",
@@ -470,7 +476,7 @@ class FourParticleSystem(MultiBodySystem):
         )
 
     def decompose_state(self, state):
-        dim = self.nbr_spatial_dimensions * 4
+        dim = self.nbr_spatial_dimensions * self.nbr_particles
 
         assert len(state) == 2 * dim + self.nbr_constraints
 
@@ -515,7 +521,7 @@ class FourParticleSystem(MultiBodySystem):
         return np.zeros(q.shape)
 
     def internal_potential(self, q):
-        q_1, q_2, q_3, q_4 = self.get_elements_for_all_masses(q)
+        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
 
         contribution_first_spring = (
             0.5
@@ -532,7 +538,7 @@ class FourParticleSystem(MultiBodySystem):
         return contribution_first_spring + contribution_second_spring
 
     def internal_potential_gradient(self, q):
-        q_1, q_2, q_3, q_4 = self.get_elements_for_all_masses(q)
+        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
 
         contribution_first_spring = (
             self.spring_stiffness_parameter_13
@@ -549,7 +555,7 @@ class FourParticleSystem(MultiBodySystem):
         return contribution_first_spring + contribution_second_spring
 
     def constraint(self, q):
-        q_1, q_2, q_3, q_4 = self.get_elements_for_all_masses(q)
+        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
         first_constraint = 0.5 * (
             (q_2 - q_1).T @ (q_2 - q_1) - self.rigid_constraint_length_12**2
         )
@@ -560,7 +566,7 @@ class FourParticleSystem(MultiBodySystem):
         return np.hstack([first_constraint, second_constraint])
 
     def constraint_gradient(self, q):
-        q_1, q_2, q_3, q_4 = self.get_elements_for_all_masses(q)
+        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
 
         first_constraint_gradient = np.hstack(
             [-(q_2 - q_1), (q_2 - q_1), np.zeros(3), np.zeros(3)]
@@ -570,19 +576,8 @@ class FourParticleSystem(MultiBodySystem):
         )
         return np.vstack([first_constraint_gradient, second_constraint_gradient])
 
-    def get_element_for_mass(self, vector, no):
+    def decompose_into_particles(self, vector):
 
-        assert len(vector) == 4 * self.nbr_spatial_dimensions
+        assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
 
-        return vector[
-            (no - 1) * self.nbr_spatial_dimensions : no * self.nbr_spatial_dimensions
-        ]
-
-    def get_elements_for_all_masses(self, vector):
-
-        return (
-            self.get_element_for_mass(vector, 1),
-            self.get_element_for_mass(vector, 2),
-            self.get_element_for_mass(vector, 3),
-            self.get_element_for_mass(vector, 4),
-        )
+        return np.split(vector, self.nbr_particles)
