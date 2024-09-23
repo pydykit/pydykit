@@ -1,4 +1,4 @@
-name: fourparticlesystem
+name: four_particle_system
 configuration:
   system:
     class_name: FourParticleSystem

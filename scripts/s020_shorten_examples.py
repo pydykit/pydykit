@@ -9,7 +9,7 @@ PATH_REFERENCE_RESULTS = PATH_TEST_DIRECTORY.joinpath("reference_results")
 example_names = [
     "pendulum3dcartesian_full_time",
     "rigidbodyrotatingquaternion",
-    "fourparticlesystem",
+    "four_particle_system",
     "four_particle_system_port_hamiltonian",
 ]
 
