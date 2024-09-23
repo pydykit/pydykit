@@ -1,7 +1,7 @@
 import plotly.graph_objects as go
 
 
-def plot_three_dimensional_trajectory(
+def plot_3d_trajectory(
     figure,
     x_components,
     y_components,

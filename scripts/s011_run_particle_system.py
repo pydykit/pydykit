@@ -19,12 +19,19 @@ fig = go.Figure()
 for index in range(manager.system.nbr_particles):
     index = pydykit.utils.shift_index_python_to_literature(index)
 
-    pydykit.plotting.plot_three_dimensional_trajectory(
+    pydykit.plotting.plot_3d_trajectory(
         figure=fig,
         x_components=df[f"x{index}"],
         y_components=df[f"y{index}"],
         z_components=df[f"z{index}"],
         time=df["time"],
+    )
+    pydykit.plotting.add_labels(
+        figure=fig,
+        x_components=df[f"x{index}"],
+        y_components=df[f"y{index}"],
+        z_components=df[f"z{index}"],
+        index=0,
     )
 
 
