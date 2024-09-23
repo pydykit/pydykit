@@ -143,7 +143,7 @@ class MultiBodyIntegrator(abc.ABC):
         pass
 
 
-class MPStd(MultiBodyIntegrator):
+class Midpoint(MultiBodyIntegrator):
 
     @staticmethod
     def calc_residuum(system, time_stepper, state_n, state_n1):
