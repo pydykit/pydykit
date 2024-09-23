@@ -11,7 +11,7 @@ class PortHamiltonianSystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
-        self.already_initialized = False
+        self.initialized = False
 
     @abc.abstractmethod
     def initialize(self):
@@ -55,7 +55,7 @@ class Pendulum2D(PortHamiltonianSystem):
             self.initial_state
         )
 
-        self.already_initialized = True
+        self.initialized = True
 
     def decompose_state(self, state):
         decomposed_state = namedtuple("state", "q v")
@@ -98,7 +98,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
             )
         )
 
-        self.already_initialized = True
+        self.initialized = True
 
     def decompose_state(self, state):
         decomposed_MBS_state = self.MBS.decompose_state(state)
@@ -162,7 +162,7 @@ class MultiBodySystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
-        self.already_initialized = False
+        self.initialized = False
 
     @abc.abstractmethod
     def initialize(self):

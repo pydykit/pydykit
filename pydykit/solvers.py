@@ -22,7 +22,7 @@ class Newton(Solver):
         system = self.manager.system
         time_stepper = self.manager.time_stepper
 
-        if system.already_initialized:
+        if system.initialized:
             pass
         else:
             system.initialize()
