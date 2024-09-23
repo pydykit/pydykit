@@ -10,7 +10,7 @@ example_manager = pydykit.examples.Manager()
 
 example_worklist = [
     dict(
-        name="pendulum3dcartesian_full_time",
+        name="pendulum_3d_cartesian_full_time",
         result_indices=[0, 1, 2],
     ),
     dict(
