@@ -3,11 +3,11 @@ from skfem.helpers import dot, grad
 
 
 @skfem.BilinearForm
-def integrand(u, v, w):
+def integrand(uu, vv, ww):
     import pdb
 
     pdb.set_trace()  # breakpoint
-    return dot(grad(u), grad(v))
+    return dot(grad(uu), grad(vv))
 
 
 skfem.asm(
