@@ -1,0 +1,34 @@
+name: four_particle_system
+configuration:
+  system:
+    class_name: FourParticleSystem
+    kwargs:
+      nbr_spatial_dimensions: 3
+      nbr_dof: 12
+      nbr_constraints: 2
+      masses: [1.0, 3.0, 2.3, 1.7]
+      gravity: [0.0, 0.0, 0.0]
+      initial_state:
+        Q: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
+        V: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.176470588235294]
+      rigid_constraint_length_12: 1
+      rigid_constraint_length_34: 1
+      natural_spring_length_13: 1
+      natural_spring_length_24: 1
+      spring_stiffness_parameter_13: 50
+      spring_stiffness_parameter_24: 500
+      damper_viscosity_parameter_23: 0
+  solver:
+    class_name: Newton
+    kwargs:
+      newton_epsilon: 1.e-10
+      max_iterations: 40
+  integrator:
+    class_name: Midpoint
+    kwargs:
+  time_stepper:
+    class_name: FixedIncrement
+    kwargs:
+      step_size: 0.01
+      start: 0.0
+      end: 0.09

@@ -2,14 +2,16 @@ import abc
 from collections import namedtuple
 
 import numpy as np
+from scipy.linalg import block_diag
 
-from . import operators, states
+from . import operators, states, utils
 
 
 class PortHamiltonianSystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
+        self.initialized = False
 
     @abc.abstractmethod
     def initialize(self):
@@ -24,19 +26,19 @@ class PortHamiltonianSystem(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_z_vector(self, state):
+    def get_costates(self, state):
         pass
 
     @abc.abstractmethod
-    def get_jacobian(self, state):
+    def get_hamiltonian_gradient(self, state):
         pass
 
     @abc.abstractmethod
-    def get_j_matrix(self):
+    def get_structure_matrix(self):
         pass
 
     @abc.abstractmethod
-    def get_e_matrix(self, state):
+    def get_descriptor_matrix(self, state):
         pass
 
 
@@ -53,6 +55,8 @@ class Pendulum2D(PortHamiltonianSystem):
             self.initial_state
         )
 
+        self.initialized = True
+
     def decompose_state(self, state):
         decomposed_state = namedtuple("state", "q v")
         return decomposed_state(
@@ -63,25 +67,102 @@ class Pendulum2D(PortHamiltonianSystem):
     def compose_state(self):
         pass
 
-    def get_z_vector(self, state):
+    def get_costates(self, state):
         q, v = self.decompose_state(state=state)
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
 
-    def get_jacobian(self, state):
+    def get_hamiltonian_gradient(self, state):
         q, v = self.decompose_state(state=state)
         return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
 
-    def get_j_matrix(self):
+    def get_structure_matrix(self, state):
         return np.array([[0, 1], [-1, 0]])
 
-    def get_e_matrix(self, state):
+    def get_descriptor_matrix(self, state):
         return np.diag([1, self.mass * self.length**2])
+
+
+class PortHamiltonianMBS(PortHamiltonianSystem):
+
+    def initialize(self, MultiBodySystem):
+
+        self.mbs = MultiBodySystem
+
+        self.states = MultiBodySystem.states
+
+        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
+            self.mbs.compose_state(
+                q=np.array(self.mbs.initial_state["Q"]),
+                p=np.array(self.mbs.initial_state["V"]),
+                lambd=np.zeros(self.mbs.nbr_constraints),
+            )
+        )
+
+        self.initialized = True
+
+    def decompose_state(self, state):
+        decomposed_MBS_state = self.mbs.decompose_state(state)
+        decomposed_state = namedtuple("state", "q v lambd")
+        return decomposed_state(
+            q=decomposed_MBS_state.q,
+            v=decomposed_MBS_state.p,
+            lambd=decomposed_MBS_state.lambd,
+        )
+        pass
+
+    def compose_state(self):
+        utils.pydykitException("not implemented")
+        pass
+
+    def get_costates(self, state):
+        decomposed_state = self.decompose_state(state)
+        potential_forces = self.mbs.external_potential_gradient(
+            decomposed_state.q
+        ) + self.mbs.internal_potential_gradient(decomposed_state.q)
+
+        return np.hstack([potential_forces, decomposed_state.v, decomposed_state.lambd])
+
+    def get_hamiltonian_gradient(self, state):
+        decomposed_state = self.decompose_state(state)
+
+        return self.mbs.external_potential_gradient(
+            decomposed_state.q
+        ) + self.mbs.internal_potential_gradient(decomposed_state.q)
+
+    def get_structure_matrix(self, state):
+        decomposed_state = self.decompose_state(state)
+        q = decomposed_state.q
+        v = decomposed_state.v
+        lambd = decomposed_state.lambd
+        G = self.mbs.constraint_gradient(q)
+
+        return np.block(
+            [
+                [
+                    np.zeros((len(q), len(q))),
+                    np.eye(len(q)),
+                    np.zeros((len(q), len(lambd))),
+                ],
+                [-np.eye(len(v)), np.zeros((len(v), len(v))), -G.T],
+                [np.zeros((len(lambd), len(q))), G, np.zeros((len(lambd), len(lambd)))],
+            ]
+        )
+
+    def get_descriptor_matrix(self, state):
+        identity_mat = np.eye(self.mbs.nbr_dof)
+        decomposed_state = self.decompose_state(state)
+        mass_matrix = self.mbs.get_mass_matrix(decomposed_state.q)
+        zeros_matrix = np.zeros((self.mbs.nbr_constraints, self.mbs.nbr_constraints))
+        descriptor_matrix = block_diag(identity_mat, mass_matrix, zeros_matrix)
+
+        return descriptor_matrix
 
 
 class MultiBodySystem(abc.ABC):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
+        self.initialized = False
 
     @abc.abstractmethod
     def initialize(self):
@@ -139,7 +220,7 @@ class Pendulum3DCartesian(MultiBodySystem):
 
     def initialize(self):
         self.length = np.linalg.norm(self.initial_state["Q"])
-        self.ext_acc = np.array(self.ext_acc)
+        self.gravity = np.array(self.gravity)
 
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_time_points,
@@ -195,10 +276,10 @@ class Pendulum3DCartesian(MultiBodySystem):
         return np.zeros(q.shape)
 
     def external_potential(self, q):
-        return -(self.get_mass_matrix(q=q) @ self.ext_acc).T @ q
+        return -(self.get_mass_matrix(q=q) @ self.gravity).T @ q
 
     def external_potential_gradient(self, q):
-        return -self.get_mass_matrix(q=q) @ self.ext_acc
+        return -self.get_mass_matrix(q=q) @ self.gravity
 
     def internal_potential(self):
         return 0.0
@@ -207,7 +288,7 @@ class Pendulum3DCartesian(MultiBodySystem):
         return np.zeros(q.shape)
 
     def constraint(self, q):
-        return 0.5 * (q.T @ q / self.length**2 - 1.0)
+        return np.array([0.5 * (q.T @ q / self.length**2 - 1.0)])
 
     def constraint_gradient(self, q):
         return q.T[np.newaxis, :] / self.length**2
@@ -221,7 +302,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
     def initialize(self):
         self.inertias_matrix = np.diag(self.inertias)
 
-        self.ext_acc = np.array(self.ext_acc)
+        self.gravity = np.array(self.gravity)
 
         self.states = states.State(
             nbr_states=self.manager.time_stepper.nbr_time_points,
@@ -335,7 +416,168 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return np.zeros(4)
 
     def constraint(self, q):
-        return 0.5 * (q.T @ q - 1.0)
+        return np.array([0.5 * (q.T @ q - 1.0)])
 
     def constraint_gradient(self, q):
-        return q.T
+        return q.T[np.newaxis, :]
+
+
+class FourParticleSystem(MultiBodySystem):
+    def initialize(self):
+
+        self.nbr_particles = 4
+
+        self.gravity_vector = np.repeat(
+            self.gravity,
+            repeats=self.nbr_particles,
+            axis=0,
+        )
+
+        self.states = states.State(
+            nbr_states=self.manager.time_stepper.nbr_time_points,
+            dim_state=2 * self.nbr_spatial_dimensions * self.nbr_particles
+            + self.nbr_constraints,
+            columns=[
+                "x1",
+                "y1",
+                "z1",
+                "x2",
+                "y2",
+                "z2",
+                "x3",
+                "y3",
+                "z3",
+                "x4",
+                "y4",
+                "z4",
+                "dx1",
+                "dy1",
+                "dz1",
+                "dx2",
+                "dy2",
+                "dz2",
+                "dx3",
+                "dy3",
+                "dz3",
+                "dx4",
+                "dy4",
+                "dz4",
+                "lambda1",
+                "lambda2",
+            ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        )
+
+        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
+            self.compose_state(
+                q=np.array(self.initial_state["Q"]),
+                p=self.get_mass_matrix(q=None) @ np.array(self.initial_state["V"]),
+                lambd=np.zeros(self.nbr_constraints),
+            )
+        )
+
+    def decompose_state(self, state):
+        dim = self.nbr_spatial_dimensions * self.nbr_particles
+
+        assert len(state) == 2 * dim + self.nbr_constraints
+
+        decomposed_state = namedtuple("state", "q p lambd")
+        return decomposed_state(
+            q=state[0:dim],
+            p=state[dim : 2 * dim],
+            lambd=state[2 * dim :],
+        )
+
+    def compose_state(self, q, p, lambd):
+        return np.concatenate(
+            [
+                q,
+                p,
+                lambd,
+            ],
+            axis=0,
+        )
+
+    def get_mass_matrix(self, q):
+        diagonal_elements = np.concatenate(
+            (
+                self.masses[0] * np.ones(self.nbr_spatial_dimensions),
+                self.masses[1] * np.ones(self.nbr_spatial_dimensions),
+                self.masses[2] * np.ones(self.nbr_spatial_dimensions),
+                self.masses[3] * np.ones(self.nbr_spatial_dimensions),
+            )
+        )
+        return np.diag(diagonal_elements)
+
+    def kinetic_energy_gradient_from_momentum(self, q, p):
+        return np.zeros(q.shape)
+
+    def kinetic_energy_gradient_from_velocity(self, q, v):
+        return np.zeros(q.shape)
+
+    def external_potential(self, q):
+        return 0
+
+    def external_potential_gradient(self, q):
+        return np.zeros(q.shape)
+
+    def internal_potential(self, q):
+        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
+
+        contribution_first_spring = (
+            0.5
+            * self.spring_stiffness_parameter_13
+            * ((q_3 - q_1).T @ (q_3 - q_1) - self.natural_spring_length_13**2) ** 2
+        )
+
+        contribution_second_spring = (
+            0.5
+            * self.spring_stiffness_parameter_24
+            * ((q_4 - q_2).T @ (q_4 - q_2) - self.natural_spring_length_24**2) ** 2
+        )
+
+        return contribution_first_spring + contribution_second_spring
+
+    def internal_potential_gradient(self, q):
+        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
+
+        contribution_first_spring = (
+            self.spring_stiffness_parameter_13
+            * ((q_3 - q_1).T @ (q_3 - q_1) - self.natural_spring_length_13**2)
+            * np.hstack([-2 * (q_3 - q_1), np.zeros(3), 2 * (q_3 - q_1), np.zeros(3)])
+        )
+
+        contribution_second_spring = (
+            self.spring_stiffness_parameter_24
+            * ((q_4 - q_2).T @ (q_4 - q_2) - self.natural_spring_length_24**2)
+            * np.hstack([np.zeros(3), -2 * (q_4 - q_2), np.zeros(3), 2 * (q_4 - q_2)])
+        )
+
+        return contribution_first_spring + contribution_second_spring
+
+    def constraint(self, q):
+        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
+        first_constraint = 0.5 * (
+            (q_2 - q_1).T @ (q_2 - q_1) - self.rigid_constraint_length_12**2
+        )
+        second_constraint = 0.5 * (
+            (q_4 - q_3).T @ (q_4 - q_3) - self.rigid_constraint_length_34**2
+        )
+
+        return np.hstack([first_constraint, second_constraint])
+
+    def constraint_gradient(self, q):
+        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
+
+        first_constraint_gradient = np.hstack(
+            [-(q_2 - q_1), (q_2 - q_1), np.zeros(3), np.zeros(3)]
+        )
+        second_constraint_gradient = np.hstack(
+            [np.zeros(3), np.zeros(3), -(q_4 - q_3), (q_4 - q_3)]
+        )
+        return np.vstack([first_constraint_gradient, second_constraint_gradient])
+
+    def decompose_into_particles(self, vector):
+
+        assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
+
+        return np.split(vector, self.nbr_particles)

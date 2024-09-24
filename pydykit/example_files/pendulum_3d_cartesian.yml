@@ -1,4 +1,4 @@
-name: pendulum3dcartesian_full_time
+name: pendulum_3d_cartesian
 configuration:
   system:
     class_name: Pendulum3DCartesian
@@ -6,7 +6,7 @@ configuration:
       nbr_spatial_dimensions: 3
       nbr_constraints: 1
       mass: 1.0
-      ext_acc: [0.0, 0.0, -9.81]
+      gravity: [0.0, 0.0, -9.81]
       initial_state:
         Q: [1.0, 0.0, 0.0]
         V: [0.0, 1.0, 0.0]
@@ -16,11 +16,11 @@ configuration:
       newton_epsilon: 1.e-07
       max_iterations: 40
   integrator:
-    class_name: MPStd
+    class_name: Midpoint
     kwargs:
   time_stepper:
-    class_name: FixedIncrementHittingEnd
+    class_name: FixedIncrement
     kwargs:
-      step_size: 0.05
+      step_size: 0.2
       start: 0.0
-      end: 10.0
+      end: 2.0
