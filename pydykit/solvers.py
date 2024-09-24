@@ -47,6 +47,8 @@ class Newton(Solver):
             states.state_n1 = (
                 self.newton_update()  # Note: current time step size can be access through time_stepper.current_step.increment
             )
+            q, p, lambd = system.decompose_state(system.states.state_n1)
+            print(system.constraint(q=q))
 
             # Store results
             states.time[step.index] = step.time
