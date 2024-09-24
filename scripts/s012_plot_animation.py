@@ -112,14 +112,44 @@ fig.update_layout(
     sliders=sliders,
 )
 
+
+def get_extremum_position_value_over_all_particles(
+    df,
+    axis="x",
+    extremum="max",
+):
+    tmp = df.filter(
+        regex=f"^[{axis}][\d]$",
+        axis=1,
+    )
+    tmp = getattr(tmp, extremum)(numeric_only=True)
+    tmp = getattr(tmp, extremum)()
+    return tmp
+
+
 fig.update_layout(
     scene=dict(
-        # xaxis=dict(range=[min(x), max(x)], autorange=False),
-        # yaxis=dict(range=[min(y), max(y)], autorange=False),
-        # zaxis=dict(range=[min(z), max(z)], autorange=False),
-        xaxis=dict(autorange=True),
-        yaxis=dict(autorange=True),
-        zaxis=dict(autorange=True),
+        {
+            f"{axis}axis": dict(
+                range=[
+                    get_extremum_position_value_over_all_particles(
+                        df=df,
+                        axis=axis,
+                        extremum="min",
+                    ),
+                    get_extremum_position_value_over_all_particles(
+                        df=df,
+                        axis=axis,
+                        extremum="max",
+                    ),
+                ],
+                autorange=False,
+            )
+            for axis in ["x", "y", "z"]
+        }
+        # xaxis=dict(autorange=True),
+        # yaxis=dict(autorange=True),
+        # zaxis=dict(autorange=True),
     )
 )
 
