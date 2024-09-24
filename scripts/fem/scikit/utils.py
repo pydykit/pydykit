@@ -4,24 +4,30 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 
-def dump_plt(name):
-    previous_frame = inspect.currentframe().f_back
+class Dumper:
+    def __init__(self, path_base):
+        # Define directory
+        self.path_base = path_base
+        self.out_dir = self.path_base.joinpath("plots")
+        self.out_dir.mkdir(parents=True, exist_ok=True)
 
-    (
-        filename,
-        line_number,
-        function_name,
-        lines,
-        index,
-    ) = inspect.getframeinfo(previous_frame)
+        # Get name of calling script
+        previous_frame = inspect.currentframe().f_back
 
-    calling_script = Path(filename).stem
-    index = calling_script[0:4]
+        (
+            filename,
+            line_number,
+            function_name,
+            lines,
+            index,
+        ) = inspect.getframeinfo(previous_frame)
 
-    out_dir = Path("plots")
+        calling_script = Path(filename).stem
 
-    out_file = out_dir.joinpath(
-        index + "_" + name + ".png",
-    )
+        # Define prefix
+        index = calling_script[0:4]
+        self.pattern = str(self.out_dir.joinpath(f"{index}_" + "{name}" + ".png"))
 
-    plt.savefig(out_file)
+    def dump_plt(self, name):
+
+        plt.savefig(self.pattern.format(name=name))
