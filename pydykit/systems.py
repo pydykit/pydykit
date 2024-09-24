@@ -581,3 +581,226 @@ class FourParticleSystem(MultiBodySystem):
         assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
 
         return np.split(vector, self.nbr_particles)
+
+
+class ParticleSystem(MultiBodySystem):
+
+    def initialize(self):
+
+        self.nbr_constraints = len(self.constraints)
+        self.particles = utils.sort_list_of_dicts_based_on_special_value(
+            my_list=self.particles,
+            key="index",
+        )
+        self.nbr_particles = len(self.particles)
+        self.nbr_dof = self.nbr_spatial_dimensions * self.nbr_particles
+
+        # TODO: Find a better solution (e.g. switching to Python indices), as this is a hacky fix of indices
+        for attribute_name in ["springs", "dampers", "constraints"]:
+            if hasattr(self, attribute_name):
+                attribute = getattr(self, attribute_name)
+                for entry in attribute:
+                    for name in ["particle_start", "particle_end"]:
+                        value = utils.shift_index_iterature_to_python(index=entry[name])
+                        entry[name] = value
+                setattr(self, attribute_name, attribute)
+
+        self.states = states.State(
+            nbr_states=self.manager.time_stepper.nbr_time_points,
+            dim_state=2 * self.nbr_dof + self.nbr_constraints,
+            columns=[
+                f"{prefix}{letter}{utils.shift_index_python_to_literature(number)}"
+                for prefix in ["", "d"]
+                for number in range(self.nbr_particles)
+                for letter in ["x", "y", "z"]
+            ]
+            + [
+                f"lambda{utils.shift_index_python_to_literature(number)}"
+                for number in range(self.nbr_constraints)
+            ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        )
+
+        self.initial_state_q = utils.get_flat_list_of_list_attributes(
+            items=self.particles, key="initial_position"
+        )
+
+        self.initial_state_v = utils.get_flat_list_of_list_attributes(
+            items=self.particles, key="initial_velocity"
+        )
+
+        self.masses = [particle["mass"] for particle in self.particles]
+
+        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
+            self.compose_state(
+                q=np.array(self.initial_state_q),
+                p=self.get_mass_matrix(q=None) @ np.array(self.initial_state_v),
+                lambd=np.zeros(self.nbr_constraints),
+            )
+        )
+
+    def decompose_state(self, state):
+
+        assert len(state) == 2 * self.nbr_dof + self.nbr_constraints
+
+        decomposed_state = namedtuple("state", "q p lambd")
+        dim = self.nbr_dof
+
+        return decomposed_state(
+            q=state[0:dim],
+            p=state[self.nbr_dof : 2 * dim],
+            lambd=state[2 * dim :],
+        )
+
+    def compose_state(self, q, p, lambd):
+        return np.concatenate(
+            [
+                q,
+                p,
+                lambd,
+            ],
+            axis=0,
+        )
+
+    def get_mass_matrix(self, q):
+        diagonal_elements = np.repeat(self.masses, self.nbr_spatial_dimensions)
+        return np.diag(diagonal_elements)
+
+    def kinetic_energy_gradient_from_momentum(self, q, p):
+        return np.zeros(q.shape)
+
+    def kinetic_energy_gradient_from_velocity(self, q, v):
+        return np.zeros(q.shape)
+
+    def external_potential(self, q):
+        return 0
+
+    def external_potential_gradient(self, q):
+        return np.zeros(q.shape)
+
+    @staticmethod
+    def _spring_energy(stiffness, equilibrium_length, start, end):
+        import scipy.linalg as linalg
+
+        vector = end - start
+        current_length = linalg.norm(vector)
+        # return 0.5 * stiffness * (vector.T @ vector - equilibrium_length**2) ** 2  # This fits PLK solution but is wrong
+        return 0.5 * stiffness * ((current_length - equilibrium_length)) ** 2
+
+    def internal_potential(self, q):
+        position_vectors = self.decompose_into_particles(q)
+
+        contributions = [
+            self._spring_energy(
+                stiffness=spring["stiffness"],
+                equilibrium_length=spring["equilibrium_length"],
+                start=position_vectors[spring["particle_start"]],
+                end=position_vectors[spring["particle_end"]],
+            )
+            for spring in self.springs
+        ]
+
+        return sum(contributions)
+
+    @staticmethod
+    def _spring_energy_gradient(
+        stiffness,
+        equilibrium_length,
+        start_vector,
+        end_vector,
+        start_index,
+        end_index,
+        nbr_particles,
+    ):
+        vector = end_vector - start_vector
+        tmp = (vector).T @ (vector) - equilibrium_length**2
+
+        structure = []
+        for index in range(nbr_particles):
+            if index == start_index:
+                structure.append(-2 * vector)
+            elif index == end_index:
+                structure.append(2 * vector)
+            else:
+                structure.append(np.zeros(3))
+
+        return stiffness * tmp * np.hstack(structure)
+
+    def internal_potential_gradient(self, q):
+        position_vectors = self.decompose_into_particles(q)
+        contributions = [
+            self._spring_energy_gradient(
+                stiffness=spring["stiffness"],
+                equilibrium_length=spring["equilibrium_length"],
+                start_vector=position_vectors[spring["particle_start"]],
+                end_vector=position_vectors[spring["particle_end"]],
+                start_index=spring["particle_start"],
+                end_index=spring["particle_end"],
+                nbr_particles=self.nbr_particles,
+            )
+            for spring in self.springs
+        ]
+
+        return sum(contributions)
+
+    @staticmethod
+    def _constraint(length, start, end):
+        vector = end - start
+        return 0.5 * (
+            vector.T @ vector - length**2
+        )  # TODO: Define reusable functions for common operations and avoid redundancy
+
+    def constraint(self, q):
+
+        position_vectors = self.decompose_into_particles(q)
+        return [
+            self._constraint(
+                length=constraint["length"],
+                start=position_vectors[constraint["particle_start"]],
+                end=position_vectors[constraint["particle_end"]],
+            )
+            for constraint in self.constraints
+        ]
+
+    @staticmethod
+    def _constraint_gradient(
+        start_vector,
+        end_vector,
+        start_index,
+        end_index,
+        nbr_particles,
+    ):
+        vector = end_vector - start_vector
+
+        structure = []
+        for index in range(nbr_particles):
+            if index == start_index:
+                structure.append(-vector)
+            elif index == end_index:
+                structure.append(vector)
+            else:
+                structure.append(np.zeros(3))
+
+        return np.hstack(structure)
+
+    def constraint_gradient(self, q):
+
+        position_vectors = self.decompose_into_particles(q)
+
+        contributions = [
+            self._constraint_gradient(
+                start_vector=position_vectors[constraint["particle_start"]],
+                end_vector=position_vectors[constraint["particle_end"]],
+                start_index=constraint["particle_start"],
+                end_index=constraint["particle_end"],
+                nbr_particles=self.nbr_particles,
+            )
+            for constraint in self.constraints
+        ]
+
+        return np.vstack(contributions)
+
+    def decompose_into_particles(self, vector):
+
+        assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
+
+        return np.split(vector, self.nbr_particles)

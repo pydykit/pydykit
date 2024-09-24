@@ -1,0 +1,57 @@
+name: particle_system_01
+configuration:
+  system:
+    class_name: ParticleSystem
+    kwargs:
+      nbr_spatial_dimensions: 3
+      particles:
+      - index: 1
+        initial_position: [0.0, 0.0, 0.0]
+        initial_velocity: [0.0, 0.0, 0.0]
+        mass: 1.0
+      - index: 2
+        initial_position: [1.0, 0.0, 0.0]
+        initial_velocity: [0.0, 0.0, 0.0]
+        mass: 3.0
+      - index: 3
+        initial_position: [0.0, 1.0, 0.0]
+        initial_velocity: [0.0, 0.0, 0.0]
+        mass: 2.3
+      - index: 4
+        initial_position: [1.0, 1.0, 0.0]
+        initial_velocity: [0.0, 0.0, 1.176470588235294]
+        mass: 1.7
+      springs:
+      - particle_start: 1
+        particle_end: 3
+        stiffness: 50
+        equilibrium_length: 1
+      - particle_start: 2
+        particle_end: 4
+        stiffness: 500
+        equilibrium_length: 1
+      dampers: # Currently unused
+      - particle_start: 2
+        particle_end: 3
+        viscosity: 0
+      constraints:
+      - particle_start: 1
+        particle_end: 2
+        length: 1
+      - particle_start: 3
+        particle_end: 4
+        length: 1
+  solver:
+    class_name: Newton
+    kwargs:
+      newton_epsilon: 1.e-10
+      max_iterations: 40
+  integrator:
+    class_name: Midpoint
+    kwargs:
+  time_stepper:
+    class_name: FixedIncrement
+    kwargs:
+      step_size: 0.1 # 0.01
+      start: 0.0
+      end: 0.5 # 10.0
