@@ -18,28 +18,28 @@ df = result.to_df()
 
 fig = go.Figure()
 
-pydykit.utils.plot_three_dimensional_trajectory(
+pydykit.plotting.plot_3d_trajectory(
     figure=fig,
     x_components=df["x1"],
     y_components=df["y1"],
     z_components=df["z1"],
     time=df["time"],
 )
-pydykit.utils.plot_three_dimensional_trajectory(
+pydykit.plotting.plot_3d_trajectory(
     figure=fig,
     x_components=df["x2"],
     y_components=df["y2"],
     z_components=df["z2"],
     time=df["time"],
 )
-pydykit.utils.plot_three_dimensional_trajectory(
+pydykit.plotting.plot_3d_trajectory(
     figure=fig,
     x_components=df["x3"],
     y_components=df["y3"],
     z_components=df["z3"],
     time=df["time"],
 )
-pydykit.utils.plot_three_dimensional_trajectory(
+pydykit.plotting.plot_3d_trajectory(
     figure=fig,
     x_components=df["x4"],
     y_components=df["y4"],
