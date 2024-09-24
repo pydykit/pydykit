@@ -33,7 +33,7 @@ charset="utf-8"
 "pydykit.integrators.EulerExplicit" [color="black", fontcolor="black", label=<{EulerExplicit|<br ALIGN="LEFT"/>|calc_residuum_tangent()<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
 "pydykit.integrators.EulerImplicit" [color="black", fontcolor="black", label=<{EulerImplicit|<br ALIGN="LEFT"/>|calc_residuum_tangent()<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
 "pydykit.time_steppers.FixedIncrementHittingEnd" [color="black", fontcolor="black", label=<{FixedIncrementHittingEnd|current_step<br ALIGN="LEFT"/>nbr_timesteps<br ALIGN="LEFT"/>times : ndarray<br ALIGN="LEFT"/>|identify_times()<br ALIGN="LEFT"/>make_steps()<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
-"pydykit.integrators.MPStd" [color="black", fontcolor="black", label=<{MPStd|<br ALIGN="LEFT"/>|calc_residuum(system, time_stepper, state_n, state_n1)<br ALIGN="LEFT"/>calc_residuum_tangent()<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+"pydykit.integrators.Midpoint" [color="black", fontcolor="black", label=<{Midpoint|<br ALIGN="LEFT"/>|calc_residuum(system, time_stepper, state_n, state_n1)<br ALIGN="LEFT"/>calc_residuum_tangent()<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
 "pydykit.examples.Manager" [color="black", fontcolor="black", label=<{Manager|examples : dict<br ALIGN="LEFT"/>|get_example(name)<br ALIGN="LEFT"/>list_examples()<br ALIGN="LEFT"/>load_examples()<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
 "pydykit.core.Manager" [color="black", fontcolor="black", label=<{Manager|configuration<br ALIGN="LEFT"/>content_config_file<br ALIGN="LEFT"/>name<br ALIGN="LEFT"/>path_config_file<br ALIGN="LEFT"/>|instantiate_classes()<br ALIGN="LEFT"/>manage()<br ALIGN="LEFT"/>read_config_file()<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
 "pydykit.integrators.Midpoint" [color="black", fontcolor="black", label=<{Midpoint|<br ALIGN="LEFT"/>|calc_residuum_tangent()<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
@@ -51,7 +51,7 @@ charset="utf-8"
 "pydykit.time_steppers.TimeStepper" [color="black", fontcolor="black", label=<{TimeStepper|current_step<br ALIGN="LEFT"/>manager<br ALIGN="LEFT"/>|<I>make_steps</I>(): Iterator[TimeStep]<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
 "pydykit.integrators.EulerExplicit" -> "pydykit.integrators.PortHamiltoniaIntegrator" [arrowhead="empty", arrowtail="none"];
 "pydykit.integrators.EulerImplicit" -> "pydykit.integrators.PortHamiltoniaIntegrator" [arrowhead="empty", arrowtail="none"];
-"pydykit.integrators.MPStd" -> "pydykit.integrators.MultiBodyIntegrator" [arrowhead="empty", arrowtail="none"];
+"pydykit.integrators.Midpoint" -> "pydykit.integrators.MultiBodyIntegrator" [arrowhead="empty", arrowtail="none"];
 "pydykit.integrators.Midpoint" -> "pydykit.integrators.PortHamiltoniaIntegrator" [arrowhead="empty", arrowtail="none"];
 "pydykit.solvers.Newton" -> "pydykit.solvers.Solver" [arrowhead="empty", arrowtail="none"];
 "pydykit.systems.Pendulum2D" -> "pydykit.systems.PortHamiltonianSystem" [arrowhead="empty", arrowtail="none"];

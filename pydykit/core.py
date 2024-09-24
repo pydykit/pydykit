@@ -33,6 +33,7 @@ class Manager:
 
     def instantiate_classes(self):
         for attribute_name, parameters in self.configuration.items():
+            # Get class from module
             cls = getattr(
                 importlib.import_module(
                     name=f".{attribute_name}s",
@@ -50,10 +51,14 @@ class Manager:
             # Add manager to all classes to be able to access other class instances through manager
             kwargs.update(dict(manager=self))
 
+            # Create instance
+            instance = cls(**kwargs)
+
+            # Set instance to manager
             setattr(
                 self,
                 attribute_name,
-                cls(**kwargs),
+                instance,
             )
 
     def manage(self):

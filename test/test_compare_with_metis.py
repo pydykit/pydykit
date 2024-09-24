@@ -10,12 +10,20 @@ example_manager = pydykit.examples.Manager()
 
 example_worklist = [
     dict(
-        name="pendulum3dcartesian_full_time",
+        name="pendulum_3d_cartesian_full_time",
         result_indices=[0, 1, 2],
     ),
     dict(
-        name="rigidbodyrotatingquaternion",
+        name="rigid_body_rotating_quaternion",
         result_indices=[0, 1, 2, 3],
+    ),
+    dict(
+        name="four_particle_system",
+        result_indices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    ),
+    dict(
+        name="four_particle_system_port_hamiltonian",
+        result_indices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     ),
 ]
 
@@ -30,7 +38,6 @@ class TestCompareWithMetis:
                 example["result_indices"],
                 id=example["name"],
             )
-
             for example in example_worklist
         ),
     )
@@ -38,6 +45,18 @@ class TestCompareWithMetis:
     def test_run(self, content_config_file, name, result_indices):
 
         manager = pydykit.Manager(content_config_file=content_config_file)
+
+        manager.system.initialize()  # creates MBS named FourParticleSystem
+
+        if isinstance(
+            manager.integrator, pydykit.integrators.PortHamiltonianIntegrator
+        ):
+            # intermediate steps if conversion to PH system is necessary
+            porthamiltonian_system = pydykit.systems.PortHamiltonianMBS(manager=manager)
+            porthamiltonian_system.initialize(MultiBodySystem=manager.system)
+            # creates an instance of PHS with attribute MBS
+            manager.system = porthamiltonian_system
+
         result = manager.manage()
 
         reference = utils.load_result_of_metis_simulation(

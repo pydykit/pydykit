@@ -59,3 +59,19 @@ def print_current_step(step):
 def print_residual_norm(value):
 
     print(f"residual norm = {value:.4E}")
+
+
+def shift_index_python_to_literature(index):
+    return index + 1
+
+
+def shift_index_iterature_to_python(index):
+    return index - 1
+
+
+def sort_list_of_dicts_based_on_special_value(my_list, key):
+    return sorted(my_list, key=lambda d: d[key])
+
+
+def get_flat_list_of_list_attributes(items, key):
+    return np.array([item[key] for item in items]).flatten()

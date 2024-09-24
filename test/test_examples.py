@@ -11,6 +11,13 @@ from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
 
 example_manager = pydykit.examples.Manager()
 
+example_worklist = [
+    "pendulum_3d_cartesian",
+    "pendulum_2d",
+    "particle_system_01",
+    "particle_system_02",
+]
+
 
 class TestExamples:
     @pytest.mark.parametrize(
@@ -23,12 +30,7 @@ class TestExamples:
                 ),
                 id=key,
             )
-            for key in example_manager.list_examples()
-            if key
-            not in [
-                "pendulum3dcartesian_full_time",
-                "rigidbodyrotatingquaternion",
-            ]
+            for key in example_worklist
         ),
     )
     def test_run_examples(self, content_config_file, expected_result_df):
