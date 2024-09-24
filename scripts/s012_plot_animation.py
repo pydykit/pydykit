@@ -113,45 +113,7 @@ fig.update_layout(
 )
 
 
-def get_extremum_position_value_over_all_particles(
-    df,
-    axis="x",
-    extremum="max",
-):
-    tmp = df.filter(
-        regex=f"^[{axis}][\d]$",
-        axis=1,
-    )
-    tmp = getattr(tmp, extremum)(numeric_only=True)
-    tmp = getattr(tmp, extremum)()
-    return tmp
-
-
-fig.update_layout(
-    scene=dict(
-        {
-            f"{axis}axis": dict(
-                range=[
-                    get_extremum_position_value_over_all_particles(
-                        df=df,
-                        axis=axis,
-                        extremum="min",
-                    ),
-                    get_extremum_position_value_over_all_particles(
-                        df=df,
-                        axis=axis,
-                        extremum="max",
-                    ),
-                ],
-                autorange=False,
-            )
-            for axis in ["x", "y", "z"]
-        }
-        # xaxis=dict(autorange=True),
-        # yaxis=dict(autorange=True),
-        # zaxis=dict(autorange=True),
-    )
-)
+pydykit.plotting.fix_scene_bounds_to_extrema(figure=fig, df=df)
 
 fig.update_layout(sliders=sliders)
 fig.show()

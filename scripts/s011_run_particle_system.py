@@ -39,6 +39,8 @@ for index in range(manager.system.nbr_particles):
 
 fig.update_layout(font_family="Serif")
 
+pydykit.plotting.fix_scene_bounds_to_extrema(figure=fig, df=df)
+
 fig.show()
 
 df.to_csv(f"test/reference_results/{name}.csv")
