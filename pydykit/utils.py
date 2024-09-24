@@ -1,6 +1,5 @@
 import numpy as np
 import yaml
-import plotly.graph_objects as go
 
 
 def load_yaml_file(path):
@@ -62,27 +61,17 @@ def print_residual_norm(value):
     print(f"residual norm = {value:.4E}")
 
 
-def plot_three_dimensional_trajectory(
-    existing_figure, x_components, y_components, z_components, time
-):
-    existing_figure.add_trace(
-        go.Scatter3d(
-            x=x_components,
-            y=y_components,
-            z=z_components,
-            marker=dict(
-                size=3,
-                color=time,
-                colorscale="Viridis",
-                colorbar=dict(
-                    thickness=20,
-                    title="time",
-                ),
-            ),
-            line=dict(
-                color="darkblue",
-                width=3,
-            ),
-            showlegend=False,
-        )
-    )
+def shift_index_python_to_literature(index):
+    return index + 1
+
+
+def shift_index_iterature_to_python(index):
+    return index - 1
+
+
+def sort_list_of_dicts_based_on_special_value(my_list, key):
+    return sorted(my_list, key=lambda d: d[key])
+
+
+def get_flat_list_of_list_attributes(items, key):
+    return np.array([item[key] for item in items]).flatten()
