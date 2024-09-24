@@ -63,3 +63,6 @@ class Manager:
 
     def manage(self):
         return self.solver.solve()
+
+    def postprocess(self):
+        return self.postprocessor.postprocess()
