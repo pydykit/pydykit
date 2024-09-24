@@ -269,10 +269,6 @@ class Pendulum3DCartesian(MultiBodySystem):
     def get_mass_matrix(self, q):
         return self.mass * np.eye(self.nbr_spatial_dimensions)
 
-    def get_kinetic_energy(self, q, v):
-        mass_matrix = self.get_mass_matrix(q)
-        return 0.5 * v.T @ mass_matrix @ v
-
     def kinetic_energy_gradient_from_momentum(self, q, p):
         return np.zeros(q.shape)
 
@@ -285,7 +281,7 @@ class Pendulum3DCartesian(MultiBodySystem):
     def external_potential_gradient(self, q):
         return -self.get_mass_matrix(q=q) @ self.gravity
 
-    def internal_potential(self, q):
+    def internal_potential(self):
         return 0.0
 
     def internal_potential_gradient(self, q):
