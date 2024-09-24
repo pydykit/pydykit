@@ -1,26 +1,29 @@
-name: pendulum3dcartesian_full_time
+name: rigid_body_rotating_quaternion
 configuration:
   system:
-    class_name: Pendulum3DCartesian
+    class_name: RigidBodyRotatingQuaternions
     kwargs:
       nbr_spatial_dimensions: 3
+      nbr_dof: 4
       nbr_constraints: 1
       mass: 1.0
-      gravity: [0.0, 0.0, -9.81]
+      gravity: [0.0, 0.0, 0.0]
       initial_state:
-        Q: [1.0, 0.0, 0.0]
-        V: [0.0, 1.0, 0.0]
+        Q: [1.0, 0.0, 0.0, 0.0]
+        V: [10.0, 20.0, 20.0]
+      inertias: [6.0, 8.0, 3.0]
+
   solver:
     class_name: Newton
     kwargs:
-      newton_epsilon: 1.e-07
+      newton_epsilon: 1.e-09
       max_iterations: 40
   integrator:
     class_name: Midpoint
     kwargs:
   time_stepper:
-    class_name: FixedIncrementHittingEnd
+    class_name: FixedIncrement
     kwargs:
       step_size: 0.05
       start: 0.0
-      end: 10.0
+      end: 0.45

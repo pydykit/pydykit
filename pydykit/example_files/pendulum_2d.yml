@@ -1,4 +1,4 @@
-name: pendulum2d
+name: pendulum_2d
 configuration:
   system:
     class_name: Pendulum2D

@@ -1,4 +1,4 @@
-name: fourparticlesystem
+name: four_particle_system
 configuration:
   system:
     class_name: FourParticleSystem
@@ -10,20 +10,7 @@ configuration:
       gravity: [0.0, 0.0, 0.0]
       initial_state:
         Q: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
-        V: [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.176470588235294, # 2/1.7
-          ]
+        V: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.176470588235294]
       rigid_constraint_length_12: 1
       rigid_constraint_length_34: 1
       natural_spring_length_13: 1
@@ -44,4 +31,4 @@ configuration:
     kwargs:
       step_size: 0.01
       start: 0.0
-      end: 10.0
+      end: 0.09
