@@ -34,7 +34,7 @@ class TestCompareWithMetis:
 
         manager = pydykit.Manager(content_config_file=content_config_file)
 
-        manager.system.initialize()  # creates MBS named FourParticleSystem
+        manager.system.initialize()
 
         # intermediate steps if conversion to PH system is necessary
         porthamiltonian_system = pydykit.systems.PortHamiltonianMBS(manager=manager)
