@@ -24,7 +24,3 @@ configuration:
       step_size: 0.2
       start: 0.0
       end: 2.0
-  postprocessor:
-    class_name: Postprocessor
-    kwargs:
-      quantity_names: [Energy, Constraints]

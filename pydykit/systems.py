@@ -26,20 +26,39 @@ class PortHamiltonianSystem(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_costates(self, state):
+    def costates(self, state):
         pass
 
     @abc.abstractmethod
-    def get_hamiltonian_gradient(self, state):
+    def hamiltonian(self, state):
         pass
 
     @abc.abstractmethod
-    def get_structure_matrix(self):
+    def hamiltonian_gradient(self, state):
         pass
 
     @abc.abstractmethod
-    def get_descriptor_matrix(self, state):
+    def structure_matrix(self):
         pass
+
+    @abc.abstractmethod
+    def descriptor_matrix(self, state):
+        pass
+
+    @abc.abstractmethod
+    def dissipation_matrix(self, state):
+        pass
+
+    @abc.abstractmethod
+    def port_matrix(self, state):
+        pass
+
+    @abc.abstractmethod
+    def input(self):
+        pass
+
+    def output(self, state):
+        return self.port_matrix.T @ self.input(state)
 
 
 class Pendulum2D(PortHamiltonianSystem):
@@ -67,19 +86,31 @@ class Pendulum2D(PortHamiltonianSystem):
     def compose_state(self):
         pass
 
-    def get_costates(self, state):
+    def costates(self, state):
         q, v = self.decompose_state(state=state)
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
 
-    def get_hamiltonian_gradient(self, state):
+    def hamiltonian(self, state):
+        pass
+
+    def hamiltonian_gradient(self, state):
         q, v = self.decompose_state(state=state)
         return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
 
-    def get_structure_matrix(self, state):
+    def structure_matrix(self, state):
         return np.array([[0, 1], [-1, 0]])
 
-    def get_descriptor_matrix(self, state):
+    def descriptor_matrix(self, state):
         return np.diag([1, self.mass * self.length**2])
+
+    def port_matrix(self, state):
+        pass
+
+    def input(self):
+        pass
+
+    def dissipation_matrix(self, state):
+        pass
 
 
 class PortHamiltonianMBS(PortHamiltonianSystem):
@@ -114,7 +145,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         utils.pydykitException("not implemented")
         pass
 
-    def get_costates(self, state):
+    def costates(self, state):
         decomposed_state = self.decompose_state(state)
         potential_forces = self.mbs.external_potential_gradient(
             decomposed_state.q
@@ -122,14 +153,14 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
         return np.hstack([potential_forces, decomposed_state.v, decomposed_state.lambd])
 
-    def get_hamiltonian_gradient(self, state):
+    def hamiltonian_gradient(self, state):
         decomposed_state = self.decompose_state(state)
 
         return self.mbs.external_potential_gradient(
             decomposed_state.q
         ) + self.mbs.internal_potential_gradient(decomposed_state.q)
 
-    def get_structure_matrix(self, state):
+    def structure_matrix(self, state):
         decomposed_state = self.decompose_state(state)
         q = decomposed_state.q
         v = decomposed_state.v
@@ -148,14 +179,26 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
             ]
         )
 
-    def get_descriptor_matrix(self, state):
+    def descriptor_matrix(self, state):
         identity_mat = np.eye(self.mbs.nbr_dof)
         decomposed_state = self.decompose_state(state)
-        mass_matrix = self.mbs.get_mass_matrix(decomposed_state.q)
+        mass_matrix = self.mbs.mass_matrix(decomposed_state.q)
         zeros_matrix = np.zeros((self.mbs.nbr_constraints, self.mbs.nbr_constraints))
         descriptor_matrix = block_diag(identity_mat, mass_matrix, zeros_matrix)
 
         return descriptor_matrix
+
+    def hamiltonian(self, state):
+        pass
+
+    def port_matrix(self, state):
+        pass
+
+    def input(self):
+        pass
+
+    def dissipation_matrix(self, state):
+        pass
 
 
 class MultiBodySystem(abc.ABC):
@@ -177,8 +220,11 @@ class MultiBodySystem(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_mass_matrix(self, q):
+    def mass_matrix(self, q):
         pass
+
+    def kinetic_energy(self, q, v):
+        return 0.5 * v.T @ self.mass_matrix(q=q) @ v
 
     @abc.abstractmethod
     def kinetic_energy_gradient_from_momentum(self, q, p):
@@ -207,6 +253,17 @@ class MultiBodySystem(abc.ABC):
     def internal_potential_gradient(self, q):
         pass
 
+    def potential_energy(self, q):
+        return self.external_potential(q) + self.internal_potential(q)
+
+    def potential_energy_gradient(self, q):
+        return self.external_potential_gradient(q=q) + self.internal_potential_gradient(
+            q=q
+        )
+
+    def total_energy(self, q, v):
+        return self.kinetic_energy(q, v) + self.potential_energy(q)
+
     @abc.abstractmethod
     def constraint(self, q):
         pass
@@ -214,6 +271,13 @@ class MultiBodySystem(abc.ABC):
     @abc.abstractmethod
     def constraint_gradient(self, q):
         pass
+
+    @abc.abstractmethod
+    def dissipation_matrix(self, q, v):
+        pass
+
+    def rayleigh_dissipation(self, q, v):
+        return 0.5 * v.T @ self.dissipation_matrix(q=q, v=v) @ v
 
 
 class Pendulum3DCartesian(MultiBodySystem):
@@ -239,7 +303,7 @@ class Pendulum3DCartesian(MultiBodySystem):
         self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
             self.compose_state(
                 q=np.array(self.initial_state["Q"]),
-                p=self.get_mass_matrix(q=None) @ np.array(self.initial_state["V"]),
+                p=self.mass_matrix(q=None) @ np.array(self.initial_state["V"]),
                 lambd=np.zeros(self.nbr_constraints),
             )
         )
@@ -266,12 +330,8 @@ class Pendulum3DCartesian(MultiBodySystem):
             axis=0,
         )
 
-    def get_mass_matrix(self, q):
+    def mass_matrix(self, q):
         return self.mass * np.eye(self.nbr_spatial_dimensions)
-
-    def get_kinetic_energy(self, q, v):
-        mass_matrix = self.get_mass_matrix(q)
-        return 0.5 * v.T @ mass_matrix @ v
 
     def kinetic_energy_gradient_from_momentum(self, q, p):
         return np.zeros(q.shape)
@@ -280,12 +340,12 @@ class Pendulum3DCartesian(MultiBodySystem):
         return np.zeros(q.shape)
 
     def external_potential(self, q):
-        return -(self.get_mass_matrix(q=q) @ self.gravity).T @ q
+        return -(self.mass_matrix(q=q) @ self.gravity).T @ q
 
     def external_potential_gradient(self, q):
-        return -self.get_mass_matrix(q=q) @ self.gravity
+        return -self.mass_matrix(q=q) @ self.gravity
 
-    def internal_potential(self, q):
+    def internal_potential(self):
         return 0.0
 
     def internal_potential_gradient(self, q):
@@ -296,6 +356,10 @@ class Pendulum3DCartesian(MultiBodySystem):
 
     def constraint_gradient(self, q):
         return q.T[np.newaxis, :] / self.length**2
+
+    def dissipation_matrix(self, q, v):
+        diss_mat = np.zeros(q.shape, q.shape)
+        return diss_mat
 
 
 # operators
@@ -326,13 +390,13 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
         )
         q0 = np.array(self.initial_state["Q"])
-        G_q0 = operators.get_convective_transformation_matrix(quat=q0)
+        G_q0 = operators.convective_transformation_matrix(quat=q0)
         v0 = 0.5 * G_q0.T @ np.array(self.initial_state["V"])
 
         self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
             self.compose_state(
                 q=q0,
-                p=self.get_mass_matrix(q=np.array(self.initial_state["Q"])) @ v0,
+                p=self.mass_matrix(q=np.array(self.initial_state["Q"])) @ v0,
                 lambd=np.zeros(self.nbr_constraints),
             )
         )
@@ -358,9 +422,9 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             axis=0,
         )
 
-    def get_mass_matrix(self, q):
+    def mass_matrix(self, q):
         quat = q[0:4]
-        G_q = operators.get_convective_transformation_matrix(
+        G_q = operators.convective_transformation_matrix(
             quat=quat,
         )
 
@@ -371,9 +435,9 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
         return regular_mass_matrix
 
-    def get_inverse_mass_matrix(self, q):
+    def inverse_mass_matrix(self, q):
         quat = q[0:4]
-        Ql_q = operators.get_left_multiplation_matrix(quat)
+        Ql_q = operators.left_multiplation_matrix(quat)
         J0 = 0.5 * np.trace(self.inertias_matrix)
         inverse_inertias = 1.0 / np.diag(self.inertias_matrix)
         inverse_extended_inertias_matrix = np.diag(np.append(1 / J0, inverse_inertias))
@@ -390,14 +454,14 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
         inverse_extended_inertias = np.linalg.inv(extended_inertias)
 
-        Ql_p = operators.get_left_multiplation_matrix(p)
+        Ql_p = operators.left_multiplation_matrix(p)
 
         return 0.25 * Ql_p @ inverse_extended_inertias @ Ql_p.T @ q
 
     def kinetic_energy_gradient_from_velocity(self, q, v):
         tmp = v[:4]
 
-        G_v = operators.get_convective_transformation_matrix(
+        G_v = operators.convective_transformation_matrix(
             quat=tmp,
         )
         M_4_hat = operators.combine_G_inertias(
@@ -424,6 +488,10 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
     def constraint_gradient(self, q):
         return q.T[np.newaxis, :]
+
+    def dissipation_matrix(self, q, v):
+        diss_mat = np.zeros(q.shape, q.shape)
+        return diss_mat
 
 
 class FourParticleSystem(MultiBodySystem):
@@ -474,7 +542,7 @@ class FourParticleSystem(MultiBodySystem):
         self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
             self.compose_state(
                 q=np.array(self.initial_state["Q"]),
-                p=self.get_mass_matrix(q=None) @ np.array(self.initial_state["V"]),
+                p=self.mass_matrix(q=None) @ np.array(self.initial_state["V"]),
                 lambd=np.zeros(self.nbr_constraints),
             )
         )
@@ -501,7 +569,7 @@ class FourParticleSystem(MultiBodySystem):
             axis=0,
         )
 
-    def get_mass_matrix(self, q):
+    def mass_matrix(self, q):
         diagonal_elements = np.concatenate(
             (
                 self.masses[0] * np.ones(self.nbr_spatial_dimensions),
@@ -586,6 +654,10 @@ class FourParticleSystem(MultiBodySystem):
 
         return np.split(vector, self.nbr_particles)
 
+    def dissipation_matrix(self, q, v):
+        diss_mat = np.zeros(q.shape, q.shape)
+        return diss_mat
+
 
 class ParticleSystem(MultiBodySystem):
 
@@ -637,7 +709,7 @@ class ParticleSystem(MultiBodySystem):
         self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
             self.compose_state(
                 q=np.array(self.initial_state_q),
-                p=self.get_mass_matrix(q=None) @ np.array(self.initial_state_v),
+                p=self.mass_matrix(q=None) @ np.array(self.initial_state_v),
                 lambd=np.zeros(self.nbr_constraints),
             )
         )
@@ -665,7 +737,7 @@ class ParticleSystem(MultiBodySystem):
             axis=0,
         )
 
-    def get_mass_matrix(self, q):
+    def mass_matrix(self, q):
         diagonal_elements = np.repeat(self.masses, self.nbr_spatial_dimensions)
         return np.diag(diagonal_elements)
 
@@ -808,3 +880,7 @@ class ParticleSystem(MultiBodySystem):
         assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
 
         return np.split(vector, self.nbr_particles)
+
+    def dissipation_matrix(self, q, v):
+        diss_mat = np.zeros(q.shape, q.shape)
+        return diss_mat
