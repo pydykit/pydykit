@@ -180,6 +180,9 @@ class MultiBodySystem(abc.ABC):
     def get_mass_matrix(self, q):
         pass
 
+    def kinetic_energy(self, q, v):
+        return 0.5 * v.T @ self.get_mass_matrix(q=q) @ v
+
     @abc.abstractmethod
     def kinetic_energy_gradient_from_momentum(self, q, p):
         "q:position, p:momentum"
@@ -207,6 +210,17 @@ class MultiBodySystem(abc.ABC):
     def internal_potential_gradient(self, q):
         pass
 
+    def potential_energy(self, q):
+        return self.external_potential(q) + self.internal_potential(q)
+
+    def potential_energy_gradient(self, q):
+        return self.external_potential_gradient(q=q) + self.internal_potential_gradient(
+            q=q
+        )
+
+    def total_energy(self, q, v):
+        return self.kinetic_energy(q, v) + self.potential_energy(q)
+
     @abc.abstractmethod
     def constraint(self, q):
         pass
@@ -214,6 +228,13 @@ class MultiBodySystem(abc.ABC):
     @abc.abstractmethod
     def constraint_gradient(self, q):
         pass
+
+    @abc.abstractmethod
+    def get_dissipation_matrix(self, q, v):
+        pass
+
+    def rayleigh_dissipation(self, q, v):
+        return 0.5 * v.T @ self.get_dissipation_matrix(q=q, v=v) @ v
 
 
 class Pendulum3DCartesian(MultiBodySystem):
