@@ -36,6 +36,7 @@ References:
 - [Fenics example elastodynamics](https://fenicsproject.org/olddocs/dolfin/2019.1.0/python/demos/elastodynamics/demo_elastodynamics.py.html)
 - [Fenics tutorial advection-diffusion-reaction](https://fenicsproject.org/pub/tutorial/html/._ftut1010.html#ftut1:reactionsystem)
 - [Fenics course dynamic hyperelasticty](https://fenicsproject.org/pub/course/lectures/2016-04-11-alnaes-simula/lecture_07_dynamic_hyperelasticity.pdf)
+- [scikit-fem multiple fields, pressure and velocity](https://github.com/kinnala/scikit-fem/blob/10.0.1/docs/examples/ex18.py)
 
 ## Proof of Concept: Euler-Bernoulli-Beam
 
