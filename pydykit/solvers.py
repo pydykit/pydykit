@@ -12,7 +12,7 @@ class Solver(abc.ABC):
         self.__dict__.update(kwargs)
 
     @abc.abstractmethod
-    def solve(self, state_initial):
+    def solve(self):
         pass
 
 
