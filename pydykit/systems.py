@@ -223,8 +223,12 @@ class MultiBodySystem(abc.ABC):
     def mass_matrix(self, q):
         pass
 
-    def kinetic_energy(self, q, v):
-        return 0.5 * v.T @ self.mass_matrix(q=q) @ v
+    @abc.abstractmethod
+    def inverse_mass_matrix(self, q):
+        pass
+
+    def kinetic_energy(self, q, p):
+        return 0.5 * p.T @ self.inverse_mass_matrix(q=q) @ p
 
     @abc.abstractmethod
     def kinetic_energy_gradient_from_momentum(self, q, p):
@@ -261,8 +265,8 @@ class MultiBodySystem(abc.ABC):
             q=q
         )
 
-    def total_energy(self, q, v):
-        return self.kinetic_energy(q, v) + self.potential_energy(q)
+    def total_energy(self, q, p):
+        return self.kinetic_energy(q, p) + self.potential_energy(q)
 
     @abc.abstractmethod
     def constraint(self, q):
@@ -271,6 +275,9 @@ class MultiBodySystem(abc.ABC):
     @abc.abstractmethod
     def constraint_gradient(self, q):
         pass
+
+    def constraint_velocity(self, q, p):
+        return self.constraint_gradient(q) @ self.inverse_mass_matrix(q) @ p
 
     @abc.abstractmethod
     def dissipation_matrix(self, q, v):
@@ -333,6 +340,9 @@ class Pendulum3DCartesian(MultiBodySystem):
     def mass_matrix(self, q):
         return self.mass * np.eye(self.nbr_spatial_dimensions)
 
+    def inverse_mass_matrix(self, q):
+        return 1 / self.mass * np.eye(self.nbr_spatial_dimensions)
+
     def kinetic_energy_gradient_from_momentum(self, q, p):
         return np.zeros(q.shape)
 
@@ -345,7 +355,7 @@ class Pendulum3DCartesian(MultiBodySystem):
     def external_potential_gradient(self, q):
         return -self.mass_matrix(q=q) @ self.gravity
 
-    def internal_potential(self):
+    def internal_potential(self, q):
         return 0.0
 
     def internal_potential_gradient(self, q):
