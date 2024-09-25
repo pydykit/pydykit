@@ -39,17 +39,22 @@ We see multiple possiböe answers:
   3. Afterwards, the new state can be used to update FEM fields within the instance of a `pydykit.systems`-class from step 1.
   4. Postprocessing option of the FEM code could be utilized from within `pydykit`.
 - Option 02:
-  1. Define the variational forma and constraints in FEM-framework
-  2. Use the FEM-framework solver
-  3. Use the FEM-framework postprocessing
+  1. Define the variational forma and constraints in FEM-framework.
+     - [Be inspired by linear viscoelasticity in monolithic approach incorporating viscous strain evolution in weak form][linear_viscoelasticty_monolithic]
+  2. Consider these useful methods:
+     - [Lumping a mass matrix](https://comet-fenics.readthedocs.io/en/latest/demo/tips_and_tricks/mass_lumping.html#Lumping-a-mass-matrix)
+  3. Use the FEM-framework solver
+  4. Use the FEM-framework postprocessing
 
 [monolithic_wikipedia]: https://en.wikipedia.org/wiki/Fluid%E2%80%93structure_interaction#Analysis
+[linear_viscoelasticty_monolithic]: https://comet-fenics.readthedocs.io/en/latest/demo/viscoelasticity/linear_viscoelasticity.html
 
 References:
 
 - [Fenics example elastodynamics](https://fenicsproject.org/olddocs/dolfin/2019.1.0/python/demos/elastodynamics/demo_elastodynamics.py.html)
 - [Fenics tutorial advection-diffusion-reaction](https://fenicsproject.org/pub/tutorial/html/._ftut1010.html#ftut1:reactionsystem)
 - [Fenics course dynamic hyperelasticty](https://fenicsproject.org/pub/course/lectures/2016-04-11-alnaes-simula/lecture_07_dynamic_hyperelasticity.pdf)
+- [Fenics tour linear viscoelasticity in monolithic approach][linear_viscoelasticty_monolithic]
 - [scikit-fem multiple fields, pressure and velocity](https://github.com/kinnala/scikit-fem/blob/10.0.1/docs/examples/ex18.py)
 
 ## Proof of Concept: Euler-Bernoulli-Beam
