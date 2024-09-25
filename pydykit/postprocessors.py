@@ -2,6 +2,8 @@ import abc
 import copy
 import importlib
 
+import pandas as pd
+
 from . import utils
 
 
@@ -33,6 +35,8 @@ class Postprocessor:
             setattr(self, quantity, quantity_instance)
             pass
 
+        self.df = None
+
         self.manager = manager
         self.color_palette = [
             "#0072B2",
@@ -46,20 +50,30 @@ class Postprocessor:
         # color scheme (color-blind friendly)
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
 
-    def postprocess(self):
+    def postprocess(self, dataframe):
         system = self.manager.system
         self.nbr_time_point = self.manager.time_stepper.nbr_time_points
-        self.initialize_postprocessing_quantities()
+
+        # allocate quantities
 
         # for i in range(NT):
         #     # extract states of current time
-
+        #
+        #   # compute quantities from state of current time and write to preallocated vector
+        #   # and write to respective data frame
+        #
+        #
         #     match self.quantities:
         #         case "Energy":
         #             kinetic_energy[i] = system.get_kinetic_energy(q=position)
 
         # # create new_df
-        # return new_df
+        #     self.df = merge all dataframes
+        #
+        # merge with input dataframe
+
+        # return merged dataframe
+        return dataframe
 
 
 class Quantity(abc.ABC):

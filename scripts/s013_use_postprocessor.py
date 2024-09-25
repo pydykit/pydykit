@@ -25,4 +25,4 @@ absolute_postprocess_config_file_path = (
 postprocessor = postprocessors.Postprocessor(
     manager, path_config_file=absolute_postprocess_config_file_path
 )
-# postprocessor.postprocess()
+df = postprocessor.postprocess(dataframe=df)
