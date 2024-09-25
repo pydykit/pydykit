@@ -10,7 +10,21 @@ configuration:
       gravity: [0.0, 0.0, 0.0]
       initial_state:
         Q: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
-        V: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.176470588235294]
+        V:
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.176470588235294,
+          ]
       rigid_constraint_length_12: 1
       rigid_constraint_length_34: 1
       natural_spring_length_13: 1
@@ -29,6 +43,6 @@ configuration:
   time_stepper:
     class_name: FixedIncrement
     kwargs:
-      step_size: 0.01
+      step_size: 0.1
       start: 0.0
-      end: 0.09
+      end: 3
