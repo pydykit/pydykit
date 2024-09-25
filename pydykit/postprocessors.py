@@ -1,6 +1,7 @@
 import abc
 import copy
 import importlib
+import inspect
 
 import numpy as np
 import pandas as pd
@@ -36,8 +37,6 @@ class Postprocessor:
             setattr(self, quantity, quantity_instance)
             pass
 
-        self.df = None
-
         self.manager = manager
         self.color_palette = [
             "#0072B2",
@@ -55,22 +54,37 @@ class Postprocessor:
         system = self.manager.system
         self.nbr_time_point = len(dataframe)
 
-        # allocate quantities
         for quantity in self.configuration["quantity_names"]:
-            globals()[quantity]().create_dataframe(nbr_time_point=self.nbr_time_point)
+            quantity_instance = getattr(self, quantity)
+            quantity_instance.create_dataframe(nbr_time_point=self.nbr_time_point)
 
         del dataframe["time"]
         for step_index in range(self.nbr_time_point):
             row = dataframe.iloc[step_index]
             state = row.to_numpy()
+            q, p, lambd = system.decompose_state(state)
 
-        #   # compute quantities from state of current time and write to preallocated vector
-        #   # and write to respective data frame
-        #
-        #
-        #     match self.quantities:
-        #         case "Energy":
-        #             kinetic_energy[i] = system.get_kinetic_energy(q=position)
+            for quantity in self.configuration["quantity_names"]:
+                function_list = globals()[quantity]().functions
+                quantity_instance = getattr(self, quantity)
+                for function in function_list:
+                    system_function = getattr(system, function)
+                    args_list = inspect.getfullargspec(system_function)[0]
+                    args_list.remove("self")
+                    print(args_list)
+                    if args_list == ["q", "p"]:
+                        z = [q, p]
+                    elif args_list == ["q"]:
+                        z = [q]
+                    elif args_list == ["p"]:
+                        z = [p]
+                    else:
+                        raise Exception("Not implemented")
+
+                    input_dict = dict(zip(args_list, z))
+                    quantity_instance.df.at[step_index, function] = system_function(
+                        **input_dict
+                    )
 
         # # create new_df
         #     self.df = merge all dataframes
@@ -78,6 +92,10 @@ class Postprocessor:
         # merge with input dataframe
 
         # return merged dataframe
+        for quantity in self.configuration["quantity_names"]:
+            quantity_instance = getattr(self, quantity)
+            dataframe = pd.concat([dataframe, quantity_instance.df], axis=1)
+
         return dataframe
 
 
@@ -89,7 +107,7 @@ class Quantity(abc.ABC):
     def create_dataframe(self, nbr_time_point):
         self.df = pd.DataFrame(
             data=np.zeros((nbr_time_point, self.nbr_quantities)),
-            columns=self.names,
+            columns=self.functions,
         )
 
 
@@ -98,15 +116,10 @@ class Energy(Quantity):
         super().__init__()
         self.nbr_quantities = 3
         self.dimension = [1, 1, 1]
-        self.names = [
+        self.functions = [
             "kinetic_energy",
             "potential_energy",
             "total_energy",
-        ]
-        self.functions = [
-            "get_kinetic_energy",
-            "get_potential_energy",
-            "get_total_energy",
         ]
 
 
@@ -115,7 +128,6 @@ class Constraints(Quantity):
         super().__init__()
         self.nbr_quantities = 2
         self.dimension = [1, 1]
-        self.names = ["constraint_position", "constraint_velocity"]
         self.functions = [
             "constraint",
             "constraint_velocity",
