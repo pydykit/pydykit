@@ -294,9 +294,6 @@ class Pendulum3DCartesian(MultiBodySystem):
         return q.T[np.newaxis, :] / self.length**2
 
 
-# operators
-
-
 class RigidBodyRotatingQuaternions(MultiBodySystem):
 
     def initialize(self):
