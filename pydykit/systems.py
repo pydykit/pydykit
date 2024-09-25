@@ -90,6 +90,9 @@ class Pendulum2D(PortHamiltonianSystem):
         q, v = self.decompose_state(state=state)
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
 
+    def hamiltonian(self, state):
+        pass
+
     def hamiltonian_gradient(self, state):
         q, v = self.decompose_state(state=state)
         return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
@@ -99,6 +102,15 @@ class Pendulum2D(PortHamiltonianSystem):
 
     def descriptor_matrix(self, state):
         return np.diag([1, self.mass * self.length**2])
+
+    def port_matrix(self, state):
+        pass
+
+    def input(self):
+        pass
+
+    def dissipation_matrix(self, state):
+        pass
 
 
 class PortHamiltonianMBS(PortHamiltonianSystem):
@@ -175,6 +187,18 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         descriptor_matrix = block_diag(identity_mat, mass_matrix, zeros_matrix)
 
         return descriptor_matrix
+
+    def hamiltonian(self, state):
+        pass
+
+    def port_matrix(self, state):
+        pass
+
+    def input(self):
+        pass
+
+    def dissipation_matrix(self, state):
+        pass
 
 
 class MultiBodySystem(abc.ABC):
@@ -333,6 +357,10 @@ class Pendulum3DCartesian(MultiBodySystem):
     def constraint_gradient(self, q):
         return q.T[np.newaxis, :] / self.length**2
 
+    def dissipation_matrix(self, q, v):
+        diss_mat = np.zeros(q.shape, q.shape)
+        return diss_mat
+
 
 # operators
 
@@ -460,6 +488,10 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
     def constraint_gradient(self, q):
         return q.T[np.newaxis, :]
+
+    def dissipation_matrix(self, q, v):
+        diss_mat = np.zeros(q.shape, q.shape)
+        return diss_mat
 
 
 class FourParticleSystem(MultiBodySystem):
@@ -622,6 +654,10 @@ class FourParticleSystem(MultiBodySystem):
 
         return np.split(vector, self.nbr_particles)
 
+    def dissipation_matrix(self, q, v):
+        diss_mat = np.zeros(q.shape, q.shape)
+        return diss_mat
+
 
 class ParticleSystem(MultiBodySystem):
 
@@ -660,11 +696,11 @@ class ParticleSystem(MultiBodySystem):
             ],  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
         )
 
-        self.initial_state_q = utils.flat_list_of_list_attributes(
+        self.initial_state_q = utils.get_flat_list_of_list_attributes(
             items=self.particles, key="initial_position"
         )
 
-        self.initial_state_v = utils.flat_list_of_list_attributes(
+        self.initial_state_v = utils.get_flat_list_of_list_attributes(
             items=self.particles, key="initial_velocity"
         )
 
@@ -844,3 +880,7 @@ class ParticleSystem(MultiBodySystem):
         assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
 
         return np.split(vector, self.nbr_particles)
+
+    def dissipation_matrix(self, q, v):
+        diss_mat = np.zeros(q.shape, q.shape)
+        return diss_mat

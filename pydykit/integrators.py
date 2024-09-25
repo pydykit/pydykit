@@ -34,7 +34,7 @@ class MidpointPH(PortHamiltonianIntegrator):
             state_n1=state_n1.copy(),
         )
 
-        tangent = utils.numerical_tangent(
+        tangent = utils.get_numerical_tangent(
             func=partial(  # Bind some arguments to values
                 self.calc_residuum,
                 system=system,
@@ -206,7 +206,7 @@ class Midpoint(MultiBodyIntegrator):
             state_n1=state_n1.copy(),
         )
 
-        tangent = utils.numerical_tangent(
+        tangent = utils.get_numerical_tangent(
             func=partial(  # Bind some arguments to values
                 self.calc_residuum,
                 system=system,
