@@ -54,14 +54,14 @@ class MidpointPH(PortHamiltonianIntegrator):
 
         time_step_size = time_stepper.current_step.increment
 
-        e_n = system.get_descriptor_matrix(state_n)
-        e_n1 = system.get_descriptor_matrix(state_n1)
+        e_n = system.descriptor_matrix(state_n)
+        e_n1 = system.descriptor_matrix(state_n1)
 
-        z_vector = system.get_costates(
+        z_vector = system.costates(
             state=0.5 * (state_n + state_n1),
         )
 
-        j_matrix = system.get_structure_matrix(state=0.5 * (state_n + state_n1))
+        j_matrix = system.structure_matrix(state=0.5 * (state_n + state_n1))
 
         residuum = (
             e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
@@ -79,17 +79,17 @@ class EulerImplicit(PortHamiltonianIntegrator):
         state_n1 = states.state_n1
         time_step_size = self.manager.time_stepper.current_step.increment
 
-        e_n = system.get_descriptor_matrix(state_n)
-        e_n1 = system.get_descriptor_matrix(state_n1)
+        e_n = system.descriptor_matrix(state_n)
+        e_n1 = system.descriptor_matrix(state_n1)
 
-        z_vector = system.get_costates(
+        z_vector = system.costates(
             state=state_n1,
         )
-        jacobian = 0.5 * system.get_hamiltonian_gradient(
+        jacobian = 0.5 * system.hamiltonian_gradient(
             state=state_n1,
         )
 
-        j_matrix = system.get_structure_matrix()
+        j_matrix = system.structure_matrix()
 
         residuum = (
             e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
@@ -111,14 +111,14 @@ class EulerExplicit(PortHamiltonianIntegrator):
         state_n1 = states.state_n1
         time_step_size = self.manager.time_stepper.current_step.increment
 
-        e_n = system.get_descriptor_matrix(state_n)
-        e_n1 = system.get_descriptor_matrix(state_n1)
+        e_n = system.descriptor_matrix(state_n)
+        e_n1 = system.descriptor_matrix(state_n1)
 
-        z_vector = system.get_costates(
+        z_vector = system.costates(
             state=state_n,
         )
 
-        j_matrix = system.get_structure_matrix()
+        j_matrix = system.structure_matrix()
 
         residuum = (
             e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
@@ -157,9 +157,9 @@ class Midpoint(MultiBodyIntegrator):
         )
 
         try:
-            inv_mass_matrix_n05 = system.get_inverse_mass_matrix(q=q_n05)
+            inv_mass_matrix_n05 = system.inverse_mass_matrix(q=q_n05)
         except AttributeError:
-            mass_matrix_n05 = system.get_mass_matrix(q=q_n05)
+            mass_matrix_n05 = system.mass_matrix(q=q_n05)
             inv_mass_matrix_n05 = np.linalg.inv(mass_matrix_n05)
 
         G_n05 = system.constraint_gradient(q=q_n05)
