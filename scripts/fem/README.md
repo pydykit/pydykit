@@ -24,7 +24,13 @@ with the methods for the temporal integration of `pydykit`.
 We try to answer the question
 "What is the interface to combine `pydykit` with FEM codes?".
 
-There are multiple options, outlined below including sub steps:
+We are usually not interested in separating temporal and spatial evolution.
+Instead we are interested in an
+[monolithic approach](monolithic_wikipedia)
+which combines the temporal and spatial evolution of
+states of different physical quantities, such as positions and velocities.
+
+We see multiple possiböe answers:
 
 - Option 01:
   1. Within a class from `pydykit.systems` we could use a FEM code to assemble a `tangent` and a `residuum`,
@@ -37,15 +43,7 @@ There are multiple options, outlined below including sub steps:
   2. Use the FEM-framework solver
   3. Use the FEM-framework postprocessing
 
-FEM codes, such as
-
-Vocabulary:
-
-- monolithic
-  - https://en.wikipedia.org/wiki/Fluid%E2%80%93structure_interaction#Analysis
-  - https://fenicsproject.org/pub/tutorial/html/._ftut1010.html#ftut1:reactionsystem
-- ## Variational formulation
-  - https://fenicsproject.org/pub/tutorial/html/._ftut1010.html#ftut1:reactionsystem
+[monolithic_wikipedia]: https://en.wikipedia.org/wiki/Fluid%E2%80%93structure_interaction#Analysis
 
 References:
 
