@@ -2,6 +2,7 @@ import abc
 import copy
 import importlib
 
+import numpy as np
 import pandas as pd
 
 from . import utils
@@ -52,13 +53,17 @@ class Postprocessor:
 
     def postprocess(self, dataframe):
         system = self.manager.system
-        self.nbr_time_point = self.manager.time_stepper.nbr_time_points
+        self.nbr_time_point = len(dataframe)
 
         # allocate quantities
+        for quantity in self.configuration["quantity_names"]:
+            globals()[quantity]().create_dataframe(nbr_time_point=self.nbr_time_point)
 
-        # for i in range(NT):
-        #     # extract states of current time
-        #
+        del dataframe["time"]
+        for step_index in range(self.nbr_time_point):
+            row = dataframe.iloc[step_index]
+            state = row.to_numpy()
+
         #   # compute quantities from state of current time and write to preallocated vector
         #   # and write to respective data frame
         #
@@ -80,6 +85,12 @@ class Quantity(abc.ABC):
 
     def __init__(self):
         pass
+
+    def create_dataframe(self, nbr_time_point):
+        self.df = pd.DataFrame(
+            data=np.zeros((nbr_time_point, self.nbr_quantities)),
+            columns=self.names,
+        )
 
 
 class Energy(Quantity):
