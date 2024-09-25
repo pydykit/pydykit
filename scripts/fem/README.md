@@ -21,7 +21,23 @@ with the methods for the temporal integration of `pydykit`.
 
 ## Outline
 
-We try to answer the question: "What is the interface to combine FEM codes with `pydykit`"?
+We try to answer the question
+"What is the interface to combine `pydykit` with FEM codes?".
+
+There are multiple options, outlined below including sub steps:
+
+- Option 01:
+  1. Within a class from `pydykit.systems` we could use a FEM code to assemble a `tangent` and a `residuum`,
+     i.e., `A` and `b` in common pattern `A x = b`.
+  2. `tangent` and `residuum` might then be used to solve for the next state within `pydikit`.
+  3. Afterwards, the new state can be used to update FEM fields within the instance of a `pydykit.systems`-class from step 1.
+  4. Postprocessing option of the FEM code could be utilized from within `pydykit`.
+- Option 02:
+  1. Define the variational forma and constraints in FEM-framework
+  2. Use the FEM-framework solver
+  3. Use the FEM-framework postprocessing
+
+FEM codes, such as
 
 Vocabulary:
 
