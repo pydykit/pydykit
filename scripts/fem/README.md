@@ -21,6 +21,28 @@ with the methods for the temporal integration of `pydykit`.
 
 ## Outline
 
+We try to answer the question: "What is the interface to combine FEM codes with `pydykit`"?
+
+Vocabulary:
+
+- monolithic
+  - https://en.wikipedia.org/wiki/Fluid%E2%80%93structure_interaction#Analysis
+  - https://fenicsproject.org/pub/tutorial/html/._ftut1010.html#ftut1:reactionsystem
+- ## Variational formulation
+  - https://fenicsproject.org/pub/tutorial/html/._ftut1010.html#ftut1:reactionsystem
+
+References:
+
+- [Fenics example elastodynamics](https://fenicsproject.org/olddocs/dolfin/2019.1.0/python/demos/elastodynamics/demo_elastodynamics.py.html)
+- [Fenics tutorial advection-diffusion-reaction](https://fenicsproject.org/pub/tutorial/html/._ftut1010.html#ftut1:reactionsystem)
+- [Fenics course dynamic hyperelasticty](https://fenicsproject.org/pub/course/lectures/2016-04-11-alnaes-simula/lecture_07_dynamic_hyperelasticity.pdf)
+
+## Proof of Concept: Euler-Bernoulli-Beam
+
+References:
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Euler%E2%80%93Bernoulli_beam_theory)
+
 ## Comparison of Python-Based Finite Element Frameworks
 
 - [PyFEM](https://github.com/jjcremmers/PyFEM)
@@ -45,6 +67,32 @@ The content of these POCs could be:
 This is the simplest (kind of real life) mechanical-engineering-like example I can think of.
 
 #### Scikit-fem
+
+From ["JOSS: scikit-fem: A Python package for finite element assembly"](file:///home/julian/Downloads/gustafsson2020scikit-fem.pdf)
+
+"In contrast to NGSolve (Schöberl, 2014), FEniCS (Alnæs et al., 2015), Firedrake (Rathgeber et
+al., 2016), SfePy (Cimrman, Lukeš, & Rohan, 2019), and GetFEM (Renard & Poulios, 2020),
+scikit-fem contains no compiled code making the installation quick and straightforward.
+We specifically target **finite element assembly** instead of encapsulating the entire finite element
+analysis from pre- to postprocessing into a single framework. As a consequence, we cannot
+provide an end-to-end experience when it comes to, e.g., specific physical models or distributed
+computing. Our aim is to be generic in terms of PDEs and, hence, support a variety of finite
+element schemes. Currently scikit-fem includes basic support for H1-, H(div)-, H(curl)-,
+and H2-conforming problems as well as various nonconforming schemes.
+scikit-fem accepts **weak forms that depend on** the values and the derivatives of the trial and
+the test functions, their high-order derivatives, the local mesh parameter, nonuniform material
+or coefficient fields defined at the quadrature points, or any existing finite element solutions.
+Iterations related to, e.g., nonlinear problems (Newton’s method and the variants, parameter
+continuation) or adaptive mesh refinement (evaluation of functionals and the marking strategy)
+should be implemented by the user although we provide basic tools such as interpolation
+routines and conforming mesh refinement, and examples by using them. The same applies to
+boundary conditions: the linear system (A, b) is provided as such and eliminating or penalizing
+the correct degrees-of-freedom, implementing inhomogeneous or periodic boundary conditions
+should be done separately either by using the various helper routines of scikit-fem or by
+other means. scikit-fem has **no explicit support for distributed computing** although it could
+be used as a building block in parallel computations such as parameter sweeps or domain
+decomposition techniques.
+"
 
 ##### Installation
 
