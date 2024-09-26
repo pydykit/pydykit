@@ -131,12 +131,17 @@ class Energy(Quantity):
         ]
 
 
-class Constraints(Quantity):
+class Constraint(Quantity):
     def __init__(self):
         super().__init__()
-        self.nbr_quantities = 2
-        self.dimension = [1, 1]
-        self.functions = [
-            "constraint",
-            "constraint_velocity",
-        ]
+        self.nbr_quantities = 1
+        self.dimension = [1]
+        self.functions = ["constraint"]
+
+
+class Constraint_Velocity(Quantity):
+    def __init__(self):
+        super().__init__()
+        self.nbr_quantities = 1
+        self.dimension = [1]
+        self.functions = ["constraint_velocity"]
