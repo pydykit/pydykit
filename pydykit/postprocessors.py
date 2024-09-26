@@ -67,29 +67,22 @@ class Postprocessor:
 
     def visualize(self, df):
         pd.options.plotting.backend = "plotly"
+
+        for quantity in self.configuration["quantity_names"]:
+            fig = self.create_line_plot(quantity, df)
+            fig.show()
+
+    def create_line_plot(self, quantity, df):
+        quantity_instance = getattr(self, quantity)
+        x_value_identifier = "time"
+        y_value_identifiers = quantity_instance.functions
         fig = df.plot(
-            x="time",
-            y=["total_energy", "kinetic_energy", "potential_energy"],
-            labels=dict(index="time", value="energy"),
+            x=x_value_identifier,
+            y=y_value_identifiers,
+            labels=dict(index=x_value_identifier, value=quantity),
             color_discrete_sequence=self.color_palette,
         )
-        fig.show()
-
-        fig2 = df.plot(
-            x="time",
-            y=["constraint"],
-            labels=dict(index="time", value="constraint"),
-            color_discrete_sequence=self.color_palette,
-        )
-        fig2.show()
-
-        fig3 = df.plot(
-            x="time",
-            y=["constraint_velocity"],
-            labels=dict(index="time", value="constraint_velocity"),
-            color_discrete_sequence=self.color_palette,
-        )
-        fig3.show()
+        return fig
 
     @staticmethod
     def determine_args_dict(function, q, p, lambd):
