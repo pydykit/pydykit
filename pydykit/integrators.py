@@ -22,7 +22,7 @@ class PortHamiltonianIntegrator(abc.ABC):
 class MidpointPH(PortHamiltonianIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
-        states = system.states
+        states = self.manager.states
 
         state_n = states.state_n
         state_n1 = states.state_n1
@@ -73,7 +73,7 @@ class MidpointPH(PortHamiltonianIntegrator):
 class EulerImplicit(PortHamiltonianIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
-        states = system.states
+        states = self.manager.states
 
         state_n = states.state_n
         state_n1 = states.state_n1
@@ -105,7 +105,7 @@ class EulerImplicit(PortHamiltonianIntegrator):
 class EulerExplicit(PortHamiltonianIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
-        states = system.states
+        states = self.manager.states
 
         state_n = states.state_n
         state_n1 = states.state_n1
@@ -194,7 +194,7 @@ class Midpoint(MultiBodyIntegrator):
 
     def calc_residuum_tangent(self):
         system = self.manager.system
-        states = system.states
+        states = self.manager.states
 
         state_n = states.state_n
         state_n1 = states.state_n1

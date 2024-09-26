@@ -3,13 +3,21 @@ import pandas as pd
 
 
 class State:
-    def __init__(self, nbr_states, dim_state, columns):
-        self.columns = columns
+    def __init__(self, manager):
+
+        nbr_states = manager.time_stepper.nbr_time_points
+        dim_state = manager.system.get_dim_state()
+
+        self.columns = manager.system.get_columns()
         self.state = np.zeros((nbr_states, dim_state))
         self.state_n = np.zeros(dim_state)
         self.state_n1 = np.zeros(dim_state)
 
         self.time = np.zeros(nbr_states)
+
+        self.state_n = self.state_n1 = self.state[0, :] = (
+            manager.system.initialize_states()
+        )
 
     def to_df(self):
         df = pd.DataFrame(

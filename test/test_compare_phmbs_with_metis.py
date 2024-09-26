@@ -34,11 +34,8 @@ class TestCompareWithMetis:
 
         manager = pydykit.Manager(content_config_file=content_config_file)
 
-        manager.system.initialize()
-
         # intermediate steps if conversion to PH system is necessary
         porthamiltonian_system = pydykit.systems.PortHamiltonianMBS(manager=manager)
-        porthamiltonian_system.initialize(MultiBodySystem=manager.system)
         # creates an instance of PHS with attribute MBS
         manager.system = porthamiltonian_system
 

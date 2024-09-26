@@ -2,6 +2,8 @@ import abc
 
 import numpy as np
 
+import pydykit
+
 from . import utils
 
 
@@ -22,12 +24,8 @@ class Newton(Solver):
         system = self.manager.system
         time_stepper = self.manager.time_stepper
 
-        if system.initialized:
-            pass
-        else:
-            system.initialize()
-
-        states = system.states
+        states = pydykit.states.State(manager=self.manager)
+        self.manager.states = states
 
         # Initialze the time stepper
         steps = time_stepper.make_steps()
@@ -57,7 +55,7 @@ class Newton(Solver):
         return states
 
     def newton_update(self):
-        states = self.manager.system.states
+        states = self.manager.states
 
         residual_norm = 1e5
         index_iteration = 0

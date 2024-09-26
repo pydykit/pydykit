@@ -42,8 +42,6 @@ class TestCompareWithMetis:
 
         manager = pydykit.Manager(content_config_file=content_config_file)
 
-        manager.system.initialize()
-
         result = manager.manage()
 
         reference = utils.load_result_of_metis_simulation(

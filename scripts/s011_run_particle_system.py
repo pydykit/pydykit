@@ -9,7 +9,7 @@ manager = pydykit.Manager(path_config_file=f"./pydykit/example_files/{name}.yml"
 
 result = manager.manage()
 
-q, p, lambd = manager.system.decompose_state(manager.system.states.state_n)
+q, p, lambd = manager.system.decompose_state(manager.states.state_n)
 tmp = manager.system.internal_potential(q=q)
 print(tmp)
 
