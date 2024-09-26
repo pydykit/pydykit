@@ -6,6 +6,8 @@ import inspect
 import numpy as np
 import pandas as pd
 
+import pydykit
+
 from . import utils
 
 
@@ -34,9 +36,9 @@ class Postprocessor:
         # color scheme (color-blind friendly)
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
 
-    def postprocess(self, dataframe):
+    def postprocess(self, df):
         system = self.manager.system
-        self.nbr_time_point = len(dataframe)
+        self.nbr_time_point = len(df)
 
         for quantity in self.configuration["quantity_names"]:
             quantity_instance = getattr(self, quantity)
@@ -51,33 +53,32 @@ class Postprocessor:
                 quantity_instance = getattr(self, quantity)
                 for function in function_list:
                     system_function = getattr(system, function)
-                    args_list = inspect.getfullargspec(system_function)[0]
-                    args_list.remove("self")
-                    if args_list == ["q", "p"]:
-                        z = [q, p]
-                    elif args_list == ["q"]:
-                        z = [q]
-                    elif args_list == ["p"]:
-                        z = [p]
-                    else:
-                        raise Exception("Not implemented")
-
-                    input_dict = dict(zip(args_list, z))
+                    input_dict = self.determine_args_dict(system_function, q, p, lambd)
                     quantity_instance.df.at[step_index, function] = system_function(
                         **input_dict
                     )
 
-        # # create new_df
-        #     self.df = merge all dataframes
-        #
-        # merge with input dataframe
-
-        # return merged dataframe
+        # merg dataframe
         for quantity in self.configuration["quantity_names"]:
             quantity_instance = getattr(self, quantity)
-            dataframe = pd.concat([dataframe, quantity_instance.df], axis=1)
+            df = pd.concat([df, quantity_instance.df], axis=1)
 
-        return dataframe
+        return df
+
+    @staticmethod
+    def determine_args_dict(function, q, p, lambd):
+        args_list = inspect.getfullargspec(function)[0]
+        args_list.remove("self")
+        if args_list == ["q", "p"]:
+            z = [q, p]
+        elif args_list == ["q"]:
+            z = [q]
+        elif args_list == ["p"]:
+            z = [p]
+        else:
+            raise Exception("Not implemented")
+
+        return dict(zip(args_list, z))
 
 
 class Quantity(abc.ABC):
