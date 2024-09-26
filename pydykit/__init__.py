@@ -1,2 +1,2 @@
-from . import plotting
-from .core import *
+from . import managers, plotting
+from .core import Manager
