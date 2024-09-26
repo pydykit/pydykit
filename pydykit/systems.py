@@ -7,11 +7,11 @@ from scipy.linalg import block_diag
 from . import operators, states, utils
 
 
-class PortHamiltonianSystem(abc.ABC):
+class AbstractMultiBodySystem(abc.ABC):
+
+    @abc.abstractmethod
     def __init__(self, manager, **kwargs):
-        self.manager = manager
-        self.__dict__.update(kwargs)
-        self.initialized = False
+        pass
 
     @abc.abstractmethod
     def initialize(self):
@@ -26,182 +26,75 @@ class PortHamiltonianSystem(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def costates(self, state):
+    def mass_matrix(self, q):
         pass
 
     @abc.abstractmethod
-    def hamiltonian(self, state):
+    def inverse_mass_matrix(self, q):
         pass
 
     @abc.abstractmethod
-    def hamiltonian_gradient(self, state):
+    def kinetic_energy(self, q, p):
         pass
 
     @abc.abstractmethod
-    def structure_matrix(self):
+    def kinetic_energy_gradient_from_momentum(self, q, p):
         pass
 
     @abc.abstractmethod
-    def descriptor_matrix(self, state):
+    def kinetic_energy_gradient_from_velocity(self, q, v):
         pass
 
     @abc.abstractmethod
-    def dissipation_matrix(self, state):
+    def external_potential(self, q):
         pass
 
     @abc.abstractmethod
-    def port_matrix(self, state):
+    def external_potential_gradient(self, q):
         pass
 
     @abc.abstractmethod
-    def input(self):
+    def internal_potential(self, q):
         pass
 
-    def output(self, state):
-        return self.port_matrix.T @ self.input(state)
-
-
-class Pendulum2D(PortHamiltonianSystem):
-
-    def initialize(self):
-
-        self.states = states.State(
-            nbr_states=self.manager.time_stepper.nbr_time_points,
-            dim_state=2,
-            columns=["angle", "velocity"],
-        )
-        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = np.array(
-            self.initial_state
-        )
-
-        self.initialized = True
-
-    def decompose_state(self, state):
-        decomposed_state = namedtuple("state", "q v")
-        return decomposed_state(
-            q=state[0],
-            v=state[1],
-        )
-
-    def compose_state(self):
+    @abc.abstractmethod
+    def internal_potential_gradient(self, q):
         pass
 
-    def costates(self, state):
-        q, v = self.decompose_state(state=state)
-        return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
-
-    def hamiltonian(self, state):
+    @abc.abstractmethod
+    def potential_energy(self, q):
         pass
 
-    def hamiltonian_gradient(self, state):
-        q, v = self.decompose_state(state=state)
-        return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
-
-    def structure_matrix(self, state):
-        return np.array([[0, 1], [-1, 0]])
-
-    def descriptor_matrix(self, state):
-        return np.diag([1, self.mass * self.length**2])
-
-    def port_matrix(self, state):
+    @abc.abstractmethod
+    def potential_energy_gradient(self, q):
         pass
 
-    def input(self):
+    @abc.abstractmethod
+    def total_energy(self, q, p):
         pass
 
-    def dissipation_matrix(self, state):
+    @abc.abstractmethod
+    def constraint(self, q):
+        pass
+
+    @abc.abstractmethod
+    def constraint_gradient(self, q):
+        pass
+
+    @abc.abstractmethod
+    def constraint_velocity(self, q, p):
+        pass
+
+    @abc.abstractmethod
+    def dissipation_matrix(self, q, v):
+        pass
+
+    @abc.abstractmethod
+    def rayleigh_dissipation(self, q, v):
         pass
 
 
-class PortHamiltonianMBS(PortHamiltonianSystem):
-
-    def initialize(self, MultiBodySystem):
-
-        self.mbs = MultiBodySystem
-
-        self.states = MultiBodySystem.states
-
-        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
-            self.mbs.compose_state(
-                q=np.array(self.mbs.initial_state["Q"]),
-                p=np.array(self.mbs.initial_state["V"]),
-                lambd=np.zeros(self.mbs.nbr_constraints),
-            )
-        )
-
-        self.initialized = True
-
-    def decompose_state(self, state):
-        decomposed_MBS_state = self.mbs.decompose_state(state)
-        decomposed_state = namedtuple("state", "q v lambd")
-        return decomposed_state(
-            q=decomposed_MBS_state.q,
-            v=decomposed_MBS_state.p,
-            lambd=decomposed_MBS_state.lambd,
-        )
-        pass
-
-    def compose_state(self):
-        utils.pydykitException("not implemented")
-        pass
-
-    def costates(self, state):
-        decomposed_state = self.decompose_state(state)
-        potential_forces = self.mbs.external_potential_gradient(
-            decomposed_state.q
-        ) + self.mbs.internal_potential_gradient(decomposed_state.q)
-
-        return np.hstack([potential_forces, decomposed_state.v, decomposed_state.lambd])
-
-    def hamiltonian_gradient(self, state):
-        decomposed_state = self.decompose_state(state)
-
-        return self.mbs.external_potential_gradient(
-            decomposed_state.q
-        ) + self.mbs.internal_potential_gradient(decomposed_state.q)
-
-    def structure_matrix(self, state):
-        decomposed_state = self.decompose_state(state)
-        q = decomposed_state.q
-        v = decomposed_state.v
-        lambd = decomposed_state.lambd
-        G = self.mbs.constraint_gradient(q)
-
-        return np.block(
-            [
-                [
-                    np.zeros((len(q), len(q))),
-                    np.eye(len(q)),
-                    np.zeros((len(q), len(lambd))),
-                ],
-                [-np.eye(len(v)), np.zeros((len(v), len(v))), -G.T],
-                [np.zeros((len(lambd), len(q))), G, np.zeros((len(lambd), len(lambd)))],
-            ]
-        )
-
-    def descriptor_matrix(self, state):
-        identity_mat = np.eye(self.mbs.nbr_dof)
-        decomposed_state = self.decompose_state(state)
-        mass_matrix = self.mbs.mass_matrix(decomposed_state.q)
-        zeros_matrix = np.zeros((self.mbs.nbr_constraints, self.mbs.nbr_constraints))
-        descriptor_matrix = block_diag(identity_mat, mass_matrix, zeros_matrix)
-
-        return descriptor_matrix
-
-    def hamiltonian(self, state):
-        pass
-
-    def port_matrix(self, state):
-        pass
-
-    def input(self):
-        pass
-
-    def dissipation_matrix(self, state):
-        pass
-
-
-class MultiBodySystem(abc.ABC):
+class MultiBodySystem(AbstractMultiBodySystem):
     def __init__(self, manager, **kwargs):
         self.manager = manager
         self.__dict__.update(kwargs)
@@ -902,3 +795,252 @@ class ParticleSystem(MultiBodySystem):
     def dissipation_matrix(self, q, v):
         diss_mat = np.zeros(q.shape, q.shape)
         return diss_mat
+
+
+class AbstractPortHamiltonianSystem(abc.ABC):
+
+    @abc.abstractmethod
+    def __init__(self, manager, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def initialize(self):
+        pass
+
+    @abc.abstractmethod
+    def decompose_state(self):
+        pass
+
+    @abc.abstractmethod
+    def compose_state(self):
+        pass
+
+    @abc.abstractmethod
+    def costates(self, state):
+        pass
+
+    @abc.abstractmethod
+    def hamiltonian(self, state):
+        pass
+
+    @abc.abstractmethod
+    def hamiltonian_gradient(self, state):
+        pass
+
+    @abc.abstractmethod
+    def structure_matrix(self):
+        pass
+
+    @abc.abstractmethod
+    def descriptor_matrix(self, state):
+        pass
+
+    @abc.abstractmethod
+    def dissipation_matrix(self, state):
+        pass
+
+    @abc.abstractmethod
+    def port_matrix(self, state):
+        pass
+
+    @abc.abstractmethod
+    def input(self):
+        pass
+
+    @abc.abstractmethod
+    def output(self, state):
+        pass
+
+
+class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
+    def __init__(self, manager, **kwargs):
+        self.manager = manager
+        self.__dict__.update(kwargs)
+        self.initialized = False
+
+    @abc.abstractmethod
+    def initialize(self):
+        pass
+
+    @abc.abstractmethod
+    def decompose_state(self):
+        pass
+
+    @abc.abstractmethod
+    def compose_state(self):
+        pass
+
+    @abc.abstractmethod
+    def costates(self, state):
+        pass
+
+    @abc.abstractmethod
+    def hamiltonian(self, state):
+        pass
+
+    @abc.abstractmethod
+    def hamiltonian_gradient(self, state):
+        pass
+
+    @abc.abstractmethod
+    def structure_matrix(self):
+        pass
+
+    @abc.abstractmethod
+    def descriptor_matrix(self, state):
+        pass
+
+    @abc.abstractmethod
+    def dissipation_matrix(self, state):
+        pass
+
+    @abc.abstractmethod
+    def port_matrix(self, state):
+        pass
+
+    @abc.abstractmethod
+    def input(self):
+        pass
+
+    def output(self, state):
+        return self.port_matrix.T @ self.input(state)
+
+
+class Pendulum2D(PortHamiltonianSystem):
+
+    def initialize(self):
+
+        self.states = states.State(
+            nbr_states=self.manager.time_stepper.nbr_time_points,
+            dim_state=2,
+            columns=["angle", "velocity"],
+        )
+        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = np.array(
+            self.initial_state
+        )
+
+        self.initialized = True
+
+    def decompose_state(self, state):
+        decomposed_state = namedtuple("state", "q v")
+        return decomposed_state(
+            q=state[0],
+            v=state[1],
+        )
+
+    def compose_state(self):
+        pass
+
+    def costates(self, state):
+        q, v = self.decompose_state(state=state)
+        return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
+
+    def hamiltonian(self, state):
+        pass
+
+    def hamiltonian_gradient(self, state):
+        q, v = self.decompose_state(state=state)
+        return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
+
+    def structure_matrix(self, state):
+        return np.array([[0, 1], [-1, 0]])
+
+    def descriptor_matrix(self, state):
+        return np.diag([1, self.mass * self.length**2])
+
+    def port_matrix(self, state):
+        pass
+
+    def input(self):
+        pass
+
+    def dissipation_matrix(self, state):
+        pass
+
+
+class PortHamiltonianMBS(PortHamiltonianSystem):
+
+    def initialize(self, MultiBodySystem):
+
+        self.mbs = MultiBodySystem
+
+        self.states = MultiBodySystem.states
+
+        self.states.state_n = self.states.state_n1 = self.states.state[0, :] = (
+            self.mbs.compose_state(
+                q=np.array(self.mbs.initial_state["Q"]),
+                p=np.array(self.mbs.initial_state["V"]),
+                lambd=np.zeros(self.mbs.nbr_constraints),
+            )
+        )
+
+        self.initialized = True
+
+    def decompose_state(self, state):
+        decomposed_MBS_state = self.mbs.decompose_state(state)
+        decomposed_state = namedtuple("state", "q v lambd")
+        return decomposed_state(
+            q=decomposed_MBS_state.q,
+            v=decomposed_MBS_state.p,
+            lambd=decomposed_MBS_state.lambd,
+        )
+        pass
+
+    def compose_state(self):
+        utils.pydykitException("not implemented")
+        pass
+
+    def costates(self, state):
+        decomposed_state = self.decompose_state(state)
+        potential_forces = self.mbs.external_potential_gradient(
+            decomposed_state.q
+        ) + self.mbs.internal_potential_gradient(decomposed_state.q)
+
+        return np.hstack([potential_forces, decomposed_state.v, decomposed_state.lambd])
+
+    def hamiltonian_gradient(self, state):
+        decomposed_state = self.decompose_state(state)
+
+        return self.mbs.external_potential_gradient(
+            decomposed_state.q
+        ) + self.mbs.internal_potential_gradient(decomposed_state.q)
+
+    def structure_matrix(self, state):
+        decomposed_state = self.decompose_state(state)
+        q = decomposed_state.q
+        v = decomposed_state.v
+        lambd = decomposed_state.lambd
+        G = self.mbs.constraint_gradient(q)
+
+        return np.block(
+            [
+                [
+                    np.zeros((len(q), len(q))),
+                    np.eye(len(q)),
+                    np.zeros((len(q), len(lambd))),
+                ],
+                [-np.eye(len(v)), np.zeros((len(v), len(v))), -G.T],
+                [np.zeros((len(lambd), len(q))), G, np.zeros((len(lambd), len(lambd)))],
+            ]
+        )
+
+    def descriptor_matrix(self, state):
+        identity_mat = np.eye(self.mbs.nbr_dof)
+        decomposed_state = self.decompose_state(state)
+        mass_matrix = self.mbs.mass_matrix(decomposed_state.q)
+        zeros_matrix = np.zeros((self.mbs.nbr_constraints, self.mbs.nbr_constraints))
+        descriptor_matrix = block_diag(identity_mat, mass_matrix, zeros_matrix)
+
+        return descriptor_matrix
+
+    def hamiltonian(self, state):
+        pass
+
+    def port_matrix(self, state):
+        pass
+
+    def input(self):
+        pass
+
+    def dissipation_matrix(self, state):
+        pass
