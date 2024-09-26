@@ -580,13 +580,12 @@ class FourParticleSystem(MultiBodySystem):
         )
 
     def mass_matrix(self, q):
-        diagonal_elements = np.concatenate(
-            (
-                self.masses[0] * np.ones(self.nbr_spatial_dimensions),
-                self.masses[1] * np.ones(self.nbr_spatial_dimensions),
-                self.masses[2] * np.ones(self.nbr_spatial_dimensions),
-                self.masses[3] * np.ones(self.nbr_spatial_dimensions),
-            )
+        diagonal_elements = np.repeat(self.masses, self.nbr_spatial_dimensions)
+        return np.diag(diagonal_elements)
+
+    def inverse_mass_matrix(self, q):
+        diagonal_elements = np.reciprocal(
+            np.repeat(self.masses, self.nbr_spatial_dimensions).astype(float)
         )
         return np.diag(diagonal_elements)
 
@@ -749,6 +748,12 @@ class ParticleSystem(MultiBodySystem):
 
     def mass_matrix(self, q):
         diagonal_elements = np.repeat(self.masses, self.nbr_spatial_dimensions)
+        return np.diag(diagonal_elements)
+
+    def inverse_mass_matrix(self, q):
+        diagonal_elements = np.reciprocal(
+            np.repeat(self.masses, self.nbr_spatial_dimensions).astype(float)
+        )
         return np.diag(diagonal_elements)
 
     def kinetic_energy_gradient_from_momentum(self, q, p):
