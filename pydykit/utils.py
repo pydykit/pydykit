@@ -2,6 +2,27 @@ import numpy as np
 import yaml
 
 
+def update_object_from_config_file(obj, path_config_file, content_config_file):
+    if (path_config_file is not None) and (content_config_file is not None):
+        raise PydykitException(
+            "Did receive both path_config_file and content_config_file. "
+            + "Supply either path_config_file or content_config_file, not both"
+        )
+    elif path_config_file is not None:
+        obj.path_config_file = path_config_file
+        obj.content_config_file = load_yaml_file(path=obj.path_config_file)
+    elif content_config_file is not None:
+        obj.content_config_file = content_config_file
+    else:
+        raise PydykitException(
+            "Did not receive kwargs. "
+            + "Supply either path_config_file or content_config_file"
+        )
+
+    obj.name = obj.content_config_file["name"]
+    obj.configuration = obj.content_config_file["configuration"]
+
+
 def load_yaml_file(path):
     with open(path, "r") as file:
         content = yaml.safe_load(file)

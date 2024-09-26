@@ -13,24 +13,9 @@ class Postprocessor:
 
     def __init__(self, manager, path_config_file=None, content_config_file=None):
 
-        if (path_config_file is not None) and (content_config_file is not None):
-            raise utils.pydykitException(
-                "Did receive both path_config_file and content_config_file. "
-                + "Supply either path_config_file or content_config_file, not both"
-            )
-        elif path_config_file is not None:
-            self.path_config_file = path_config_file
-            self.content_config_file = utils.load_yaml_file(path=self.path_config_file)
-        elif content_config_file is not None:
-            self.content_config_file = content_config_file
-        else:
-            raise utils.pydykitException(
-                "Did not receive kwargs. "
-                + "Supply either path_config_file or content_config_file"
-            )
-
-        self.name = self.content_config_file["name"]
-        self.configuration = self.content_config_file["configuration"]
+        utils.update_object_from_config_file(
+            self, path_config_file, content_config_file
+        )
 
         for quantity in self.configuration["quantity_names"]:
             quantity_instance = globals()[quantity]()
