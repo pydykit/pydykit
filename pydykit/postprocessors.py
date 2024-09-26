@@ -35,7 +35,6 @@ class Postprocessor:
         for quantity in self.configuration["quantity_names"]:
             quantity_instance = globals()[quantity]()
             setattr(self, quantity, quantity_instance)
-            pass
 
         self.manager = manager
         self.color_palette = [
