@@ -286,10 +286,6 @@ class MultiBodySystem(abc.ABC):
     def rayleigh_dissipation(self, q, v):
         return 0.5 * v.T @ self.dissipation_matrix(q=q, v=v) @ v
 
-    @abc.abstractmethod
-    def angular_momentum(self, q, p):
-        pass
-
 
 class Pendulum3DCartesian(MultiBodySystem):
 
