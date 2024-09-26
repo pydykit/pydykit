@@ -16,7 +16,7 @@ result = manager.manage()
 print("Success, start plotting")
 
 df = result.to_df()
-df.to_csv("scratch/export_results/pendulum_3d_cartesian.csv")
+df.to_csv("scratch/export_results/pendulum_3d_cartesian.csv", index=False)
 
 relative_postprocess_config_file_path = (
     "../pydykit/example_postprocessing_input/pendulum_3d_cartesian.yml"
@@ -31,6 +31,6 @@ postprocessor = postprocessors.Postprocessor(
 )
 df = postprocessor.postprocess(df=df)
 
-df.to_csv("scratch/export_results/pendulum_3d_cartesian.csv")
+df.to_csv("scratch/export_results/pendulum_3d_cartesian.csv", index=False)
 df = pd.read_csv("scratch/export_results/pendulum_3d_cartesian.csv")
 postprocessor.visualize(df=df)

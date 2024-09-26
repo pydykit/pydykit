@@ -75,6 +75,22 @@ class Postprocessor:
         )
         fig.show()
 
+        fig2 = df.plot(
+            x="time",
+            y=["constraint"],
+            labels=dict(index="time", value="constraint"),
+            color_discrete_sequence=self.color_palette,
+        )
+        fig2.show()
+
+        fig3 = df.plot(
+            x="time",
+            y=["constraint_velocity"],
+            labels=dict(index="time", value="constraint_velocity"),
+            color_discrete_sequence=self.color_palette,
+        )
+        fig3.show()
+
     @staticmethod
     def determine_args_dict(function, q, p, lambd):
         args_list = inspect.getfullargspec(function)[0]
