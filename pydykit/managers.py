@@ -1,15 +1,28 @@
 import copy
 
-from . import configuration, integrators, solvers, systems, time_steppers
+from . import integrators, solvers, systems, time_steppers, utils
+from .configuration import Configuration
 
 
 class Manager:
 
     def configure(
         self,
-        configuration: configuration.Configuration,
+        configuration: Configuration,
     ):
+        self._configure(configuration=configuration)
 
+    def configure_from_path(self, path):
+        file_content = utils.load_yaml_file(
+            path=path,
+        )
+        configuration = Configuration(
+            **file_content["configuration"],
+        )
+
+        self._configure(configuration=configuration)
+
+    def _configure(self, configuration):
         self.configuration = configuration
 
         self.system = self._set_system()
