@@ -5,10 +5,16 @@ from . import utils
 
 
 class Manager:
-    def __init__(self, path_config_file=None, content_config_file=None):
+    def __init__(
+        self,
+        path_config_file=None,
+        content_config_file=None,
+    ):
 
         utils.update_object_from_config_file(
-            self, path_config_file, content_config_file
+            obj=self,
+            path_config_file=path_config_file,
+            content_config_file=content_config_file,
         )
 
         self.instantiate_classes()
