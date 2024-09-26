@@ -186,10 +186,10 @@ class Pendulum3DCartesian(MultiBodySystem):
             lambd=np.zeros(self.nbr_constraints),
         )
 
-    def get_dim_state(self):
+    def get_state_dimensions(self):
         return 2 * self.nbr_spatial_dimensions + self.nbr_constraints
 
-    def get_columns(self):
+    def get_state_columns(self):
         return [
             "x",
             "y",
@@ -280,10 +280,10 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             lambd=np.zeros(self.nbr_constraints),
         )
 
-    def get_dim_state(self):
+    def get_state_dimensions(self):
         return 2 * self.nbr_dof + self.nbr_constraints
 
-    def get_columns(self):
+    def get_state_columns(self):
         return [
             "q0",
             "q1",
@@ -411,12 +411,12 @@ class FourParticleSystem(MultiBodySystem):
             lambd=np.zeros(self.nbr_constraints),
         )
 
-    def get_dim_state(self):
+    def get_state_dimensions(self):
         return (
             2 * self.nbr_spatial_dimensions * self.nbr_particles + self.nbr_constraints
         )
 
-    def get_columns(self):
+    def get_state_columns(self):
         return [
             "x1",
             "y1",
@@ -596,10 +596,10 @@ class ParticleSystem(MultiBodySystem):
             lambd=np.zeros(self.nbr_constraints),
         )
 
-    def get_dim_state(self):
+    def get_state_dimensions(self):
         return 2 * self.nbr_dof + self.nbr_constraints
 
-    def get_columns(self):
+    def get_state_columns(self):
         return [
             f"{prefix}{letter}{utils.shift_index_python_to_literature(number)}"
             for prefix in ["", "d"]
@@ -898,10 +898,10 @@ class Pendulum2D(PortHamiltonianSystem):
 
         return np.array(self.initial_state)
 
-    def get_dim_state(self):
+    def get_state_dimensions(self):
         return 2
 
-    def get_columns(self):
+    def get_state_columns(self):
         return [
             "angle",
             "velocity",
@@ -958,11 +958,11 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
             lambd=np.zeros(self.mbs.nbr_constraints),
         )
 
-    def get_dim_state(self):
-        return self.mbs.get_dim_state()
+    def get_state_dimensions(self):
+        return self.mbs.get_state_dimensions()
 
-    def get_columns(self):
-        return self.mbs.get_columns()
+    def get_state_columns(self):
+        return self.mbs.get_state_columns()
 
     def decompose_state(self, state):
         decomposed_MBS_state = self.mbs.decompose_state(state)
