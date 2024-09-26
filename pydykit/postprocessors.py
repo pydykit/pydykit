@@ -54,6 +54,7 @@ class Postprocessor:
                 for function in function_list:
                     system_function = getattr(system, function)
                     input_dict = self.determine_args_dict(system_function, q, p, lambd)
+                    # if quantity_instance.
                     quantity_instance.df.at[step_index, function] = system_function(
                         **input_dict
                     )
@@ -107,7 +108,7 @@ class Quantity(abc.ABC):
 
     def create_dataframe(self, nbr_time_point):
         self.df = pd.DataFrame(
-            data=np.zeros((nbr_time_point, self.nbr_quantities)),
+            data=np.zeros((nbr_time_point, sum(self.dimension))),
             columns=self.functions,
         )
 
@@ -115,7 +116,6 @@ class Quantity(abc.ABC):
 class Energy(Quantity):
     def __init__(self):
         super().__init__()
-        self.nbr_quantities = 3
         self.dimension = [1, 1, 1]
         self.functions = [
             "kinetic_energy",
@@ -127,7 +127,6 @@ class Energy(Quantity):
 class Constraint(Quantity):
     def __init__(self):
         super().__init__()
-        self.nbr_quantities = 1
         self.dimension = [1]
         self.functions = ["constraint"]
 
@@ -135,6 +134,12 @@ class Constraint(Quantity):
 class Constraint_Velocity(Quantity):
     def __init__(self):
         super().__init__()
-        self.nbr_quantities = 1
         self.dimension = [1]
         self.functions = ["constraint_velocity"]
+
+
+class Angular_Momentum(Quantity):
+    def __init__(self):
+        super().__init__()
+        self.dimension = [3]
+        self.functions = ["angular_momentum"]
