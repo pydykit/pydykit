@@ -904,8 +904,8 @@ class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
 
 class Pendulum2D(PortHamiltonianSystem):
 
-    def __init__(self, manager):
-        super().__init__(manager)
+    def __init__(self, manager, **kwargs):
+        super().__init__(manager, **kwargs)
 
     def initialize_states(self):
 
