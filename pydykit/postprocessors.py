@@ -42,7 +42,6 @@ class Postprocessor:
             quantity_instance = getattr(self, quantity)
             quantity_instance.create_dataframe(nbr_time_point=self.nbr_time_point)
 
-        del dataframe["time"]
         for step_index in range(self.nbr_time_point):
             row = dataframe.iloc[step_index]
             state = row.to_numpy()
@@ -55,7 +54,6 @@ class Postprocessor:
                     system_function = getattr(system, function)
                     args_list = inspect.getfullargspec(system_function)[0]
                     args_list.remove("self")
-                    print(args_list)
                     if args_list == ["q", "p"]:
                         z = [q, p]
                     elif args_list == ["q"]:
