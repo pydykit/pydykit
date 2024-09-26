@@ -43,8 +43,7 @@ class Postprocessor:
             quantity_instance.create_dataframe(nbr_time_point=self.nbr_time_point)
 
         for step_index in range(self.nbr_time_point):
-            row = dataframe.iloc[step_index]
-            state = row.to_numpy()
+            state = pydykit.states.State.from_df(df, step_index)
             q, p, lambd = system.decompose_state(state)
 
             for quantity in self.configuration["quantity_names"]:

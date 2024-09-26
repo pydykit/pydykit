@@ -18,3 +18,9 @@ class State:
         )
         df["time"] = self.time
         return df
+
+    @staticmethod
+    def from_df(df, step_index):
+        row = df.iloc[step_index]
+        row = row.drop("time")
+        return row.to_numpy()
