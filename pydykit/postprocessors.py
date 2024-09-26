@@ -65,6 +65,16 @@ class Postprocessor:
 
         return df
 
+    def visualize(self, df):
+        pd.options.plotting.backend = "plotly"
+        fig = df.plot(
+            x="time",
+            y=["total_energy", "kinetic_energy", "potential_energy"],
+            labels=dict(index="time", value="energy"),
+            color_discrete_sequence=self.color_palette,
+        )
+        fig.show()
+
     @staticmethod
     def determine_args_dict(function, q, p, lambd):
         args_list = inspect.getfullargspec(function)[0]
