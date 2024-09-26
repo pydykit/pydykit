@@ -6,10 +6,7 @@ from .configuration import Configuration
 
 class Manager:
 
-    def configure(
-        self,
-        configuration: Configuration,
-    ):
+    def configure(self, configuration: Configuration):
         self._configure(configuration=configuration)
 
     def configure_from_path(self, path):
