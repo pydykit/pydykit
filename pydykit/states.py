@@ -62,7 +62,7 @@ class State:
     def build_state_vector(self):
 
         if not hasattr(self.manager.integrator, "variable_names"):
-            return np.array(list(self.initial_state.values())).flatten()
+            return np.hstack(list(self.initial_state.values()))
         else:
             list_of_lists = [
                 self.initial_state[var]
