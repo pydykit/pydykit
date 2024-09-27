@@ -40,8 +40,11 @@ class TestCompareWithMetis:
     @pytest.mark.slow
     def test_run(self, content_config_file, name, result_indices):
 
-        manager = pydykit.Manager(content_config_file=content_config_file)
-
+        manager = pydykit.managers.Manager()
+        configuration = pydykit.configuration.Configuration(
+            **content_config_file["configuration"],
+        )
+        manager._configure(configuration=configuration)
         result = manager.manage()
 
         reference = utils.load_result_of_metis_simulation(

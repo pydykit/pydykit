@@ -5,10 +5,10 @@ import tikzplotly
 
 import pydykit
 
-manager = pydykit.Manager(
-    path_config_file="./pydykit/example_files/four_particle_system.yml"
-)
-
+manager = pydykit.managers.Manager()
+name = "four_particle_system"
+path_config_file = f"./pydykit/example_files/{name}.yml"
+manager.configure_from_path(path=path_config_file)
 result = manager.manage()
 
 df = result.to_df()
@@ -46,8 +46,3 @@ pydykit.plotting.plot_3d_trajectory(
 fig.update_layout(font_family="Serif")
 
 fig.show()
-
-if not os.path.exists("images"):
-    os.mkdir("images")
-
-tikzplotly.save("images/example.tex", fig)
