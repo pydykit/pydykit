@@ -1,7 +1,7 @@
 import pydykit
 
-manager = pydykit.Manager(
-    path_config_file="./pydykit/example_files/rigid_body_rotating_quaternion.yml"
-)
-
-results = manager.manage()
+manager = pydykit.managers.Manager()
+name = "rigid_body_rotating_quaternion"
+path_config_file = f"./pydykit/example_files/{name}.yml"
+manager.configure_from_path(path=path_config_file)
+result = manager.manage()

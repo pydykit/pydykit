@@ -559,8 +559,21 @@ class FourParticleSystem(MultiBodySystem):
 
 class ParticleSystem(MultiBodySystem):
 
-    def __init__(self, manager, **kwargs):
-        super().__init__(manager, **kwargs)
+    def __init__(
+        self,
+        manager,
+        nbr_spatial_dimensions: int,
+        particles: list[dict,],
+        springs: list[dict,],
+        constraints: list[dict,],
+    ):
+
+        self.nbr_spatial_dimensions = nbr_spatial_dimensions
+        self.particles = particles
+        self.springs = springs
+        self.constraints = constraints
+
+        super().__init__(manager)
         self.nbr_constraints = len(self.constraints)
         self.particles = utils.sort_list_of_dicts_based_on_special_value(
             my_list=self.particles,

@@ -5,8 +5,11 @@ import pydykit
 # name = "particle_system_01"
 name = "particle_system_02"
 
-manager = pydykit.Manager(path_config_file=f"./pydykit/example_files/{name}.yml")
+manager = pydykit.managers.Manager()
 
+path_config_file = f"./pydykit/example_files/{name}.yml"
+
+manager.configure_from_path(path=path_config_file)
 result = manager.manage()
 
 q, p, lambd = manager.system.decompose_state(manager.states.state_n)

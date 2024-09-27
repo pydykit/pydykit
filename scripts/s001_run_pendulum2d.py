@@ -3,10 +3,15 @@ import numpy as np
 
 import pydykit
 
-manager = pydykit.Manager(path_config_file="./pydykit/example_files/pendulum_2d.yml")
+manager = pydykit.managers.Manager()
+
+name = "pendulum_2d"
+path_config_file = f"./pydykit/example_files/{name}.yml"
+
+manager.configure_from_path(path=path_config_file)
+
 result = manager.manage()
 df = result.to_df()
-# df.to_csv("test/reference_results/pendulum_2d.csv")
 
 print(result)
 

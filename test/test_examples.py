@@ -34,7 +34,13 @@ class TestExamples:
         ),
     )
     def test_run_examples(self, content_config_file, expected_result_df):
-        manager = pydykit.Manager(content_config_file=content_config_file)
+
+        manager = pydykit.managers.Manager()
+        configuration = pydykit.configuration.Configuration(
+            **content_config_file["configuration"],
+        )
+        manager._configure(configuration=configuration)
+
         result = manager.manage()
         old = expected_result_df
         new = result.to_df()
