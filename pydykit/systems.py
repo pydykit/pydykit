@@ -4,13 +4,13 @@ from collections import namedtuple
 import numpy as np
 from scipy.linalg import block_diag
 
-from . import operators, states, utils
+from . import managers, operators, states, utils
 
 
 class AbstractMultiBodySystem(abc.ABC):
 
     @abc.abstractmethod
-    def __init__(self, manager, **kwargs):
+    def __init__(self):
         pass
 
     @abc.abstractmethod
@@ -91,10 +91,23 @@ class AbstractMultiBodySystem(abc.ABC):
 
 
 class MultiBodySystem(AbstractMultiBodySystem):
-    def __init__(self, manager, **kwargs):
+    def __init__(
+        self,
+        manager,
+        nbr_spatial_dimensions: int,
+        nbr_constraints: int,
+        nbr_dof: int,
+        mass: float,
+        gravity: list[float,],
+        initial_state: list[dict,],
+    ):
         self.manager = manager
-        self.__dict__.update(kwargs)
-        self.initialized = False
+        self.nbr_spatial_dimensions = nbr_spatial_dimensions
+        self.nbr_constraints = nbr_constraints
+        self.nbr_dof = nbr_dof
+        self.mass = mass
+        self.gravity = gravity
+        self.initial_state = initial_state
 
     @abc.abstractmethod
     def decompose_state(self):
@@ -174,8 +187,27 @@ class MultiBodySystem(AbstractMultiBodySystem):
 
 class Pendulum3DCartesian(MultiBodySystem):
 
-    def __init__(self, manager, **kwargs):
-        super().__init__(manager, **kwargs)
+    def __init__(
+        self,
+        manager,
+        nbr_spatial_dimensions: int,
+        nbr_constraints: int,
+        nbr_dof: int,
+        mass: float,
+        gravity: list[float,],
+        initial_state: list[dict,],
+    ):
+
+        super().__init__(
+            manager=manager,
+            nbr_spatial_dimensions=nbr_spatial_dimensions,
+            nbr_constraints=nbr_constraints,
+            nbr_dof=nbr_dof,
+            mass=mass,
+            gravity=gravity,
+            initial_state=initial_state,
+        )
+
         self.length = np.linalg.norm(self.initial_state["Q"])
         self.gravity = np.array(self.gravity)
 
@@ -260,12 +292,29 @@ class Pendulum3DCartesian(MultiBodySystem):
         return np.cross(q, p)
 
 
-# operators
-
-
 class RigidBodyRotatingQuaternions(MultiBodySystem):
-    def __init__(self, manager, **kwargs):
-        super().__init__(manager, **kwargs)
+    def __init__(
+        self,
+        manager,
+        nbr_spatial_dimensions: int,
+        nbr_constraints: int,
+        nbr_dof: int,
+        mass: float,
+        gravity: list[float,],
+        initial_state: list[dict,],
+        inertias: list[float,],
+    ):
+
+        super().__init__(
+            manager=manager,
+            nbr_spatial_dimensions=nbr_spatial_dimensions,
+            nbr_constraints=nbr_constraints,
+            nbr_dof=nbr_dof,
+            mass=mass,
+            gravity=gravity,
+            initial_state=initial_state,
+        )
+        self.inertias = inertias
         self.inertias_matrix = np.diag(self.inertias)
         self.gravity = np.array(self.gravity)
 
@@ -393,8 +442,40 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
 class FourParticleSystem(MultiBodySystem):
 
-    def __init__(self, manager, **kwargs):
-        super().__init__(manager, **kwargs)
+    def __init__(
+        self,
+        manager,
+        nbr_spatial_dimensions: int,
+        nbr_constraints: int,
+        nbr_dof: int,
+        mass: list[float,],
+        gravity: list[float,],
+        initial_state: list[dict,],
+        rigid_constraint_length_12: float,
+        rigid_constraint_length_34: float,
+        natural_spring_length_13: float,
+        natural_spring_length_24: float,
+        spring_stiffness_parameter_13: float,
+        spring_stiffness_parameter_24: float,
+        damper_viscosity_parameter_23: float,
+    ):
+
+        super().__init__(
+            manager=manager,
+            nbr_spatial_dimensions=nbr_spatial_dimensions,
+            nbr_constraints=nbr_constraints,
+            nbr_dof=nbr_dof,
+            mass=mass,
+            gravity=gravity,
+            initial_state=initial_state,
+        )
+        self.rigid_constraint_length_12 = rigid_constraint_length_12
+        self.rigid_constraint_length_34 = rigid_constraint_length_34
+        self.natural_spring_length_13 = natural_spring_length_13
+        self.natural_spring_length_24 = natural_spring_length_24
+        self.spring_stiffness_parameter_13 = spring_stiffness_parameter_13
+        self.spring_stiffness_parameter_24 = spring_stiffness_parameter_24
+        self.damper_viscosity_parameter_23 = damper_viscosity_parameter_23
         self.nbr_particles = 4
 
         self.gravity_vector = np.repeat(
@@ -469,12 +550,12 @@ class FourParticleSystem(MultiBodySystem):
         )
 
     def mass_matrix(self, q):
-        diagonal_elements = np.repeat(self.masses, self.nbr_spatial_dimensions)
+        diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
         return np.diag(diagonal_elements)
 
     def inverse_mass_matrix(self, q):
         diagonal_elements = np.reciprocal(
-            np.repeat(self.masses, self.nbr_spatial_dimensions).astype(float)
+            np.repeat(self.mass, self.nbr_spatial_dimensions).astype(float)
         )
         return np.diag(diagonal_elements)
 
@@ -566,6 +647,7 @@ class ParticleSystem(MultiBodySystem):
         particles: list[dict,],
         springs: list[dict,],
         constraints: list[dict,],
+        gravity: float,
     ):
 
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
@@ -573,14 +655,34 @@ class ParticleSystem(MultiBodySystem):
         self.springs = springs
         self.constraints = constraints
 
-        super().__init__(manager)
-        self.nbr_constraints = len(self.constraints)
         self.particles = utils.sort_list_of_dicts_based_on_special_value(
             my_list=self.particles,
             key="index",
         )
         self.nbr_particles = len(self.particles)
-        self.nbr_dof = self.nbr_spatial_dimensions * self.nbr_particles
+        nbr_dof = self.nbr_spatial_dimensions * self.nbr_particles
+
+        mass = [particle["mass"] for particle in self.particles]
+
+        self.initial_state_q = utils.get_flat_list_of_list_attributes(
+            items=self.particles, key="initial_position"
+        )
+
+        self.initial_state_v = utils.get_flat_list_of_list_attributes(
+            items=self.particles, key="initial_velocity"
+        )
+
+        initial_state = [dict(Q=self.initial_state_q, V=self.initial_state_v)]
+
+        super().__init__(
+            manager=manager,
+            nbr_spatial_dimensions=nbr_spatial_dimensions,
+            nbr_constraints=len(self.constraints),
+            nbr_dof=nbr_dof,
+            mass=mass,
+            gravity=gravity,
+            initial_state=initial_state,
+        )
 
         # TODO: Find a better solution (e.g. switching to Python indices), as this is a hacky fix of indices
         for attribute_name in ["springs", "dampers", "constraints"]:
@@ -593,15 +695,6 @@ class ParticleSystem(MultiBodySystem):
                 setattr(self, attribute_name, attribute)
 
     def initialize_states(self):
-        self.initial_state_q = utils.get_flat_list_of_list_attributes(
-            items=self.particles, key="initial_position"
-        )
-
-        self.initial_state_v = utils.get_flat_list_of_list_attributes(
-            items=self.particles, key="initial_velocity"
-        )
-
-        self.masses = [particle["mass"] for particle in self.particles]
 
         return self.compose_state(
             q=np.array(self.initial_state_q),
@@ -647,12 +740,12 @@ class ParticleSystem(MultiBodySystem):
         )
 
     def mass_matrix(self, q):
-        diagonal_elements = np.repeat(self.masses, self.nbr_spatial_dimensions)
+        diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
         return np.diag(diagonal_elements)
 
     def inverse_mass_matrix(self, q):
         diagonal_elements = np.reciprocal(
-            np.repeat(self.masses, self.nbr_spatial_dimensions).astype(float)
+            np.repeat(self.mass, self.nbr_spatial_dimensions).astype(float)
         )
         return np.diag(diagonal_elements)
 
@@ -804,7 +897,7 @@ class ParticleSystem(MultiBodySystem):
 class AbstractPortHamiltonianSystem(abc.ABC):
 
     @abc.abstractmethod
-    def __init__(self, manager, **kwargs):
+    def __init__(self):
         pass
 
     @abc.abstractmethod
@@ -853,10 +946,9 @@ class AbstractPortHamiltonianSystem(abc.ABC):
 
 
 class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
-    def __init__(self, manager, **kwargs):
+    def __init__(self, manager, initial_state: list[dict,]):
         self.manager = manager
-        self.__dict__.update(kwargs)
-        self.initialized = False
+        self.initial_state = initial_state
 
     @abc.abstractmethod
     def decompose_state(self):
@@ -904,8 +996,19 @@ class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
 
 class Pendulum2D(PortHamiltonianSystem):
 
-    def __init__(self, manager, **kwargs):
-        super().__init__(manager, **kwargs)
+    def __init__(
+        self,
+        manager,
+        mass: float,
+        gravity: float,
+        length: float,
+        initial_state: list[dict,],
+    ):
+
+        super().__init__(manager, initial_state=initial_state)
+        self.mass = 1.0
+        self.gravity = 9.81
+        self.length = 1.0
 
     def initialize_states(self):
 
@@ -959,8 +1062,8 @@ class Pendulum2D(PortHamiltonianSystem):
 
 class PortHamiltonianMBS(PortHamiltonianSystem):
 
-    def __init__(self, manager, **kwargs):
-        super().__init__(manager, **kwargs)
+    def __init__(self, manager):
+        super().__init__(manager, initial_state=manager.system.initial_state)
         self.mbs = manager.system
 
     def initialize_states(self):
