@@ -22,11 +22,8 @@ class Solver(abc.ABC):
 class Newton(Solver):
 
     def solve(self):
-        system = self.manager.system
         time_stepper = self.manager.time_stepper
-
-        states = pydykit.states.State(manager=self.manager)
-        self.manager.states = states
+        states = self.manager.state
 
         # Initialze the time stepper
         steps = time_stepper.make_steps()
@@ -56,7 +53,7 @@ class Newton(Solver):
         return states
 
     def newton_update(self):
-        states = self.manager.states
+        states = self.manager.state
 
         residual_norm = 1e5
         index_iteration = 0
