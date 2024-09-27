@@ -11,3 +11,4 @@ class Configuration(BaseModel):
     solver: ClassNameKwargs
     integrator: ClassNameKwargs
     time_stepper: ClassNameKwargs
+    state: ClassNameKwargs
