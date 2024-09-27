@@ -10,9 +10,8 @@ from . import utils
 class PortHamiltonianIntegrator(abc.ABC):
     integrator_output = namedtuple("integrator_output", "residuum tangent")
 
-    def __init__(self, manager, **kwargs):
+    def __init__(self, manager):
         self.manager = manager
-        self.__dict__.update(kwargs)
 
     @abc.abstractmethod
     def calc_residuum_tangent(self):
@@ -73,9 +72,8 @@ class MidpointPH(PortHamiltonianIntegrator):
 class MultiBodyIntegrator(abc.ABC):
     integrator_output = namedtuple("integrator_output", "residuum tangent")
 
-    def __init__(self, manager, **kwargs):
+    def __init__(self, manager):
         self.manager = manager
-        self.__dict__.update(kwargs)
 
     @abc.abstractmethod
     def calc_residuum_tangent(self):
