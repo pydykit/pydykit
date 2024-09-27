@@ -131,7 +131,7 @@ class Midpoint(MultiBodyIntegrator):
 
     def calc_residuum_tangent(self):
         system = self.manager.system
-        states = self.manager.states
+        states = self.manager.state
 
         state_n = states.state_n
         state_n1 = states.state_n1
