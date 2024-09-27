@@ -56,8 +56,6 @@ class Manager:
     ) -> (
         integrators.MultiBodyIntegrator
         | integrators.PortHamiltonianIntegrator
-        | integrators.EulerExplicit
-        | integrators.EulerImplicit
         | integrators.Midpoint
         | integrators.MidpointPH
     ):

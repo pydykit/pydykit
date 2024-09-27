@@ -70,67 +70,6 @@ class MidpointPH(PortHamiltonianIntegrator):
         return residuum
 
 
-class EulerImplicit(PortHamiltonianIntegrator):
-    def calc_residuum_tangent(self):
-        system = self.manager.system
-        states = self.manager.states
-
-        state_n = states.state_n
-        state_n1 = states.state_n1
-        time_step_size = self.manager.time_stepper.current_step.increment
-
-        e_n = system.descriptor_matrix(state_n)
-        e_n1 = system.descriptor_matrix(state_n1)
-
-        z_vector = system.costates(
-            state=state_n1,
-        )
-        jacobian = 0.5 * system.hamiltonian_gradient(
-            state=state_n1,
-        )
-
-        j_matrix = system.structure_matrix()
-
-        residuum = (
-            e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
-        )
-        tangent = e_n1 - time_step_size * j_matrix @ jacobian
-
-        return self.integrator_output(
-            residuum=residuum,
-            tangent=tangent,
-        )
-
-
-class EulerExplicit(PortHamiltonianIntegrator):
-    def calc_residuum_tangent(self):
-        system = self.manager.system
-        states = self.manager.states
-
-        state_n = states.state_n
-        state_n1 = states.state_n1
-        time_step_size = self.manager.time_stepper.current_step.increment
-
-        e_n = system.descriptor_matrix(state_n)
-        e_n1 = system.descriptor_matrix(state_n1)
-
-        z_vector = system.costates(
-            state=state_n,
-        )
-
-        j_matrix = system.structure_matrix()
-
-        residuum = (
-            e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
-        )
-        tangent = e_n1
-
-        return self.integrator_output(
-            residuum=residuum,
-            tangent=tangent,
-        )
-
-
 class MultiBodyIntegrator(abc.ABC):
     integrator_output = namedtuple("integrator_output", "residuum tangent")
 
