@@ -21,7 +21,7 @@ class PortHamiltonianIntegrator(abc.ABC):
 class MidpointPH(PortHamiltonianIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
-        states = self.manager.states
+        states = self.manager.state
 
         state_n = states.state_n
         state_n1 = states.state_n1
@@ -81,6 +81,10 @@ class MultiBodyIntegrator(abc.ABC):
 
 
 class Midpoint(MultiBodyIntegrator):
+
+    def __init__(self, manager):
+        super().__init__(manager)
+        self.variable_names = ["position", "momentum", "multiplier"]
 
     @staticmethod
     def calc_residuum(system, time_stepper, state_n, state_n1):
