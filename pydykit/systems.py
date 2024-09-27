@@ -99,7 +99,6 @@ class MultiBodySystem(AbstractMultiBodySystem):
         nbr_dof: int,
         mass: float,
         gravity: list[float,],
-        initial_state: list[dict,],
     ):
         self.manager = manager
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
@@ -107,7 +106,6 @@ class MultiBodySystem(AbstractMultiBodySystem):
         self.nbr_dof = nbr_dof
         self.mass = mass
         self.gravity = gravity
-        self.initial_state = initial_state
 
     @abc.abstractmethod
     def decompose_state(self):
@@ -195,7 +193,7 @@ class Pendulum3DCartesian(MultiBodySystem):
         nbr_dof: int,
         mass: float,
         gravity: list[float,],
-        initial_state: list[dict,],
+        length: float,
     ):
 
         super().__init__(
@@ -205,18 +203,16 @@ class Pendulum3DCartesian(MultiBodySystem):
             nbr_dof=nbr_dof,
             mass=mass,
             gravity=gravity,
-            initial_state=initial_state,
         )
 
-        self.length = np.linalg.norm(self.initial_state["Q"])
+        self.length = length
         self.gravity = np.array(self.gravity)
 
-    def initialize_states(self):
-        return self.compose_state(
-            q=np.array(self.initial_state["Q"]),
-            p=self.mass_matrix(q=None) @ np.array(self.initial_state["V"]),
-            lambd=np.zeros(self.nbr_constraints),
-        )
+    def get_momentum_from_velocity(
+        self, position: list[float,], velocity: list[float,]
+    ) -> list[float,]:
+        momentum = self.mass_matrix(q=None) @ np.array(velocity)
+        return momentum.tolist()
 
     def get_state_dimensions(self):
         return 2 * self.nbr_spatial_dimensions + self.nbr_constraints
@@ -301,7 +297,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         nbr_dof: int,
         mass: float,
         gravity: list[float,],
-        initial_state: list[dict,],
         inertias: list[float,],
     ):
 
@@ -312,22 +307,16 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             nbr_dof=nbr_dof,
             mass=mass,
             gravity=gravity,
-            initial_state=initial_state,
         )
         self.inertias = inertias
         self.inertias_matrix = np.diag(self.inertias)
         self.gravity = np.array(self.gravity)
 
-    def initialize_states(self):
-        q0 = np.array(self.initial_state["Q"])
-        G_q0 = operators.convective_transformation_matrix(quat=q0)
-        v0 = 0.5 * G_q0.T @ np.array(self.initial_state["V"])
-
-        return self.compose_state(
-            q=q0,
-            p=self.mass_matrix(q=np.array(self.initial_state["Q"])) @ v0,
-            lambd=np.zeros(self.nbr_constraints),
-        )
+    def get_momentum_from_velocity(
+        self, position: list[float,], velocity: list[float,]
+    ) -> list[float,]:
+        momentum = self.mass_matrix(q=np.array(position)) @ np.array(velocity)
+        return momentum.tolist()
 
     def get_state_dimensions(self):
         return 2 * self.nbr_dof + self.nbr_constraints
@@ -450,7 +439,6 @@ class FourParticleSystem(MultiBodySystem):
         nbr_dof: int,
         mass: list[float,],
         gravity: list[float,],
-        initial_state: list[dict,],
         rigid_constraint_length_12: float,
         rigid_constraint_length_34: float,
         natural_spring_length_13: float,
@@ -467,7 +455,6 @@ class FourParticleSystem(MultiBodySystem):
             nbr_dof=nbr_dof,
             mass=mass,
             gravity=gravity,
-            initial_state=initial_state,
         )
         self.rigid_constraint_length_12 = rigid_constraint_length_12
         self.rigid_constraint_length_34 = rigid_constraint_length_34
@@ -484,13 +471,11 @@ class FourParticleSystem(MultiBodySystem):
             axis=0,
         )
 
-    def initialize_states(self):
-
-        return self.compose_state(
-            q=np.array(self.initial_state["Q"]),
-            p=self.mass_matrix(q=None) @ np.array(self.initial_state["V"]),
-            lambd=np.zeros(self.nbr_constraints),
-        )
+    def get_momentum_from_velocity(
+        self, position: list[float,], velocity: list[float,]
+    ) -> list[float,]:
+        momentum = self.mass_matrix(q=None) @ np.array(velocity)
+        return momentum.tolist()
 
     def get_state_dimensions(self):
         return (
@@ -672,8 +657,6 @@ class ParticleSystem(MultiBodySystem):
             items=self.particles, key="initial_velocity"
         )
 
-        initial_state = [dict(Q=self.initial_state_q, V=self.initial_state_v)]
-
         super().__init__(
             manager=manager,
             nbr_spatial_dimensions=nbr_spatial_dimensions,
@@ -681,7 +664,6 @@ class ParticleSystem(MultiBodySystem):
             nbr_dof=nbr_dof,
             mass=mass,
             gravity=gravity,
-            initial_state=initial_state,
         )
 
         # TODO: Find a better solution (e.g. switching to Python indices), as this is a hacky fix of indices
@@ -946,9 +928,8 @@ class AbstractPortHamiltonianSystem(abc.ABC):
 
 
 class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
-    def __init__(self, manager, initial_state: list[dict,]):
+    def __init__(self, manager):
         self.manager = manager
-        self.initial_state = initial_state
 
     @abc.abstractmethod
     def decompose_state(self):
@@ -1002,17 +983,12 @@ class Pendulum2D(PortHamiltonianSystem):
         mass: float,
         gravity: float,
         length: float,
-        initial_state: list[dict,],
     ):
 
-        super().__init__(manager, initial_state=initial_state)
+        super().__init__(manager)
         self.mass = 1.0
         self.gravity = 9.81
         self.length = 1.0
-
-    def initialize_states(self):
-
-        return np.array(self.initial_state)
 
     def get_state_dimensions(self):
         return 2
@@ -1063,7 +1039,7 @@ class Pendulum2D(PortHamiltonianSystem):
 class PortHamiltonianMBS(PortHamiltonianSystem):
 
     def __init__(self, manager):
-        super().__init__(manager, initial_state=manager.system.initial_state)
+        super().__init__(manager)
         self.mbs = manager.system
 
     def initialize_states(self):
