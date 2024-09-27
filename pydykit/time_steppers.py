@@ -8,7 +8,7 @@ from . import utils
 
 
 class TimeStep:
-    def __init__(self, index, time, increment):
+    def __init__(self, index: int, time: float, increment: float):
         self.index = index
         self.time = time
         self.increment = (
@@ -17,9 +17,11 @@ class TimeStep:
 
 
 class TimeStepper(abc.ABC):
-    def __init__(self, manager, **kwargs):
+    def __init__(self, manager, step_size: float, start: float, end: float):
         self.manager = manager
-        self.__dict__.update(kwargs)
+        self.step_size = step_size
+        self.start = start
+        self.end = end
 
     @abc.abstractmethod
     def make_steps(self) -> Iterator[TimeStep]:
@@ -32,7 +34,7 @@ class TimeStepper(abc.ABC):
 
 
 class FixedIncrement(TimeStepper):
-    def __init__(self, start, end, step_size, manager):
+    def __init__(self, manager, step_size: float, start: float, end: float):
 
         super().__init__(
             start=start,
