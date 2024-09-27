@@ -8,11 +8,7 @@ configuration:
       nbr_constraints: 1
       mass: 1.0
       gravity: [0.0, 0.0, 0.0]
-      initial_state:
-        Q: [1.0, 0.0, 0.0, 0.0]
-        V: [10.0, 20.0, 20.0]
       inertias: [6.0, 8.0, 3.0]
-
   solver:
     class_name: Newton
     kwargs:
@@ -27,3 +23,10 @@ configuration:
       step_size: 0.05
       start: 0.0
       end: 0.45
+  state:
+    class_name: State
+    kwargs:
+      initial_state:
+        position: [1.0, 0.0, 0.0, 0.0]
+        velocity: [0.0, 5.0, 10.0, 10.0]
+        multiplier: [0.0]
