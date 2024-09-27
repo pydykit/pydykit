@@ -676,13 +676,11 @@ class ParticleSystem(MultiBodySystem):
                         entry[name] = value
                 setattr(self, attribute_name, attribute)
 
-    def initialize_states(self):
-
-        return self.compose_state(
-            q=np.array(self.initial_state_q),
-            p=self.mass_matrix(q=None) @ np.array(self.initial_state_v),
-            lambd=np.zeros(self.nbr_constraints),
-        )
+    def get_momentum_from_velocity(
+        self, position: list[float,], velocity: list[float,]
+    ) -> list[float,]:
+        momentum = self.mass_matrix(q=None) @ np.array(velocity)
+        return momentum.tolist()
 
     def get_state_dimensions(self):
         return 2 * self.nbr_dof + self.nbr_constraints
