@@ -60,17 +60,16 @@ class State:
         self.state_n = self.state_n1 = self.state[0, :] = self.build_state_vector()
 
     def build_state_vector(self):
+
         if not hasattr(self.manager.integrator, "variable_names"):
-            state_vector = np.concatenate(
-                [self.initial_state["position"], self.initial_state["velocity"]], axis=0
-            )
+            return np.array(list(self.initial_state.values())).flatten()
         else:
-            state_vector = self.manager.system.compose_state(
-                q=np.array(self.initial_state["position"]),
-                p=np.array(self.initial_state["momentum"]),
-                lambd=np.array(self.initial_state["multiplier"]),
-            )
-        return state_vector
+            list_of_lists = [
+                self.initial_state[var]
+                for var in self.manager.integrator.variable_names
+                if var in self.initial_state
+            ]
+            return np.hstack(list_of_lists)
 
     def to_df(self):
         df = pd.DataFrame(
