@@ -109,3 +109,13 @@ def sort_list_of_dicts_based_on_special_value(my_list, key):
 
 def get_flat_list_of_list_attributes(items, key):
     return np.array([item[key] for item in items]).flatten()
+
+
+def get_elements_dict_list(my_list: list[dict,]):
+    count = 0
+    for entry in my_list:
+        if isinstance(my_list[entry], list):
+            count += len(my_list[entry])
+        else:
+            raise PydykitException("Mismatching datatype.")
+    return count
