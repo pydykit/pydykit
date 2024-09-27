@@ -211,7 +211,7 @@ class Pendulum3DCartesian(MultiBodySystem):
     def get_momentum_from_velocity(
         self, position: list[float,], velocity: list[float,]
     ) -> list[float,]:
-        momentum = self.mass_matrix(q=None) @ np.array(velocity)
+        momentum = self.mass_matrix() @ np.array(velocity)
         return momentum.tolist()
 
     def get_state_dimensions(self):
@@ -228,63 +228,79 @@ class Pendulum3DCartesian(MultiBodySystem):
             "lambda",
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
 
-    def decompose_state(self, state):
+    def decompose_state(self):
+        state = self.state
         dim = self.nbr_spatial_dimensions
 
         assert len(state) == 2 * dim + self.nbr_constraints
 
-        decomposed_state = namedtuple("state", "q p lambd")
+        decomposed_state = namedtuple(
+            "decomposed_state", self.manager.integrator.variable_names
+        )
         return decomposed_state(
-            q=state[0:dim],
-            p=state[dim : 2 * dim],
-            lambd=state[2 * dim :],
+            position=state[0:dim],
+            momentum=state[dim : 2 * dim],
+            multiplier=state[2 * dim :],
         )
 
-    def compose_state(self, q, p, lambd):
+    @staticmethod
+    def compose_state(q, dq, lambd):
         return np.concatenate(
             [
                 q,
-                p,
+                dq,
                 lambd,
             ],
             axis=0,
         )
 
-    def mass_matrix(self, q):
+    def set_state(self, state):
+        self.state = state
+
+    def mass_matrix(self):
         return self.mass * np.eye(self.nbr_spatial_dimensions)
 
-    def inverse_mass_matrix(self, q):
+    def inverse_mass_matrix(self):
         return 1 / self.mass * np.eye(self.nbr_spatial_dimensions)
 
-    def kinetic_energy_gradient_from_momentum(self, q, p):
+    def kinetic_energy_gradient_from_momentum(self):
+        q = self.decompose_state().position
         return np.zeros(q.shape)
 
-    def kinetic_energy_gradient_from_velocity(self, q, v):
+    def kinetic_energy_gradient_from_velocity(self):
+        q = self.decompose_state().position
         return np.zeros(q.shape)
 
-    def external_potential(self, q):
-        return -(self.mass_matrix(q=q) @ self.gravity).T @ q
+    def external_potential(self):
+        q = self.decompose_state().position
+        return -(self.mass_matrix() @ self.gravity).T @ q
 
-    def external_potential_gradient(self, q):
-        return -self.mass_matrix(q=q) @ self.gravity
+    def external_potential_gradient(self):
+        return -self.mass_matrix() @ self.gravity
 
-    def internal_potential(self, q):
+    def internal_potential(self):
         return 0.0
 
-    def internal_potential_gradient(self, q):
+    def internal_potential_gradient(self):
+        q = self.decompose_state().position
         return np.zeros(q.shape)
 
-    def constraint(self, q):
+    def constraint(self):
+        q = self.decompose_state().position
         return np.array([0.5 * (q.T @ q / self.length**2 - 1.0)])
 
-    def constraint_gradient(self, q):
+    def constraint_gradient(self):
+        q = self.decompose_state().position
         return q.T[np.newaxis, :] / self.length**2
 
-    def dissipation_matrix(self, q, v):
+    def dissipation_matrix(self):
+        q = self.decompose_state().position
         diss_mat = np.zeros(q.shape, q.shape)
         return diss_mat
 
-    def angular_momentum(self, q, p):
+    def angular_momentum(self):
+        q = self.decompose_state().position
+        p = self.decompose_state().momentum
         return np.cross(q, p)
 
 

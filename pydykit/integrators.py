@@ -1,4 +1,5 @@
 import abc
+import copy
 from collections import namedtuple
 from functools import partial
 
@@ -90,29 +91,35 @@ class Midpoint(MultiBodyIntegrator):
     def calc_residuum(system, time_stepper, state_n, state_n1):
 
         step_size = time_stepper.current_step.increment
+        state_n05 = 0.5 * (state_n + state_n1)
 
-        q_n, p_n, lambd_n = system.decompose_state(state=state_n)
-        q_n1, p_n1, lambd_n1 = system.decompose_state(state=state_n1)
-        q_n05, p_n05, lambd_n05 = system.decompose_state(
-            state=0.5 * (state_n + state_n1)
-        )
+        system.set_state(state=state_n)
+        system_n = copy.copy(system)
+        system.set_state(state=state_n1)
+        system_n1 = copy.copy(system)
+        system.set_state(state=state_n05)
+        system_n05 = copy.copy(system)
 
         try:
-            inv_mass_matrix_n05 = system.inverse_mass_matrix(q=q_n05)
+            inv_mass_matrix_n05 = system_n05.inverse_mass_matrix()
         except AttributeError:
-            mass_matrix_n05 = system.mass_matrix(q=q_n05)
+            mass_matrix_n05 = system_n05.mass_matrix()
             inv_mass_matrix_n05 = np.linalg.inv(mass_matrix_n05)
 
-        G_n05 = system.constraint_gradient(q=q_n05)
+        G_n05 = system_n05.constraint_gradient()
 
-        g_n1 = system.constraint(q=q_n1)
+        g_n1 = system_n1.constraint()
 
-        DV_int_n05 = system.internal_potential_gradient(q=q_n05)
-        DV_ext_n05 = system.external_potential_gradient(q=q_n05)
-        DTq_n05 = system.kinetic_energy_gradient_from_momentum(
-            q=q_n05,
-            p=p_n05,
-        )
+        DV_int_n05 = system_n05.internal_potential_gradient()
+        DV_ext_n05 = system_n05.external_potential_gradient()
+        DTq_n05 = system_n05.kinetic_energy_gradient_from_momentum()
+
+        p_n = system_n.decompose_state().momentum
+        p_n1 = system_n1.decompose_state().momentum
+        p_n05 = system_n05.decompose_state().momentum
+        q_n = system_n.decompose_state().position
+        q_n1 = system_n1.decompose_state().position
+        lambd_n05 = system_n05.decompose_state().multiplier
 
         residuum_p = (
             p_n1
