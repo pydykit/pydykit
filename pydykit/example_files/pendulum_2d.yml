@@ -6,7 +6,6 @@ configuration:
       mass: 1.0
       gravity: 9.81
       length: 1.0
-      initial_state: [0.0, 1.0]
   solver:
     class_name: Newton
     kwargs:
@@ -21,3 +20,9 @@ configuration:
       step_size: 0.15
       start: 0.0
       end: 2.2
+  state:
+    class_name: State
+    kwargs:
+      initial_state:
+        position: [0.0]
+        velocity: [1.0]

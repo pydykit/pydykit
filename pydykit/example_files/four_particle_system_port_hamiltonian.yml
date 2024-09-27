@@ -8,9 +8,6 @@ configuration:
       nbr_constraints: 2
       mass: [1.0, 3.0, 2.3, 1.7]
       gravity: [0.0, 0.0, 0.0]
-      initial_state:
-        Q: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
-        V: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.176470588235294]
       rigid_constraint_length_12: 1
       rigid_constraint_length_34: 1
       natural_spring_length_13: 1
@@ -32,3 +29,10 @@ configuration:
       step_size: 0.01 # 0.1
       start: 0.0
       end: 0.09
+  state:
+    class_name: State
+    kwargs:
+      initial_state:
+        position: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
+        velocity: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.1764705882352939]
+        multiplier: [0.0, 0.0]
