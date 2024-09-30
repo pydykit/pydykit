@@ -93,11 +93,11 @@ class Midpoint(MultiBodyIntegrator):
         step_size = time_stepper.current_step.increment
         state_n05 = 0.5 * (state_n + state_n1)
 
-        system.set_state(state=state_n)
+        system.state = state_n
         system_n = copy.copy(system)
-        system.set_state(state=state_n1)
+        system.state = state_n1
         system_n1 = copy.copy(system)
-        system.set_state(state=state_n05)
+        system.state = state_n05
         system_n05 = copy.copy(system)
 
         try:

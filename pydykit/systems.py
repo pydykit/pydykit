@@ -254,9 +254,6 @@ class Pendulum3DCartesian(MultiBodySystem):
             axis=0,
         )
 
-    def set_state(self, state):
-        self.state = state
-
     def mass_matrix(self):
         return self.mass * np.eye(self.nbr_spatial_dimensions)
 
@@ -331,7 +328,8 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
     def get_momentum_from_velocity(
         self, position: list[float,], velocity: list[float,]
     ) -> list[float,]:
-        momentum = self.mass_matrix(q=np.array(position)) @ np.array(velocity)
+
+        momentum = self.mass_matrix() @ np.array(velocity)
         return momentum.tolist()
 
     def get_state_dimensions(self):
@@ -352,15 +350,17 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             "lambda",
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
 
-    def decompose_state(self, state):
-
+    def decompose_state(self):
+        state = self.state
         assert len(state) == 2 * self.nbr_dof + self.nbr_constraints
 
-        decomposed_state = namedtuple("state", "q p lambd")
+        decomposed_state = namedtuple(
+            "decomposed_state", self.manager.integrator.variable_names
+        )
         return decomposed_state(
-            q=state[0 : self.nbr_dof],
-            p=state[self.nbr_dof : 2 * self.nbr_dof],
-            lambd=state[2 * self.nbr_dof :],
+            position=state[0 : self.nbr_dof],
+            momentum=state[self.nbr_dof : 2 * self.nbr_dof],
+            multiplier=state[2 * self.nbr_dof :],
         )
 
     def compose_state(self, q, p, lambd):
@@ -373,7 +373,8 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             axis=0,
         )
 
-    def mass_matrix(self, q):
+    def mass_matrix(self):
+        q = self.decompose_state().position
         quat = q[0:4]
         G_q = operators.convective_transformation_matrix(
             quat=quat,
@@ -386,7 +387,8 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
         return regular_mass_matrix
 
-    def inverse_mass_matrix(self, q):
+    def inverse_mass_matrix(self):
+        q = self.decompose_state().position
         quat = q[0:4]
         Ql_q = operators.left_multiplation_matrix(quat)
         J0 = 0.5 * np.trace(self.inertias_matrix)
@@ -395,7 +397,9 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
         return 0.25 * Ql_q @ inverse_extended_inertias_matrix @ Ql_q.T
 
-    def kinetic_energy_gradient_from_momentum(self, q, p):
+    def kinetic_energy_gradient_from_momentum(self):
+        q = self.decompose_state().position
+        p = self.decompose_state().momentum
 
         # extended inertia tensor
         J0 = np.trace(self.inertias_matrix)
@@ -409,7 +413,10 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
         return 0.25 * Ql_p @ inverse_extended_inertias @ Ql_p.T @ q
 
-    def kinetic_energy_gradient_from_velocity(self, q, v):
+    def kinetic_energy_gradient_from_velocity(self):
+        q = self.decompose_state().position
+        v = self.decompose_state().velocity
+
         tmp = v[:4]
 
         G_v = operators.convective_transformation_matrix(
@@ -422,26 +429,33 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
         return M_4_hat @ q
 
-    def external_potential(self, q):
+    def external_potential(self):
         return 0.0
 
-    def external_potential_gradient(self, q):
-        return np.zeros(4)
+    def external_potential_gradient(self):
+        q = self.decompose_state().position
+        return np.zeros(q.shape)
 
     def internal_potential(self):
         return 0.0
 
-    def internal_potential_gradient(self, q):
-        return np.zeros(4)
+    def internal_potential_gradient(self):
+        q = self.decompose_state().position
+        return np.zeros(q.shape)
 
-    def constraint(self, q):
+    def constraint(self):
+        q = self.decompose_state().position
         return np.array([0.5 * (q.T @ q - 1.0)])
 
-    def constraint_gradient(self, q):
+    def constraint_gradient(self):
+        q = self.decompose_state().position
         return q.T[np.newaxis, :]
 
-    def dissipation_matrix(self, q, v):
-        diss_mat = np.zeros(q.shape, q.shape)
+    def dissipation_matrix(self):
+        q = self.decompose_state().position
+        v = self.decompose_state().velocity
+
+        diss_mat = np.zeros(q.shape, v.shape)
         return diss_mat
 
 
