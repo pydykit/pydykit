@@ -90,30 +90,30 @@ class Midpoint(MultiBodyIntegrator):
     @staticmethod
     def calc_residuum(system, time_stepper, state_n, state_n1):
 
+        # read time step size
         step_size = time_stepper.current_step.increment
+
+        # create midpoint state and all corresponding discrete-time systems
         state_n05 = 0.5 * (state_n + state_n1)
+        system_n, system_n1, system_n05 = system.update(state_n, state_n1, state_n05)
 
-        system.state = state_n
-        system_n = copy.copy(system)
-        system.state = state_n1
-        system_n1 = copy.copy(system)
-        system.state = state_n05
-        system_n05 = copy.copy(system)
-
+        # get inverse mass matrix
         try:
             inv_mass_matrix_n05 = system_n05.inverse_mass_matrix()
         except AttributeError:
             mass_matrix_n05 = system_n05.mass_matrix()
             inv_mass_matrix_n05 = np.linalg.inv(mass_matrix_n05)
 
+        # constraint
         G_n05 = system_n05.constraint_gradient()
-
         g_n1 = system_n1.constraint()
 
+        # energetic gradients
         DV_int_n05 = system_n05.internal_potential_gradient()
         DV_ext_n05 = system_n05.external_potential_gradient()
         DTq_n05 = system_n05.kinetic_energy_gradient_from_momentum()
 
+        # state contributions
         p_n = system_n.decompose_state().momentum
         p_n1 = system_n1.decompose_state().momentum
         p_n05 = system_n05.decompose_state().momentum
@@ -121,6 +121,7 @@ class Midpoint(MultiBodyIntegrator):
         q_n1 = system_n1.decompose_state().position
         lambd_n05 = system_n05.decompose_state().multiplier
 
+        # residuum contributions
         residuum_p = (
             p_n1
             - p_n
@@ -128,7 +129,6 @@ class Midpoint(MultiBodyIntegrator):
             + step_size * DTq_n05
             + step_size * G_n05.T @ lambd_n05
         )
-
         residuum = np.concatenate(
             [
                 q_n1 - q_n - step_size * inv_mass_matrix_n05 @ p_n05,

@@ -1,4 +1,5 @@
 import abc
+import copy
 from collections import namedtuple
 
 import numpy as np
@@ -106,6 +107,14 @@ class MultiBodySystem(AbstractMultiBodySystem):
         self.nbr_dof = nbr_dof
         self.mass = mass
         self.gravity = gravity
+
+    def update(self, *states):
+        # for each entry in states a system is created
+        systems = []
+        for state in states:
+            self.state = state
+            systems.append(copy.copy(self))
+        return systems
 
     @abc.abstractmethod
     def decompose_state(self):
