@@ -1164,6 +1164,15 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         self.mbs = manager.system
         super().__init__(manager, state=manager.system.initial_state)
 
+    def update(self, *states):
+        systems = super().update(*states)
+
+        for system, state in zip(systems, states):
+            # Assign the corresponding state to the system
+            system.mbs.state = state
+
+        return systems
+
     def get_state_dimensions(self):
         return self.mbs.get_state_dimensions()
 
