@@ -111,7 +111,7 @@ def get_flat_list_of_list_attributes(items, key):
     return np.array([item[key] for item in items]).flatten()
 
 
-def get_elements_dict_list(my_list: list[dict,]):
+def get_nbr_elements_dict_list(my_list: list[dict,]):
     count = 0
     for entry in my_list:
         if isinstance(my_list[entry], list):
@@ -119,3 +119,9 @@ def get_elements_dict_list(my_list: list[dict,]):
         else:
             raise PydykitException("Mismatching datatype.")
     return count
+
+
+def row_array_from_df(df, index):
+    row = df.iloc[index]
+    row = row.drop("time")
+    return row.to_numpy()

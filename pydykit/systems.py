@@ -100,13 +100,30 @@ class MultiBodySystem(AbstractMultiBodySystem):
         nbr_dof: int,
         mass: float,
         gravity: list[float,],
+        state,
     ):
         self.manager = manager
+        self.state = state
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
         self.nbr_constraints = nbr_constraints
         self.nbr_dof = nbr_dof
         self.mass = mass
         self.gravity = gravity
+
+        self.initialize_state(state)
+
+    def initialize_state(self, state):
+
+        # convert state as dict to array with values
+        self.initial_state = state
+        self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
+
+        self.state_columns = self.get_state_columns()
+        self.state = np.zeros((self.dim_state))  # this will move to manager.results
+        # transform velocity and momentum states if needed
+        self.check_transform_states()
+        # transform initial state to one array
+        self.build_state_vector()
 
     def update(self, *states):
         # for each entry in states a system is created
@@ -115,6 +132,67 @@ class MultiBodySystem(AbstractMultiBodySystem):
             self.state = state
             systems.append(copy.copy(self))
         return systems
+
+    def build_state_vector(self):
+        # stacks values of initial state according to integrator name list
+        if not hasattr(self.manager.integrator, "variable_names"):
+            self.state = np.hstack(list(self.initial_state.values()))
+        else:
+            list_of_lists = [
+                self.initial_state[var]
+                for var in self.manager.integrator.variable_names
+                if var in self.initial_state
+            ]
+            self.state = np.hstack(list_of_lists)
+
+    def check_transform_states(self):
+        # switches momentum and velocity states if needed
+
+        initial_state_variable_names = list(self.initial_state.keys())
+
+        if (
+            not hasattr(self.manager.integrator, "variable_names")
+            or initial_state_variable_names == self.manager.integrator.variable_names
+        ):
+            pass
+        else:
+
+            transformations = {
+                "velocity": ("momentum", self.mass_matrix, "velocity", "momentum"),
+                "momentum": (
+                    "velocity",
+                    self.inverse_mass_matrix,
+                    "momentum",
+                    "velocity",
+                ),
+            }
+
+            initial_state_var, integrator_var = (
+                initial_state_variable_names[1],
+                self.manager.integrator.variable_names[1],
+            )
+
+            if (
+                initial_state_var in transformations
+                and integrator_var == transformations[initial_state_var][0]
+            ):
+                initial_state_variable_names[1] = transformations[initial_state_var][0]
+
+                assert (
+                    initial_state_variable_names
+                    == self.manager.integrator.variable_names
+                ), f"Transformation from {initial_state_var} to {integrator_var} does not fix the problem of mismatching variable names between integrator and initial state."
+
+                # Perform the appropriate transformation
+                state_var = self.initial_state[transformations[initial_state_var][2]]
+                self.initial_state[transformations[initial_state_var][3]] = (
+                    transformations[initial_state_var][1]() @ np.array(state_var)
+                )
+
+            else:
+                raise utils.PydykitException(
+                    "Transformation from velocity to momentum does not fix the problem of mismatching variable names between integrator and initial state."
+                )
 
     @abc.abstractmethod
     def decompose_state(self):
@@ -212,83 +290,12 @@ class Pendulum3DCartesian(MultiBodySystem):
             nbr_constraints=nbr_constraints,
             nbr_dof=nbr_dof,
             mass=mass,
+            state=state,
             gravity=gravity,
         )
-        self.initialize_state(state)
+
         self.length = length
         self.gravity = np.array(self.gravity)
-
-    def initialize_state(self, state):
-
-        self.initial_state = state
-        self.dim_state = utils.get_elements_dict_list(self.initial_state)
-
-        assert (
-            self.dim_state == self.get_state_dimensions()
-        ), "Dimension of states does not match dimension of system."
-
-        self.state_columns = self.get_state_columns()
-        self.state = np.zeros((self.dim_state))  # this will move to manager.results
-        #
-
-        initial_state_variable_names = list(self.initial_state.keys())
-
-        if (
-            not hasattr(self.manager.integrator, "variable_names")
-            or initial_state_variable_names == self.manager.integrator.variable_names
-        ):
-            pass
-        else:
-            if (
-                initial_state_variable_names[1] == "velocity"
-                and self.manager.integrator.variable_names[1] == "momentum"
-            ):
-                initial_state_variable_names[1] = "momentum"
-
-                assert (
-                    initial_state_variable_names
-                    == self.manager.integrator.variable_names
-                ), "Transformation from velocity to momentum does not fix the problem of mismatching variable names between integrator and input."
-
-                self.initial_state["momentum"] = self.get_momentum_from_velocity(
-                    position=self.initial_state["position"],
-                    velocity=self.initial_state["velocity"],
-                )
-            else:
-                raise utils.PydykitException(
-                    "Transformation from velocity to momentum does not fix the problem of mismatching variable names between integrator and input."
-                )
-
-        # transform initial state to one array
-        # self.state_n = self.state_n1 =
-        self.state = self.build_state_vector()
-
-    def build_state_vector(self):
-
-        if not hasattr(self.manager.integrator, "variable_names"):
-            return np.hstack(list(self.initial_state.values()))
-        else:
-            list_of_lists = [
-                self.initial_state[var]
-                for var in self.manager.integrator.variable_names
-                if var in self.initial_state
-            ]
-            return np.hstack(list_of_lists)
-
-    @staticmethod
-    def from_df(df, step_index):
-        row = df.iloc[step_index]
-        row = row.drop("time")
-        return row.to_numpy()
-
-    def get_momentum_from_velocity(
-        self, position: list[float,], velocity: list[float,]
-    ) -> list[float,]:
-        momentum = self.mass_matrix() @ np.array(velocity)
-        return momentum.tolist()
-
-    def get_state_dimensions(self):
-        return 2 * self.nbr_spatial_dimensions + self.nbr_constraints
 
     def get_state_columns(self):
         return [
@@ -303,7 +310,7 @@ class Pendulum3DCartesian(MultiBodySystem):
 
     def decompose_state(self):
         state = self.state
-        dim = self.nbr_spatial_dimensions
+        dim = self.nbr_dof
 
         assert len(state) == 2 * dim + self.nbr_constraints
 
@@ -328,10 +335,10 @@ class Pendulum3DCartesian(MultiBodySystem):
         )
 
     def mass_matrix(self):
-        return self.mass * np.eye(self.nbr_spatial_dimensions)
+        return self.mass * np.eye(self.nbr_dof)
 
     def inverse_mass_matrix(self):
-        return 1 / self.mass * np.eye(self.nbr_spatial_dimensions)
+        return 1 / self.mass * np.eye(self.nbr_dof)
 
     def kinetic_energy_gradient_from_momentum(self):
         q = self.decompose_state().position
