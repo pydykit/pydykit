@@ -20,6 +20,10 @@ class PortHamiltonianIntegrator(abc.ABC):
 
 
 class MidpointPH(PortHamiltonianIntegrator):
+    def __init__(self, manager):
+        super().__init__(manager)
+        self.variable_names = ["position", "velocity", "multiplier"]
+
     def calc_residuum_tangent(self):
         system = self.manager.system
         manager = self.manager
@@ -118,12 +122,12 @@ class Midpoint(MultiBodyIntegrator):
         DTq_n05 = system_n05.kinetic_energy_gradient_from_momentum()
 
         # state contributions
-        p_n = system_n.decompose_state().momentum
-        p_n1 = system_n1.decompose_state().momentum
-        p_n05 = system_n05.decompose_state().momentum
-        q_n = system_n.decompose_state().position
-        q_n1 = system_n1.decompose_state().position
-        lambd_n05 = system_n05.decompose_state().multiplier
+        p_n = system_n.decompose_state()["momentum"]
+        p_n1 = system_n1.decompose_state()["momentum"]
+        p_n05 = system_n05.decompose_state()["momentum"]
+        q_n = system_n.decompose_state()["position"]
+        q_n1 = system_n1.decompose_state()["position"]
+        lambd_n05 = system_n05.decompose_state()["multiplier"]
 
         # residuum contributions
         residuum_p = (
