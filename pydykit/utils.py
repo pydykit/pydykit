@@ -114,10 +114,7 @@ def get_flat_list_of_list_attributes(items, key):
 def get_nbr_elements_dict_list(my_list: list[dict,]):
     count = 0
     for entry in my_list:
-        if isinstance(my_list[entry], list):
-            count += len(my_list[entry])
-        else:
-            raise PydykitException("Mismatching datatype.")
+        count += len(my_list[entry])
     return count
 
 
