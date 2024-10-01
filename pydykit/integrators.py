@@ -22,16 +22,16 @@ class PortHamiltonianIntegrator(abc.ABC):
 class MidpointPH(PortHamiltonianIntegrator):
     def calc_residuum_tangent(self):
         system = self.manager.system
-        states = self.manager.state
+        manager = self.manager
 
-        state_n = states.state_n
-        state_n1 = states.state_n1
+        current_state = manager.current_state
+        next_state = manager.next_state
 
         residuum = self.calc_residuum(
             system=system,
             time_stepper=self.manager.time_stepper,
-            state_n=state_n.copy(),
-            state_n1=state_n1.copy(),
+            state_n=current_state.copy(),
+            state_n1=next_state.copy(),
         )
 
         tangent = utils.get_numerical_tangent(
@@ -40,8 +40,8 @@ class MidpointPH(PortHamiltonianIntegrator):
                 system=system,
                 time_stepper=self.manager.time_stepper,
             ),
-            state_1=state_n.copy(),
-            state_2=state_n1.copy(),
+            state_1=current_state.copy(),
+            state_2=next_state.copy(),
         )
 
         return self.integrator_output(
@@ -54,17 +54,21 @@ class MidpointPH(PortHamiltonianIntegrator):
 
         time_step_size = time_stepper.current_step.increment
 
-        e_n = system.descriptor_matrix(state_n)
-        e_n1 = system.descriptor_matrix(state_n1)
+        # create midpoint state and all corresponding discrete-time systems
+        state_n05 = 0.5 * (state_n + state_n1)
+        system_n, system_n1, system_n05 = system.update(state_n, state_n1, state_n05)
 
-        z_vector = system.costates(
-            state=0.5 * (state_n + state_n1),
-        )
+        e_n = system_n.descriptor_matrix()
+        e_n1 = system_n1.descriptor_matrix()
 
-        j_matrix = system.structure_matrix(state=0.5 * (state_n + state_n1))
+        z_vector_n05 = system_n05.costates()
+
+        j_matrix_n05 = system_n05.structure_matrix()
 
         residuum = (
-            e_n1 @ state_n1 - e_n @ state_n - time_step_size * j_matrix @ z_vector
+            e_n1 @ state_n1
+            - e_n @ state_n
+            - time_step_size * j_matrix_n05 @ z_vector_n05
         )
 
         return residuum

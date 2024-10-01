@@ -5,7 +5,7 @@ from collections import namedtuple
 import numpy as np
 from scipy.linalg import block_diag
 
-from . import managers, operators, states, utils
+from . import operators, utils
 
 
 class AbstractMultiBodySystem(abc.ABC):
@@ -1024,8 +1024,32 @@ class AbstractPortHamiltonianSystem(abc.ABC):
 
 
 class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
-    def __init__(self, manager):
+    def __init__(self, manager, state):
         self.manager = manager
+        self.initialize_state(state)
+
+    def initialize_state(self, state):
+
+        # convert state as dict to array with values
+        self.initial_state = state
+        self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
+
+        self.state_columns = self.get_state_columns()
+        self.state = np.zeros((self.dim_state))
+
+        # build up state vector
+        self.build_state_vector()
+
+    def build_state_vector(self):
+        self.state = np.hstack(list(self.initial_state.values()))
+
+    def update(self, *states):
+        # for each entry in states a system is created
+        systems = []
+        for state in states:
+            self.state = state
+            systems.append(copy.copy(self))
+        return systems
 
     @abc.abstractmethod
     def decompose_state(self):
@@ -1076,18 +1100,16 @@ class Pendulum2D(PortHamiltonianSystem):
     def __init__(
         self,
         manager,
+        state,
         mass: float,
         gravity: float,
         length: float,
     ):
 
-        super().__init__(manager)
+        super().__init__(manager, state)
         self.mass = 1.0
         self.gravity = 9.81
         self.length = 1.0
-
-    def get_state_dimensions(self):
-        return 2
 
     def get_state_columns(self):
         return [
@@ -1095,40 +1117,40 @@ class Pendulum2D(PortHamiltonianSystem):
             "velocity",
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
 
-    def decompose_state(self, state):
+    def decompose_state(self):
         decomposed_state = namedtuple("state", "q v")
         return decomposed_state(
-            q=state[0],
-            v=state[1],
+            q=self.state[0],
+            v=self.state[1],
         )
 
     def compose_state(self):
         pass
 
-    def costates(self, state):
-        q, v = self.decompose_state(state=state)
+    def costates(self):
+        q, v = self.decompose_state()
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
 
-    def hamiltonian(self, state):
+    def hamiltonian(self):
         pass
 
-    def hamiltonian_gradient(self, state):
-        q, v = self.decompose_state(state=state)
+    def hamiltonian_gradient(self):
+        q, v = self.decompose_state()
         return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
 
-    def structure_matrix(self, state):
+    def structure_matrix(self):
         return np.array([[0, 1], [-1, 0]])
 
-    def descriptor_matrix(self, state):
+    def descriptor_matrix(self):
         return np.diag([1, self.mass * self.length**2])
 
-    def port_matrix(self, state):
+    def port_matrix(self):
         pass
 
     def input(self):
         pass
 
-    def dissipation_matrix(self, state):
+    def dissipation_matrix(self):
         pass
 
 
