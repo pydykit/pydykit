@@ -1,6 +1,6 @@
 import copy
 
-from . import integrators, solvers, states, systems, time_steppers, utils
+from . import integrators, results, solvers, systems, time_steppers, utils
 from .configuration import Configuration
 
 
@@ -20,13 +20,19 @@ class Manager:
         self._configure(configuration=configuration)
 
     def _configure(self, configuration):
+
+        # set configuration
         self.configuration = configuration
 
-        self.system = self._set_system()
+        # derive instances of classes
+        self.time_stepper = self._set_time_stepper()
         self.solver = self._set_solver()
         self.integrator = self._set_integrator()
-        self.time_stepper = self._set_time_stepper()
-        self.state = self._set_state()
+        self.system = self._set_system()
+        self.result = self._set_result()
+
+        # manager shuffles current and next state between objects
+        self.current_state = self.next_state = self.system.state
 
     def _set_system(
         self,
@@ -81,14 +87,14 @@ class Manager:
             kwargs=self.configuration.time_stepper.kwargs,
         )
 
-    def _set_state(
+    def _set_result(
         self,
-    ) -> states.State:
+    ) -> results.Result:
 
         return self._dynamically_instantiate(
-            module=states,
-            class_name=self.configuration.state.class_name,
-            kwargs=self.configuration.state.kwargs,
+            module=results,
+            class_name="Result",
+            kwargs=None,
         )
 
     def _dynamically_instantiate(self, module, class_name, kwargs):

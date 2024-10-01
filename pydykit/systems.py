@@ -188,6 +188,7 @@ class Pendulum3DCartesian(MultiBodySystem):
     def __init__(
         self,
         manager,
+        state,
         nbr_spatial_dimensions: int,
         nbr_constraints: int,
         nbr_dof: int,
@@ -204,9 +205,72 @@ class Pendulum3DCartesian(MultiBodySystem):
             mass=mass,
             gravity=gravity,
         )
-
+        self.initialize_state(state)
         self.length = length
         self.gravity = np.array(self.gravity)
+
+    def initialize_state(self, state):
+
+        self.initial_state = state
+        self.dim_state = utils.get_elements_dict_list(self.initial_state)
+
+        assert (
+            self.dim_state == self.get_state_dimensions()
+        ), "Dimension of states does not match dimension of system."
+
+        self.state_columns = self.get_state_columns()
+        self.state = np.zeros((self.dim_state))  # this will move to manager.results
+        #
+
+        initial_state_variable_names = list(self.initial_state.keys())
+
+        if (
+            not hasattr(self.manager.integrator, "variable_names")
+            or initial_state_variable_names == self.manager.integrator.variable_names
+        ):
+            pass
+        else:
+            if (
+                initial_state_variable_names[1] == "velocity"
+                and self.manager.integrator.variable_names[1] == "momentum"
+            ):
+                initial_state_variable_names[1] = "momentum"
+
+                assert (
+                    initial_state_variable_names
+                    == self.manager.integrator.variable_names
+                ), "Transformation from velocity to momentum does not fix the problem of mismatching variable names between integrator and input."
+
+                self.initial_state["momentum"] = self.get_momentum_from_velocity(
+                    position=self.initial_state["position"],
+                    velocity=self.initial_state["velocity"],
+                )
+            else:
+                raise utils.PydykitException(
+                    "Transformation from velocity to momentum does not fix the problem of mismatching variable names between integrator and input."
+                )
+
+        # transform initial state to one array
+        # self.state_n = self.state_n1 =
+        self.state = self.build_state_vector()
+
+    def build_state_vector(self):
+
+        if not hasattr(self.manager.integrator, "variable_names"):
+            return np.hstack(list(self.initial_state.values()))
+        else:
+            list_of_lists = [
+                self.initial_state[var]
+                for var in self.manager.integrator.variable_names
+                if var in self.initial_state
+            ]
+            return np.hstack(list_of_lists)
+
+    @staticmethod
+    def from_df(df, step_index):
+        row = df.iloc[step_index]
+        row = row.drop("time")
+        return row.to_numpy()
 
     def get_momentum_from_velocity(
         self, position: list[float,], velocity: list[float,]
