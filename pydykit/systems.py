@@ -1116,17 +1116,23 @@ class Pendulum2D(PortHamiltonianSystem):
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
 
     def decompose_state(self):
-        decomposed_state = namedtuple("state", "q v")
-        return decomposed_state(
-            q=self.state[0],
-            v=self.state[1],
+        state = self.state
+
+        assert len(state) == 2
+
+        return dict(
+            zip(
+                self.manager.integrator.variable_names,
+                [state[0], state[1]],
+            )
         )
 
     def compose_state(self):
         pass
 
     def costates(self):
-        q, v = self.decompose_state()
+        q = self.decompose_state()["position"]
+        v = self.decompose_state()["velocity"]
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
 
     def hamiltonian(self):
@@ -1158,14 +1164,6 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         self.mbs = manager.system
         super().__init__(manager, state=manager.system.initial_state)
 
-    def initialize_states(self):
-
-        return self.mbs.compose_state(
-            q=np.array(self.mbs.initial_state["Q"]),
-            p=np.array(self.mbs.initial_state["V"]),
-            lambd=np.zeros(self.mbs.nbr_constraints),
-        )
-
     def get_state_dimensions(self):
         return self.mbs.get_state_dimensions()
 
@@ -1195,15 +1193,12 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         )
 
     def hamiltonian_gradient(self):
-        state = self.state
-        decomposed_state = self.decompose_state(state)
-
-        return self.mbs.external_potential_gradient(
-            decomposed_state.q
-        ) + self.mbs.internal_potential_gradient(decomposed_state.q)
+        return (
+            self.mbs.external_potential_gradient()
+            + self.mbs.internal_potential_gradient()
+        )
 
     def structure_matrix(self):
-        state = self.state
         decomposed_state = self.decompose_state()
         q = decomposed_state["position"]
         v = decomposed_state["velocity"]
@@ -1223,9 +1218,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         )
 
     def descriptor_matrix(self):
-        state = self.state
         identity_mat = np.eye(self.mbs.nbr_dof)
-        decomposed_state = self.decompose_state()
         mass_matrix = self.mbs.mass_matrix()
         zeros_matrix = np.zeros((self.mbs.nbr_constraints, self.mbs.nbr_constraints))
         descriptor_matrix = block_diag(identity_mat, mass_matrix, zeros_matrix)
