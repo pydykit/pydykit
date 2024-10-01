@@ -119,11 +119,11 @@ class MultiBodySystem(AbstractMultiBodySystem):
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
 
         self.state_columns = self.get_state_columns()
-        self.state = np.zeros((self.dim_state))  # this will move to manager.results
+        self.state = np.zeros((self.dim_state))
+
         # transform velocity and momentum states if needed
-        self.check_transform_states()
-        # transform initial state to one array
         self.build_state_vector()
+        self.check_transform_states()
 
     def update(self, *states):
         # for each entry in states a system is created
@@ -134,16 +134,7 @@ class MultiBodySystem(AbstractMultiBodySystem):
         return systems
 
     def build_state_vector(self):
-        # stacks values of initial state according to integrator name list
-        if not hasattr(self.manager.integrator, "variable_names"):
-            self.state = np.hstack(list(self.initial_state.values()))
-        else:
-            list_of_lists = [
-                self.initial_state[var]
-                for var in self.manager.integrator.variable_names
-                if var in self.initial_state
-            ]
-            self.state = np.hstack(list_of_lists)
+        self.state = np.hstack(list(self.initial_state.values()))
 
     def check_transform_states(self):
         # switches momentum and velocity states if needed
@@ -188,6 +179,13 @@ class MultiBodySystem(AbstractMultiBodySystem):
                 self.initial_state[transformations[initial_state_var][3]] = (
                     transformations[initial_state_var][1]() @ np.array(state_var)
                 )
+
+                list_of_lists = [
+                    self.initial_state[var]
+                    for var in self.manager.integrator.variable_names
+                    if var in self.initial_state
+                ]
+                self.state = np.hstack(list_of_lists)
 
             else:
                 raise utils.PydykitException(
@@ -385,6 +383,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
     def __init__(
         self,
         manager,
+        state,
         nbr_spatial_dimensions: int,
         nbr_constraints: int,
         nbr_dof: int,
@@ -392,28 +391,19 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         gravity: list[float,],
         inertias: list[float,],
     ):
+        self.inertias = inertias
+        self.inertias_matrix = np.diag(self.inertias)
 
         super().__init__(
             manager=manager,
+            state=state,
             nbr_spatial_dimensions=nbr_spatial_dimensions,
             nbr_constraints=nbr_constraints,
             nbr_dof=nbr_dof,
             mass=mass,
             gravity=gravity,
         )
-        self.inertias = inertias
-        self.inertias_matrix = np.diag(self.inertias)
         self.gravity = np.array(self.gravity)
-
-    def get_momentum_from_velocity(
-        self, position: list[float,], velocity: list[float,]
-    ) -> list[float,]:
-
-        momentum = self.mass_matrix() @ np.array(velocity)
-        return momentum.tolist()
-
-    def get_state_dimensions(self):
-        return 2 * self.nbr_dof + self.nbr_constraints
 
     def get_state_columns(self):
         return [
@@ -459,7 +449,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         G_q = operators.convective_transformation_matrix(
             quat=quat,
         )
-
         singular_mass_matrix = 4.0 * G_q.T @ self.inertias_matrix @ G_q
         regular_mass_matrix = singular_mass_matrix + 2 * np.trace(
             self.inertias_matrix
