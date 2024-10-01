@@ -15,6 +15,10 @@ configuration:
       spring_stiffness_parameter_13: 50
       spring_stiffness_parameter_24: 500
       damper_viscosity_parameter_23: 0
+      state:
+        position: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
+        velocity: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.1764705882352939]
+        multiplier: [0.0, 0.0]
   solver:
     class_name: Newton
     kwargs:
@@ -29,10 +33,3 @@ configuration:
       step_size: 0.01
       start: 0.0
       end: 0.09
-  state:
-    class_name: State
-    kwargs:
-      initial_state:
-        position: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
-        velocity: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.1764705882352939]
-        multiplier: [0.0, 0.0]

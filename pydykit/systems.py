@@ -533,6 +533,7 @@ class FourParticleSystem(MultiBodySystem):
     def __init__(
         self,
         manager,
+        state,
         nbr_spatial_dimensions: int,
         nbr_constraints: int,
         nbr_dof: int,
@@ -549,6 +550,7 @@ class FourParticleSystem(MultiBodySystem):
 
         super().__init__(
             manager=manager,
+            state=state,
             nbr_spatial_dimensions=nbr_spatial_dimensions,
             nbr_constraints=nbr_constraints,
             nbr_dof=nbr_dof,
@@ -568,17 +570,6 @@ class FourParticleSystem(MultiBodySystem):
             self.gravity,
             repeats=self.nbr_particles,
             axis=0,
-        )
-
-    def get_momentum_from_velocity(
-        self, position: list[float,], velocity: list[float,]
-    ) -> list[float,]:
-        momentum = self.mass_matrix(q=None) @ np.array(velocity)
-        return momentum.tolist()
-
-    def get_state_dimensions(self):
-        return (
-            2 * self.nbr_spatial_dimensions * self.nbr_particles + self.nbr_constraints
         )
 
     def get_state_columns(self):
@@ -611,51 +602,56 @@ class FourParticleSystem(MultiBodySystem):
             "lambda2",
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
 
-    def decompose_state(self, state):
+    def decompose_state(self):
+        state = self.state
         dim = self.nbr_spatial_dimensions * self.nbr_particles
 
         assert len(state) == 2 * dim + self.nbr_constraints
 
-        decomposed_state = namedtuple("state", "q p lambd")
+        decomposed_state = namedtuple(
+            "decomposed_state", self.manager.integrator.variable_names
+        )
         return decomposed_state(
-            q=state[0:dim],
-            p=state[dim : 2 * dim],
-            lambd=state[2 * dim :],
+            position=state[0:dim],
+            momentum=state[dim : 2 * dim],
+            multiplier=state[2 * dim :],
         )
 
-    def compose_state(self, q, p, lambd):
+    @staticmethod
+    def compose_state(q, dq, lambd):
         return np.concatenate(
             [
                 q,
-                p,
+                dq,
                 lambd,
             ],
             axis=0,
         )
 
-    def mass_matrix(self, q):
+    def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
         return np.diag(diagonal_elements)
 
-    def inverse_mass_matrix(self, q):
+    def inverse_mass_matrix(self):
         diagonal_elements = np.reciprocal(
             np.repeat(self.mass, self.nbr_spatial_dimensions).astype(float)
         )
         return np.diag(diagonal_elements)
 
-    def kinetic_energy_gradient_from_momentum(self, q, p):
-        return np.zeros(q.shape)
+    def kinetic_energy_gradient_from_momentum(self):
+        return np.zeros(self.nbr_dof)
 
-    def kinetic_energy_gradient_from_velocity(self, q, v):
-        return np.zeros(q.shape)
+    def kinetic_energy_gradient_from_velocity(self):
+        return np.zeros(self.nbr_dof)
 
-    def external_potential(self, q):
+    def external_potential(self):
         return 0
 
-    def external_potential_gradient(self, q):
-        return np.zeros(q.shape)
+    def external_potential_gradient(self):
+        return np.zeros(self.nbr_dof)
 
-    def internal_potential(self, q):
+    def internal_potential(self):
+        q = self.decompose_state().position
         q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
 
         contribution_first_spring = (
@@ -672,7 +668,8 @@ class FourParticleSystem(MultiBodySystem):
 
         return contribution_first_spring + contribution_second_spring
 
-    def internal_potential_gradient(self, q):
+    def internal_potential_gradient(self):
+        q = self.decompose_state().position
         q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
 
         contribution_first_spring = (
@@ -689,7 +686,8 @@ class FourParticleSystem(MultiBodySystem):
 
         return contribution_first_spring + contribution_second_spring
 
-    def constraint(self, q):
+    def constraint(self):
+        q = self.decompose_state().position
         q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
         first_constraint = 0.5 * (
             (q_2 - q_1).T @ (q_2 - q_1) - self.rigid_constraint_length_12**2
@@ -700,7 +698,8 @@ class FourParticleSystem(MultiBodySystem):
 
         return np.hstack([first_constraint, second_constraint])
 
-    def constraint_gradient(self, q):
+    def constraint_gradient(self):
+        q = self.decompose_state().position
         q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
 
         first_constraint_gradient = np.hstack(
@@ -717,8 +716,8 @@ class FourParticleSystem(MultiBodySystem):
 
         return np.split(vector, self.nbr_particles)
 
-    def dissipation_matrix(self, q, v):
-        diss_mat = np.zeros(q.shape, q.shape)
+    def dissipation_matrix(self):
+        diss_mat = np.zeros(self.nbr_dof, self.nbr_dof)
         return diss_mat
 
 
