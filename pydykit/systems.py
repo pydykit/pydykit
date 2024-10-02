@@ -118,13 +118,12 @@ class MultiBodySystem(AbstractMultiBodySystem):
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
         self.state_names = utils.get_keys_dict_list(self.initial_state)
-
+        if hasattr(self.manager.integrator, "variable_names"):
+            utils.compare_string_lists(
+                list1=self.state_names, list2=self.manager.integrator.variable_names
+            )
         self.state_columns = self.get_state_columns()
-        self.state = np.zeros((self.dim_state))
-
-        # transform velocity and momentum states if needed
         self.build_state_vector()
-        self.check_transform_states()
 
     def update(self, *states):
         # for each entry in states a system is created
@@ -136,62 +135,6 @@ class MultiBodySystem(AbstractMultiBodySystem):
 
     def build_state_vector(self):
         self.state = np.hstack(list(self.initial_state.values()))
-
-    def check_transform_states(self):
-        # switches momentum and velocity states if needed
-
-        initial_state_variable_names = list(self.initial_state.keys())
-
-        if (
-            not hasattr(self.manager.integrator, "variable_names")
-            or initial_state_variable_names == self.manager.integrator.variable_names
-        ):
-            pass
-        else:
-
-            transformations = {
-                "velocity": ("momentum", self.mass_matrix, "velocity", "momentum"),
-                "momentum": (
-                    "velocity",
-                    self.inverse_mass_matrix,
-                    "momentum",
-                    "velocity",
-                ),
-            }
-
-            initial_state_var, integrator_var = (
-                initial_state_variable_names[1],
-                self.manager.integrator.variable_names[1],
-            )
-
-            if (
-                initial_state_var in transformations
-                and integrator_var == transformations[initial_state_var][0]
-            ):
-                initial_state_variable_names[1] = transformations[initial_state_var][0]
-
-                assert (
-                    initial_state_variable_names
-                    == self.manager.integrator.variable_names
-                ), f"Transformation from {initial_state_var} to {integrator_var} does not fix the problem of mismatching variable names between integrator and initial state."
-
-                # Perform the appropriate transformation
-                state_var = self.initial_state[transformations[initial_state_var][2]]
-                self.initial_state[transformations[initial_state_var][3]] = (
-                    transformations[initial_state_var][1]() @ np.array(state_var)
-                )
-
-                list_of_lists = [
-                    self.initial_state[var]
-                    for var in self.manager.integrator.variable_names
-                    if var in self.initial_state
-                ]
-                self.state = np.hstack(list_of_lists)
-
-            else:
-                raise utils.PydykitException(
-                    "Transformation from velocity to momentum does not fix the problem of mismatching variable names between integrator and initial state."
-                )
 
     @abc.abstractmethod
     def decompose_state(self):
@@ -1035,11 +978,7 @@ class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
         self.state_names = utils.get_keys_dict_list(self.initial_state)
-
         self.state_columns = self.get_state_columns()
-        self.state = np.zeros((self.dim_state))
-
-        # build up state vector
         self.build_state_vector()
 
     def build_state_vector(self):
