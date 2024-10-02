@@ -89,7 +89,7 @@ class MultiBodyIntegrator(abc.ABC):
         pass
 
 
-class Midpoint(MultiBodyIntegrator):
+class Midpoint_DAE(MultiBodyIntegrator):
 
     def __init__(self, manager):
         super().__init__(manager)
