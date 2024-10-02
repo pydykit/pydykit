@@ -248,7 +248,7 @@ class Pendulum3DCartesian(MultiBodySystem):
             "dy",
             "dz",
             "lambda",
-        ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        ]
 
     def mass_matrix(self):
         return self.mass * np.eye(self.nbr_dof)
@@ -336,7 +336,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             "p3",
             "p4",
             "lambda",
-        ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        ]
 
     def mass_matrix(self):
         q = self.decompose_state()["position"]
@@ -495,7 +495,7 @@ class FourParticleSystem(MultiBodySystem):
             "dz4",
             "lambda1",
             "lambda2",
-        ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        ]
 
     def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
@@ -658,7 +658,7 @@ class ParticleSystem(MultiBodySystem):
         ] + [
             f"lambda{utils.shift_index_python_to_literature(number)}"
             for number in range(self.nbr_constraints)
-        ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        ]
 
     def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
