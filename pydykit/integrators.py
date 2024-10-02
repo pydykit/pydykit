@@ -20,9 +20,6 @@ class PortHamiltonianIntegrator(abc.ABC):
 
 
 class MidpointPH(PortHamiltonianIntegrator):
-    def __init__(self, manager):
-        super().__init__(manager)
-        self.variable_names = ["position", "velocity", "multiplier"]
 
     def calc_residuum_tangent(self):
         system = self.manager.system

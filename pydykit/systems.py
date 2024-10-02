@@ -117,6 +117,7 @@ class MultiBodySystem(AbstractMultiBodySystem):
         # convert state as dict to array with values
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
+        self.state_names = utils.get_keys_dict_list(self.initial_state)
 
         self.state_columns = self.get_state_columns()
         self.state = np.zeros((self.dim_state))
@@ -314,7 +315,7 @@ class Pendulum3DCartesian(MultiBodySystem):
 
         return dict(
             zip(
-                self.manager.integrator.variable_names,
+                self.state_names,
                 [state[0:dim], state[dim : 2 * dim], state[2 * dim :]],
             )
         )
@@ -424,7 +425,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
         return dict(
             zip(
-                self.manager.integrator.variable_names,
+                self.state_names,
                 [
                     state[0 : self.nbr_dof],
                     state[self.nbr_dof : 2 * self.nbr_dof],
@@ -610,7 +611,7 @@ class FourParticleSystem(MultiBodySystem):
 
         return dict(
             zip(
-                self.manager.integrator.variable_names,
+                self.state_names,
                 [state[0:dim], state[dim : 2 * dim], state[2 * dim :]],
             )
         )
@@ -749,12 +750,12 @@ class ParticleSystem(MultiBodySystem):
             items=self.particles, key="initial_position"
         )
 
-        self.initial_state_v = utils.get_flat_list_of_list_attributes(
-            items=self.particles, key="initial_velocity"
+        self.initial_state_p = utils.get_flat_list_of_list_attributes(
+            items=self.particles, key="initial_momentum"
         )
         self.initial_state = {
             "position": self.initial_state_q,
-            "velocity": self.initial_state_v,
+            "momentum": self.initial_state_p,
             "multiplier": np.zeros(len(self.constraints)),
         }
 
@@ -795,7 +796,7 @@ class ParticleSystem(MultiBodySystem):
 
         return dict(
             zip(
-                self.manager.integrator.variable_names,
+                self.state_names,
                 [
                     state[0 : self.nbr_dof],
                     state[self.nbr_dof : 2 * self.nbr_dof],
@@ -1033,6 +1034,7 @@ class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
         # convert state as dict to array with values
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
+        self.state_names = utils.get_keys_dict_list(self.initial_state)
 
         self.state_columns = self.get_state_columns()
         self.state = np.zeros((self.dim_state))
@@ -1112,19 +1114,14 @@ class Pendulum2D(PortHamiltonianSystem):
         self.length = 1.0
 
     def get_state_columns(self):
-        return [
-            "angle",
-            "velocity",
-        ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        return self.state_names  # special case!
 
     def decompose_state(self):
         state = self.state
-
         assert len(state) == 2
-
         return dict(
             zip(
-                self.manager.integrator.variable_names,
+                self.state_names,
                 [state[0], state[1]],
             )
         )
