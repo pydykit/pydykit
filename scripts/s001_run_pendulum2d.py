@@ -19,13 +19,13 @@ print(result)
 fig, ax = plt.subplots()
 
 ax.plot(
-    result.time[:],
-    result.state[:, 0],
+    result.times[:],
+    result.results[:, 0],
     marker="x",
 )
 ax.plot(
-    result.time[:],
-    result.state[:, 1],
+    result.times[:],
+    result.results[:, 1],
     marker="x",
 )
 

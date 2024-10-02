@@ -109,3 +109,16 @@ def sort_list_of_dicts_based_on_special_value(my_list, key):
 
 def get_flat_list_of_list_attributes(items, key):
     return np.array([item[key] for item in items]).flatten()
+
+
+def get_nbr_elements_dict_list(my_list: list[dict,]):
+    count = 0
+    for entry in my_list:
+        count += len(my_list[entry])
+    return count
+
+
+def row_array_from_df(df, index):
+    row = df.iloc[index]
+    row = row.drop("time")
+    return row.to_numpy()

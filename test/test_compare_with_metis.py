@@ -55,7 +55,7 @@ class TestCompareWithMetis:
         )
         old = reference["coordinates"]
 
-        new = result.state[:, result_indices]
+        new = result.results[:, result_indices]
 
         utils.print_compare(old=old, new=new)
 
