@@ -19,10 +19,6 @@ class AbstractMultiBodySystem(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def compose_state(self):
-        pass
-
-    @abc.abstractmethod
     def mass_matrix(self, q):
         pass
 
@@ -149,10 +145,6 @@ class MultiBodySystem(AbstractMultiBodySystem):
         )
 
     @abc.abstractmethod
-    def compose_state(self):
-        pass
-
-    @abc.abstractmethod
     def mass_matrix(self, q):
         pass
 
@@ -258,30 +250,6 @@ class Pendulum3DCartesian(MultiBodySystem):
             "lambda",
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
 
-    def decompose_state(self):
-        state = self.state
-        dim = self.nbr_dof
-
-        assert len(state) == 2 * dim + self.nbr_constraints
-
-        return dict(
-            zip(
-                self.state_names,
-                [state[0:dim], state[dim : 2 * dim], state[2 * dim :]],
-            )
-        )
-
-    @staticmethod
-    def compose_state(q, dq, lambd):
-        return np.concatenate(
-            [
-                q,
-                dq,
-                lambd,
-            ],
-            axis=0,
-        )
-
     def mass_matrix(self):
         return self.mass * np.eye(self.nbr_dof)
 
@@ -369,16 +337,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             "p4",
             "lambda",
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
-
-    def compose_state(self, q, p, lambd):
-        return np.concatenate(
-            [
-                q,
-                p,
-                lambd,
-            ],
-            axis=0,
-        )
 
     def mass_matrix(self):
         q = self.decompose_state()["position"]
@@ -538,17 +496,6 @@ class FourParticleSystem(MultiBodySystem):
             "lambda1",
             "lambda2",
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
-
-    @staticmethod
-    def compose_state(q, dq, lambd):
-        return np.concatenate(
-            [
-                q,
-                dq,
-                lambd,
-            ],
-            axis=0,
-        )
 
     def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
@@ -712,17 +659,6 @@ class ParticleSystem(MultiBodySystem):
             f"lambda{utils.shift_index_python_to_literature(number)}"
             for number in range(self.nbr_constraints)
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
-
-    @staticmethod
-    def compose_state(q, p, lambd):
-        return np.concatenate(
-            [
-                q,
-                p,
-                lambd,
-            ],
-            axis=0,
-        )
 
     def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
@@ -892,10 +828,6 @@ class AbstractPortHamiltonianSystem(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def compose_state(self):
-        pass
-
-    @abc.abstractmethod
     def costates(self, state):
         pass
 
@@ -959,10 +891,6 @@ class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
 
     @abc.abstractmethod
     def decompose_state(self):
-        pass
-
-    @abc.abstractmethod
-    def compose_state(self):
         pass
 
     @abc.abstractmethod
@@ -1030,9 +958,6 @@ class Pendulum2D(PortHamiltonianSystem):
             )
         )
 
-    def compose_state(self):
-        pass
-
     def costates(self):
         q = self.decompose_state()["position"]
         v = self.decompose_state()["velocity"]
@@ -1084,10 +1009,6 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
     def decompose_state(self):
         return self.mbs.decompose_state()
-
-    def compose_state(self):
-        utils.pydykitException("not implemented")
-        pass
 
     def costates(self):
         decomposed_state = self.decompose_state()
