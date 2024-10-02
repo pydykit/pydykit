@@ -118,6 +118,10 @@ def get_nbr_elements_dict_list(my_list: list[dict,]):
     return count
 
 
+def get_keys_dict_list(my_list: list[dict,]):
+    return list(my_list.keys())
+
+
 def row_array_from_df(df, index):
     row = df.iloc[index]
     row = row.drop("time")
