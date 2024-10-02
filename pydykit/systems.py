@@ -144,6 +144,16 @@ class MultiBodySystem(AbstractMultiBodySystem):
             )
         )
 
+    def get_state_columns(self):
+        return [
+            f"{state_name}{utils.shift_index_python_to_literature(number)}"
+            for state_name in self.state_names[:2]
+            for number in range(self.nbr_dof)
+        ] + [
+            f"lambda{utils.shift_index_python_to_literature(number)}"
+            for number in range(self.nbr_constraints)
+        ]
+
     @abc.abstractmethod
     def mass_matrix(self, q):
         pass
@@ -239,17 +249,6 @@ class Pendulum3DCartesian(MultiBodySystem):
         self.length = length
         self.gravity = np.array(self.gravity)
 
-    def get_state_columns(self):
-        return [
-            "x",
-            "y",
-            "z",
-            "dx",
-            "dy",
-            "dz",
-            "lambda",
-        ]
-
     def mass_matrix(self):
         return self.mass * np.eye(self.nbr_dof)
 
@@ -322,21 +321,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             gravity=gravity,
         )
         self.gravity = np.array(self.gravity)
-
-    def get_state_columns(self):
-        return [
-            "q0",
-            "q1",
-            "q2",
-            "q3",
-            "q4",
-            "p0",
-            "p1",
-            "p2",
-            "p3",
-            "p4",
-            "lambda",
-        ]
 
     def mass_matrix(self):
         q = self.decompose_state()["position"]
@@ -466,36 +450,6 @@ class FourParticleSystem(MultiBodySystem):
             repeats=self.nbr_particles,
             axis=0,
         )
-
-    def get_state_columns(self):
-        return [
-            "x1",
-            "y1",
-            "z1",
-            "x2",
-            "y2",
-            "z2",
-            "x3",
-            "y3",
-            "z3",
-            "x4",
-            "y4",
-            "z4",
-            "dx1",
-            "dy1",
-            "dz1",
-            "dx2",
-            "dy2",
-            "dz2",
-            "dx3",
-            "dy3",
-            "dz3",
-            "dx4",
-            "dy4",
-            "dz4",
-            "lambda1",
-            "lambda2",
-        ]
 
     def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
@@ -651,8 +605,8 @@ class ParticleSystem(MultiBodySystem):
 
     def get_state_columns(self):
         return [
-            f"{prefix}{letter}{utils.shift_index_python_to_literature(number)}"
-            for prefix in ["", "d"]
+            f"{state_name}_{letter}{utils.shift_index_python_to_literature(number)}"
+            for state_name in self.state_names[:2]
             for number in range(self.nbr_particles)
             for letter in ["x", "y", "z"]
         ] + [
