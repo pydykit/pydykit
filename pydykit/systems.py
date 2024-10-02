@@ -136,9 +136,17 @@ class MultiBodySystem(AbstractMultiBodySystem):
     def build_state_vector(self):
         self.state = np.hstack(list(self.initial_state.values()))
 
-    @abc.abstractmethod
     def decompose_state(self):
-        pass
+        return dict(
+            zip(
+                self.state_names,
+                [
+                    self.state[0 : self.nbr_dof],
+                    self.state[self.nbr_dof : 2 * self.nbr_dof],
+                    self.state[2 * self.nbr_dof :],
+                ],
+            )
+        )
 
     @abc.abstractmethod
     def compose_state(self):
@@ -362,21 +370,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             "lambda",
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
 
-    def decompose_state(self):
-        state = self.state
-        assert len(state) == 2 * self.nbr_dof + self.nbr_constraints
-
-        return dict(
-            zip(
-                self.state_names,
-                [
-                    state[0 : self.nbr_dof],
-                    state[self.nbr_dof : 2 * self.nbr_dof],
-                    state[2 * self.nbr_dof :],
-                ],
-            )
-        )
-
     def compose_state(self, q, p, lambd):
         return np.concatenate(
             [
@@ -545,19 +538,6 @@ class FourParticleSystem(MultiBodySystem):
             "lambda1",
             "lambda2",
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
-
-    def decompose_state(self):
-        state = self.state
-        dim = self.nbr_spatial_dimensions * self.nbr_particles
-
-        assert len(state) == 2 * dim + self.nbr_constraints
-
-        return dict(
-            zip(
-                self.state_names,
-                [state[0:dim], state[dim : 2 * dim], state[2 * dim :]],
-            )
-        )
 
     @staticmethod
     def compose_state(q, dq, lambd):
@@ -732,21 +712,6 @@ class ParticleSystem(MultiBodySystem):
             f"lambda{utils.shift_index_python_to_literature(number)}"
             for number in range(self.nbr_constraints)
         ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
-
-    def decompose_state(self):
-        state = self.state
-        assert len(state) == 2 * self.nbr_dof + self.nbr_constraints
-
-        return dict(
-            zip(
-                self.state_names,
-                [
-                    state[0 : self.nbr_dof],
-                    state[self.nbr_dof : 2 * self.nbr_dof],
-                    state[2 * self.nbr_dof :],
-                ],
-            )
-        )
 
     @staticmethod
     def compose_state(q, p, lambd):
