@@ -1042,7 +1042,7 @@ class Pendulum2D(PortHamiltonianSystem):
         pass
 
     def hamiltonian_gradient(self):
-        q, v = self.decompose_state()
+        q = self.decompose_state()["position"]
         return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
 
     def structure_matrix(self):
