@@ -30,10 +30,6 @@ configuration:
         particle_end: 4
         stiffness: 500
         equilibrium_length: 1
-      dampers: # Currently unused
-      - particle_start: 2
-        particle_end: 3
-        viscosity: 0
       constraints:
       - particle_start: 1
         particle_end: 2
@@ -41,6 +37,7 @@ configuration:
       - particle_start: 3
         particle_end: 4
         length: 1
+      gravity: 0
   solver:
     class_name: Newton
     kwargs:

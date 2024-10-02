@@ -32,13 +32,14 @@ class TestCompareWithMetis:
     @pytest.mark.slow
     def test_run(self, content_config_file, name, result_indices):
 
-        manager = pydykit.Manager(content_config_file=content_config_file)
-
-        manager.system.initialize()
+        manager = pydykit.managers.Manager()
+        configuration = pydykit.configuration.Configuration(
+            **content_config_file["configuration"],
+        )
+        manager._configure(configuration=configuration)
 
         # intermediate steps if conversion to PH system is necessary
         porthamiltonian_system = pydykit.systems.PortHamiltonianMBS(manager=manager)
-        porthamiltonian_system.initialize(MultiBodySystem=manager.system)
         # creates an instance of PHS with attribute MBS
         manager.system = porthamiltonian_system
 
@@ -52,7 +53,7 @@ class TestCompareWithMetis:
         )
         old = reference["coordinates"]
 
-        new = result.state[:, result_indices]
+        new = result.results[:, result_indices]
 
         utils.print_compare(old=old, new=new)
 

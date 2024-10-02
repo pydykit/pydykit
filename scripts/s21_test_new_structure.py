@@ -1,23 +1,20 @@
-import pathlib
-
-import numpy as np
-import pandas as pd
 import plotly.graph_objects as go
 
 import pydykit
 
+# instantiate manager
 manager = pydykit.managers.Manager()
 
+# configure manager from input
 name = "pendulum_3d_cartesian"
-path_config_file = f"./pydykit/example_files/{name}.yml"
-
+path_config_file = f"./pydykit/example_files/{name}_new_structure.yml"
 manager.configure_from_path(path=path_config_file)
 
+# run simulation and store to dataframe
 result = manager.manage()
 df = result.to_df()
 
-# df.to_csv("test/reference_results/pendulum_3d_cartesian.csv")
-
+# postprocess
 fig = go.Figure(
     data=go.Scatter3d(
         x=df["x"],

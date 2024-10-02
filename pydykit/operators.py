@@ -58,3 +58,8 @@ def left_multiplation_matrix(quat):
     assert tmp.shape == (4, 4)
 
     return tmp
+
+
+def quaternion_velocity(quaternion_position: np.array, angular_velocity: np.array):
+    G_q = convective_transformation_matrix(quat=quaternion_position)
+    return 0.5 * G_q.T @ angular_velocity

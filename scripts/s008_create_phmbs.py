@@ -2,13 +2,15 @@ import plotly.graph_objects as go
 
 import pydykit
 
-manager = pydykit.Manager(
-    path_config_file="./pydykit/example_files/four_particle_system_port_hamiltonian.yml"
-)
-manager.system.initialize()  # creates MBS named FourParticleSystem
+name = "four_particle_system_port_hamiltonian"
+
+manager = pydykit.managers.Manager()
+
+path_config_file = f"./pydykit/example_files/{name}.yml"
+
+manager.configure_from_path(path=path_config_file)
 
 porthamiltonian_system = pydykit.systems.PortHamiltonianMBS(manager=manager)
-porthamiltonian_system.initialize(MultiBodySystem=manager.system)
 # creates an instance of PHS with attribute MBS
 manager.system = porthamiltonian_system
 

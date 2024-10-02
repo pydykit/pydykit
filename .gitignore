@@ -1,5 +1,9 @@
 # Mac-storage files
 **/*.DS_Store
+
+# tex-export pdfs
+docs/tex_export/**.pdf
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
