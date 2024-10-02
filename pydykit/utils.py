@@ -2,22 +2,35 @@ import numpy as np
 import yaml
 
 
-def update_object_from_config_file(obj, path_config_file, content_config_file):
+def update_object_from_config_file(
+    obj,
+    path_config_file,
+    content_config_file,
+):
     if (path_config_file is not None) and (content_config_file is not None):
+
         raise PydykitException(
             "Did receive both path_config_file and content_config_file. "
             + "Supply either path_config_file or content_config_file, not both"
         )
+
     elif path_config_file is not None:
+
         obj.path_config_file = path_config_file
-        obj.content_config_file = load_yaml_file(path=obj.path_config_file)
+        content_config_file = load_yaml_file(path=obj.path_config_file)
+
     elif content_config_file is not None:
-        obj.content_config_file = content_config_file
+
+        pass
+
     else:
+
         raise PydykitException(
             "Did not receive kwargs. "
             + "Supply either path_config_file or content_config_file"
         )
+
+    obj.content_config_file = content_config_file
 
     obj.name = obj.content_config_file["name"]
     obj.configuration = obj.content_config_file["configuration"]
@@ -96,3 +109,16 @@ def sort_list_of_dicts_based_on_special_value(my_list, key):
 
 def get_flat_list_of_list_attributes(items, key):
     return np.array([item[key] for item in items]).flatten()
+
+
+def get_nbr_elements_dict_list(my_list: list[dict,]):
+    count = 0
+    for entry in my_list:
+        count += len(my_list[entry])
+    return count
+
+
+def row_array_from_df(df, index):
+    row = df.iloc[index]
+    row = row.drop("time")
+    return row.to_numpy()

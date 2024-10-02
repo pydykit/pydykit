@@ -26,6 +26,7 @@ configuration:
       - particle_start: 2
         particle_end: 3
         length: 1
+      gravity: 0
   solver:
     class_name: Newton
     kwargs:
