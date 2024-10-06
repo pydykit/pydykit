@@ -63,7 +63,7 @@ class Manager:
     ) -> (
         integrators.MultiBodyIntegrator
         | integrators.PortHamiltonianIntegrator
-        | integrators.Midpoint
+        | integrators.Midpoint_DAE
         | integrators.MidpointPH
     ):
 

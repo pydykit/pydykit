@@ -118,7 +118,18 @@ def get_nbr_elements_dict_list(my_list: list[dict,]):
     return count
 
 
+def get_keys_dict_list(my_list: list[dict,]):
+    return list(my_list.keys())
+
+
 def row_array_from_df(df, index):
     row = df.iloc[index]
     row = row.drop("time")
     return row.to_numpy()
+
+
+def compare_string_lists(list1, list2):
+    if list1 == list2:
+        pass
+    else:
+        raise PydykitException(f"{list1} does not match {list2}")

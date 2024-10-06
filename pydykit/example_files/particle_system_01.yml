@@ -7,19 +7,19 @@ configuration:
       particles:
       - index: 1
         initial_position: [0.0, 0.0, 0.0]
-        initial_velocity: [0.0, 0.0, 0.0]
+        initial_momentum: [0.0, 0.0, 0.0]
         mass: 1.0
       - index: 2
         initial_position: [1.0, 0.0, 0.0]
-        initial_velocity: [0.0, 0.0, 0.0]
+        initial_momentum: [0.0, 0.0, 0.0]
         mass: 3.0
       - index: 3
         initial_position: [0.0, 1.0, 0.0]
-        initial_velocity: [0.0, 0.0, 0.0]
+        initial_momentum: [0.0, 0.0, 0.0]
         mass: 2.3
       - index: 4
         initial_position: [1.0, 1.0, 0.0]
-        initial_velocity: [0.0, 0.0, 1.176470588235294]
+        initial_momentum: [0.0, 0.0, 2]
         mass: 1.7
       springs:
       - particle_start: 1
@@ -44,7 +44,7 @@ configuration:
       newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:
-    class_name: Midpoint
+    class_name: Midpoint_DAE
     kwargs:
   time_stepper:
     class_name: FixedIncrement

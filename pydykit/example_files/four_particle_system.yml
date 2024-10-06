@@ -17,7 +17,7 @@ configuration:
       damper_viscosity_parameter_23: 0
       state:
         position: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
-        velocity: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.1764705882352939]
+        momentum: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2]
         multiplier: [0.0, 0.0]
   solver:
     class_name: Newton
@@ -25,7 +25,7 @@ configuration:
       newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:
-    class_name: Midpoint
+    class_name: Midpoint_DAE
     kwargs:
   time_stepper:
     class_name: FixedIncrement

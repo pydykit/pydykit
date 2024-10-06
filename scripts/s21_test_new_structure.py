@@ -7,7 +7,7 @@ manager = pydykit.managers.Manager()
 
 # configure manager from input
 name = "pendulum_3d_cartesian"
-path_config_file = f"./pydykit/example_files/{name}_new_structure.yml"
+path_config_file = f"./pydykit/example_files/{name}.yml"
 manager.configure_from_path(path=path_config_file)
 
 # run simulation and store to dataframe

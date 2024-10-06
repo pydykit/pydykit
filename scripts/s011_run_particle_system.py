@@ -23,18 +23,18 @@ for index in range(manager.system.nbr_particles):
 
     pydykit.plotting.plot_3d_trajectory(
         figure=fig,
-        x_components=df[f"x{index}"],
-        y_components=df[f"y{index}"],
-        z_components=df[f"z{index}"],
+        x_components=df[f"position_x{index}"],
+        y_components=df[f"position_y{index}"],
+        z_components=df[f"position_z{index}"],
         time=df["time"],
     )
 
     index_time = 0
     pydykit.plotting.add_3d_annotation(
         figure=fig,
-        x=df[f"x{index}"][index_time],
-        y=df[f"y{index}"][index_time],
-        z=df[f"z{index}"][index_time],
+        x=df[f"position_x{index}"][index_time],
+        y=df[f"position_y{index}"][index_time],
+        z=df[f"position_z{index}"][index_time],
         text=str(index),
     )
 

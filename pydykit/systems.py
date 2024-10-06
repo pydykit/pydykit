@@ -19,10 +19,6 @@ class AbstractMultiBodySystem(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def compose_state(self):
-        pass
-
-    @abc.abstractmethod
     def mass_matrix(self, q):
         pass
 
@@ -117,13 +113,13 @@ class MultiBodySystem(AbstractMultiBodySystem):
         # convert state as dict to array with values
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
-
+        self.state_names = utils.get_keys_dict_list(self.initial_state)
+        if hasattr(self.manager.integrator, "variable_names"):
+            utils.compare_string_lists(
+                list1=self.state_names, list2=self.manager.integrator.variable_names
+            )
         self.state_columns = self.get_state_columns()
-        self.state = np.zeros((self.dim_state))
-
-        # transform velocity and momentum states if needed
         self.build_state_vector()
-        self.check_transform_states()
 
     def update(self, *states):
         # for each entry in states a system is created
@@ -136,69 +132,27 @@ class MultiBodySystem(AbstractMultiBodySystem):
     def build_state_vector(self):
         self.state = np.hstack(list(self.initial_state.values()))
 
-    def check_transform_states(self):
-        # switches momentum and velocity states if needed
-
-        initial_state_variable_names = list(self.initial_state.keys())
-
-        if (
-            not hasattr(self.manager.integrator, "variable_names")
-            or initial_state_variable_names == self.manager.integrator.variable_names
-        ):
-            pass
-        else:
-
-            transformations = {
-                "velocity": ("momentum", self.mass_matrix, "velocity", "momentum"),
-                "momentum": (
-                    "velocity",
-                    self.inverse_mass_matrix,
-                    "momentum",
-                    "velocity",
-                ),
-            }
-
-            initial_state_var, integrator_var = (
-                initial_state_variable_names[1],
-                self.manager.integrator.variable_names[1],
-            )
-
-            if (
-                initial_state_var in transformations
-                and integrator_var == transformations[initial_state_var][0]
-            ):
-                initial_state_variable_names[1] = transformations[initial_state_var][0]
-
-                assert (
-                    initial_state_variable_names
-                    == self.manager.integrator.variable_names
-                ), f"Transformation from {initial_state_var} to {integrator_var} does not fix the problem of mismatching variable names between integrator and initial state."
-
-                # Perform the appropriate transformation
-                state_var = self.initial_state[transformations[initial_state_var][2]]
-                self.initial_state[transformations[initial_state_var][3]] = (
-                    transformations[initial_state_var][1]() @ np.array(state_var)
-                )
-
-                list_of_lists = [
-                    self.initial_state[var]
-                    for var in self.manager.integrator.variable_names
-                    if var in self.initial_state
-                ]
-                self.state = np.hstack(list_of_lists)
-
-            else:
-                raise utils.PydykitException(
-                    "Transformation from velocity to momentum does not fix the problem of mismatching variable names between integrator and initial state."
-                )
-
-    @abc.abstractmethod
     def decompose_state(self):
-        pass
+        return dict(
+            zip(
+                self.state_names,
+                [
+                    self.state[0 : self.nbr_dof],
+                    self.state[self.nbr_dof : 2 * self.nbr_dof],
+                    self.state[2 * self.nbr_dof :],
+                ],
+            )
+        )
 
-    @abc.abstractmethod
-    def compose_state(self):
-        pass
+    def get_state_columns(self):
+        return [
+            f"{state_name}{utils.shift_index_python_to_literature(number)}"
+            for state_name in self.state_names[:2]
+            for number in range(self.nbr_dof)
+        ] + [
+            f"lambda{utils.shift_index_python_to_literature(number)}"
+            for number in range(self.nbr_constraints)
+        ]
 
     @abc.abstractmethod
     def mass_matrix(self, q):
@@ -295,41 +249,6 @@ class Pendulum3DCartesian(MultiBodySystem):
         self.length = length
         self.gravity = np.array(self.gravity)
 
-    def get_state_columns(self):
-        return [
-            "x",
-            "y",
-            "z",
-            "dx",
-            "dy",
-            "dz",
-            "lambda",
-        ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
-
-    def decompose_state(self):
-        state = self.state
-        dim = self.nbr_dof
-
-        assert len(state) == 2 * dim + self.nbr_constraints
-
-        return dict(
-            zip(
-                self.manager.integrator.variable_names,
-                [state[0:dim], state[dim : 2 * dim], state[2 * dim :]],
-            )
-        )
-
-    @staticmethod
-    def compose_state(q, dq, lambd):
-        return np.concatenate(
-            [
-                q,
-                dq,
-                lambd,
-            ],
-            axis=0,
-        )
-
     def mass_matrix(self):
         return self.mass * np.eye(self.nbr_dof)
 
@@ -402,46 +321,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             gravity=gravity,
         )
         self.gravity = np.array(self.gravity)
-
-    def get_state_columns(self):
-        return [
-            "q0",
-            "q1",
-            "q2",
-            "q3",
-            "q4",
-            "p0",
-            "p1",
-            "p2",
-            "p3",
-            "p4",
-            "lambda",
-        ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
-
-    def decompose_state(self):
-        state = self.state
-        assert len(state) == 2 * self.nbr_dof + self.nbr_constraints
-
-        return dict(
-            zip(
-                self.manager.integrator.variable_names,
-                [
-                    state[0 : self.nbr_dof],
-                    state[self.nbr_dof : 2 * self.nbr_dof],
-                    state[2 * self.nbr_dof :],
-                ],
-            )
-        )
-
-    def compose_state(self, q, p, lambd):
-        return np.concatenate(
-            [
-                q,
-                p,
-                lambd,
-            ],
-            axis=0,
-        )
 
     def mass_matrix(self):
         q = self.decompose_state()["position"]
@@ -572,60 +451,6 @@ class FourParticleSystem(MultiBodySystem):
             axis=0,
         )
 
-    def get_state_columns(self):
-        return [
-            "x1",
-            "y1",
-            "z1",
-            "x2",
-            "y2",
-            "z2",
-            "x3",
-            "y3",
-            "z3",
-            "x4",
-            "y4",
-            "z4",
-            "dx1",
-            "dy1",
-            "dz1",
-            "dx2",
-            "dy2",
-            "dz2",
-            "dx3",
-            "dy3",
-            "dz3",
-            "dx4",
-            "dy4",
-            "dz4",
-            "lambda1",
-            "lambda2",
-        ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
-
-    def decompose_state(self):
-        state = self.state
-        dim = self.nbr_spatial_dimensions * self.nbr_particles
-
-        assert len(state) == 2 * dim + self.nbr_constraints
-
-        return dict(
-            zip(
-                self.manager.integrator.variable_names,
-                [state[0:dim], state[dim : 2 * dim], state[2 * dim :]],
-            )
-        )
-
-    @staticmethod
-    def compose_state(q, dq, lambd):
-        return np.concatenate(
-            [
-                q,
-                dq,
-                lambd,
-            ],
-            axis=0,
-        )
-
     def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
         return np.diag(diagonal_elements)
@@ -749,12 +574,12 @@ class ParticleSystem(MultiBodySystem):
             items=self.particles, key="initial_position"
         )
 
-        self.initial_state_v = utils.get_flat_list_of_list_attributes(
-            items=self.particles, key="initial_velocity"
+        self.initial_state_p = utils.get_flat_list_of_list_attributes(
+            items=self.particles, key="initial_momentum"
         )
         self.initial_state = {
             "position": self.initial_state_q,
-            "velocity": self.initial_state_v,
+            "momentum": self.initial_state_p,
             "multiplier": np.zeros(len(self.constraints)),
         }
 
@@ -780,40 +605,14 @@ class ParticleSystem(MultiBodySystem):
 
     def get_state_columns(self):
         return [
-            f"{prefix}{letter}{utils.shift_index_python_to_literature(number)}"
-            for prefix in ["", "d"]
+            f"{state_name}_{letter}{utils.shift_index_python_to_literature(number)}"
+            for state_name in self.state_names[:2]
             for number in range(self.nbr_particles)
             for letter in ["x", "y", "z"]
         ] + [
             f"lambda{utils.shift_index_python_to_literature(number)}"
             for number in range(self.nbr_constraints)
-        ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
-
-    def decompose_state(self):
-        state = self.state
-        assert len(state) == 2 * self.nbr_dof + self.nbr_constraints
-
-        return dict(
-            zip(
-                self.manager.integrator.variable_names,
-                [
-                    state[0 : self.nbr_dof],
-                    state[self.nbr_dof : 2 * self.nbr_dof],
-                    state[2 * self.nbr_dof :],
-                ],
-            )
-        )
-
-    @staticmethod
-    def compose_state(q, p, lambd):
-        return np.concatenate(
-            [
-                q,
-                p,
-                lambd,
-            ],
-            axis=0,
-        )
+        ]
 
     def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
@@ -983,10 +782,6 @@ class AbstractPortHamiltonianSystem(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def compose_state(self):
-        pass
-
-    @abc.abstractmethod
     def costates(self, state):
         pass
 
@@ -1033,11 +828,8 @@ class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
         # convert state as dict to array with values
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
-
+        self.state_names = utils.get_keys_dict_list(self.initial_state)
         self.state_columns = self.get_state_columns()
-        self.state = np.zeros((self.dim_state))
-
-        # build up state vector
         self.build_state_vector()
 
     def build_state_vector(self):
@@ -1053,10 +845,6 @@ class PortHamiltonianSystem(AbstractPortHamiltonianSystem):
 
     @abc.abstractmethod
     def decompose_state(self):
-        pass
-
-    @abc.abstractmethod
-    def compose_state(self):
         pass
 
     @abc.abstractmethod
@@ -1112,25 +900,17 @@ class Pendulum2D(PortHamiltonianSystem):
         self.length = 1.0
 
     def get_state_columns(self):
-        return [
-            "angle",
-            "velocity",
-        ]  # TODO: As the integrator defines whether it is velocity or momentum, this definition should be moved to integrator? Yes!
+        return self.state_names  # special case!
 
     def decompose_state(self):
         state = self.state
-
         assert len(state) == 2
-
         return dict(
             zip(
-                self.manager.integrator.variable_names,
+                self.state_names,
                 [state[0], state[1]],
             )
         )
-
-    def compose_state(self):
-        pass
 
     def costates(self):
         q = self.decompose_state()["position"]
@@ -1141,7 +921,7 @@ class Pendulum2D(PortHamiltonianSystem):
         pass
 
     def hamiltonian_gradient(self):
-        q, v = self.decompose_state()
+        q = self.decompose_state()["position"]
         return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
 
     def structure_matrix(self):
@@ -1183,10 +963,6 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
     def decompose_state(self):
         return self.mbs.decompose_state()
-
-    def compose_state(self):
-        utils.pydykitException("not implemented")
-        pass
 
     def costates(self):
         decomposed_state = self.decompose_state()

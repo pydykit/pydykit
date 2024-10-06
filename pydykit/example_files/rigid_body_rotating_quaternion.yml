@@ -11,7 +11,7 @@ configuration:
       inertias: [6.0, 8.0, 3.0]
       state:
         position: [1.0, 0.0, 0.0, 0.0]
-        velocity: [0.0, 5.0, 10.0, 10.0]
+        momentum: [0, 120, 320, 120] # mass matr (q0): diag([34,24,32,12]), velocity: [0.0, 5.0, 10.0, 10.0]
         multiplier: [0.0]
   solver:
     class_name: Newton
@@ -19,7 +19,7 @@ configuration:
       newton_epsilon: 1.e-09
       max_iterations: 40
   integrator:
-    class_name: Midpoint
+    class_name: Midpoint_DAE
     kwargs:
   time_stepper:
     class_name: FixedIncrement
