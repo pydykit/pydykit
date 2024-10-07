@@ -1,6 +1,7 @@
 import copy
+import importlib
 
-from . import integrators, results, solvers, systems, time_steppers, utils
+from . import base_classes, results, utils
 from .configuration import Configuration
 
 
@@ -20,7 +21,6 @@ class Manager:
         self._configure(configuration=configuration)
 
     def _configure(self, configuration):
-
         # set configuration
         self.configuration = configuration
 
@@ -37,52 +37,40 @@ class Manager:
     def _set_system(
         self,
     ) -> (
-        systems.FourParticleSystem
-        | systems.MultiBodySystem
-        | systems.ParticleSystem
-        | systems.Pendulum2D
-        | systems.Pendulum3DCartesian
+        base_classes.AbstractMultiBodySystem
+        | base_classes.AbstractPortHamiltonianSystem
     ):
 
         return self._dynamically_instantiate(
-            module=systems,
+            module_name="systems",
             class_name=self.configuration.system.class_name,
             kwargs=self.configuration.system.kwargs,
         )
 
-    def _set_solver(self) -> solvers.Solver | solvers.Newton:
+    def _set_solver(self) -> base_classes.Solver:
 
         return self._dynamically_instantiate(
-            module=solvers,
+            module_name="solvers",
             class_name=self.configuration.solver.class_name,
             kwargs=self.configuration.solver.kwargs,
         )
 
     def _set_integrator(
         self,
-    ) -> (
-        integrators.MultiBodyIntegrator
-        | integrators.PortHamiltonianIntegrator
-        | integrators.Midpoint_DAE
-        | integrators.MidpointPH
-    ):
+    ) -> base_classes.MultiBodyIntegrator | base_classes.PortHamiltonianIntegrator:
 
         return self._dynamically_instantiate(
-            module=integrators,
+            module_name="integrators",
             class_name=self.configuration.integrator.class_name,
             kwargs=self.configuration.integrator.kwargs,
         )
 
     def _set_time_stepper(
         self,
-    ) -> (
-        time_steppers.TimeStepper
-        | time_steppers.FixedIncrement
-        | time_steppers.FixedIncrementHittingEnd
-    ):
+    ) -> base_classes.TimeStepper:
 
         return self._dynamically_instantiate(
-            module=time_steppers,
+            module_name="time_steppers",
             class_name=self.configuration.time_stepper.class_name,
             kwargs=self.configuration.time_stepper.kwargs,
         )
@@ -92,18 +80,21 @@ class Manager:
     ) -> results.Result:
 
         return self._dynamically_instantiate(
-            module=results,
+            module_name="results",
             class_name="Result",
             kwargs=None,
         )
 
-    def _dynamically_instantiate(self, module, class_name, kwargs):
+    def _dynamically_instantiate(self, module_name, class_name, kwargs):
 
         # Deepcopy and handle empty kwargs
         kwargs = {} if (kwargs is None) else copy.deepcopy(kwargs)
 
         return getattr(
-            module,
+            importlib.import_module(
+                name=f".{module_name}",
+                package="pydykit",
+            ),
             class_name,
         )(manager=self, **kwargs)
 
