@@ -5,7 +5,7 @@ from . import base_classes, results, utils
 from .configuration import Configuration
 
 
-class Manager:
+class Manager(base_classes.Manager):
 
     def configure(self, configuration: Configuration):
         self._configure(configuration=configuration)

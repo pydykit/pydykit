@@ -2,6 +2,8 @@ import abc
 from collections import namedtuple
 from typing import Iterator
 
+from . import results
+
 
 class PortHamiltonianIntegrator(abc.ABC):
     integrator_output = namedtuple("integrator_output", "residuum tangent")
@@ -187,3 +189,14 @@ class TimeStepper(abc.ABC):
     @abc.abstractmethod
     def current_step(self) -> TimeStep:
         raise NotImplementedError
+
+
+class Manager(abc.ABC):
+    time_stepper: TimeStepper = NotImplemented
+    solver: Solver = NotImplemented
+    integrator: MultiBodyIntegrator | PortHamiltonianIntegrator = NotImplemented
+    system: AbstractMultiBodySystem | AbstractPortHamiltonianSystem = NotImplemented
+    result: results.Result = NotImplemented
+
+    current_state = NotImplemented
+    next_state = NotImplemented
