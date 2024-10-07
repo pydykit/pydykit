@@ -1,5 +1,3 @@
-import abc
-import copy
 from collections import namedtuple
 from functools import partial
 
