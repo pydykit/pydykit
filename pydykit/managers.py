@@ -50,7 +50,7 @@ class Manager:
             kwargs=self.configuration.system.kwargs,
         )
 
-    def _set_solver(self) -> solvers.Solver | solvers.Newton:
+    def _set_solver(self) -> base_classes.Solver:
 
         return self._dynamically_instantiate(
             module=solvers,
