@@ -50,15 +50,13 @@ class MidpointPH(IntegratorCommon):
 
         # create midpoint state and all corresponding discrete-time systems
         state_n05 = 0.5 * (state_n + state_n1)
-        system_n, system_n1, system_n05 = list(
-            map(
-                lambda state: system.copy(state=state),
-                [
-                    state_n,
-                    state_n1,
-                    state_n05,
-                ],
-            )
+        system_n, system_n1, system_n05 = utils.get_system_copies_from_states(
+            system=system,
+            states=[
+                state_n,
+                state_n1,
+                state_n05,
+            ],
         )
 
         e_n = system_n.descriptor_matrix()
@@ -90,15 +88,13 @@ class Midpoint_DAE(IntegratorCommon):
         # create midpoint state and all corresponding discrete-time systems
         state_n05 = 0.5 * (state_n + state_n1)
 
-        system_n, system_n1, system_n05 = list(
-            map(
-                lambda state: system.copy(state=state),
-                [
-                    state_n,
-                    state_n1,
-                    state_n05,
-                ],
-            )
+        system_n, system_n1, system_n05 = utils.get_system_copies_from_states(
+            system=system,
+            states=[
+                state_n,
+                state_n1,
+                state_n05,
+            ],
         )
 
         # get inverse mass matrix

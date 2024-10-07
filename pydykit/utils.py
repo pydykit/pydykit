@@ -131,3 +131,12 @@ def compare_string_lists(list1, list2):
         pass
     else:
         raise PydykitException(f"{list1} does not match {list2}")
+
+
+def get_system_copies_from_states(system, *states):
+    return list(
+        map(
+            lambda state: system.copy(state=state),
+            states,
+        )
+    )
