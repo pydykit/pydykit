@@ -186,4 +186,3 @@ class Manager(abc.ABC):
     result: results.Result = NotImplemented
 
     current_state = NotImplemented
-    next_state = NotImplemented

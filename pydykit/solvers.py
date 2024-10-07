@@ -46,17 +46,16 @@ class Newton(SystemSolver):
         # Do remaining steps, until stepper stops
         for step in steps:
 
-            # Update system for NEW time based on previous state
-            manager.current_state = manager.next_state
-            manager.next_state = self.function_solver.solve(
+            # Calc next state
+            tmp = self.function_solver.solve(
                 func=self.manager.integrator.get_residuum,
                 jacobian=self.manager.integrator.get_tangent,
-                initial=manager.next_state,
+                initial=manager.current_state,
             )
 
             # Store results
             result.times[step.index] = step.time
-            result.results[step.index, :] = manager.next_state
+            result.results[step.index, :] = manager.current_state = tmp
 
             # Print
             utils.print_current_step(step)
