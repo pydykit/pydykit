@@ -50,7 +50,9 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
     def get_state_columns(self):
         return [
             f"{state_name}{utils.shift_index_python_to_literature(number)}"
-            for state_name in self.state_names[:2]
+            for state_name in self.state_names[
+                :2
+            ]  # NOTE: Why hardcoding here numbers if you already have dictionary-type data? Why indices?
             for number in range(self.nbr_dof)
         ] + [
             f"lambda{utils.shift_index_python_to_literature(number)}"
