@@ -1,5 +1,8 @@
 import numpy as np
+import numpy.typing as npt
 import yaml
+
+from . import base_classes
 
 
 def update_object_from_config_file(
@@ -133,10 +136,11 @@ def compare_string_lists(list1, list2):
         raise PydykitException(f"{list1} does not match {list2}")
 
 
-def get_system_copies_from_states(system, *states):
-    return list(
-        map(
-            lambda state: system.copy(state=state),
-            states,
-        )
+def get_system_copies_from_states(
+    system: base_classes.System,
+    states: list[npt.ArrayLike],
+):
+    return map(
+        lambda state: system.copy(state=state),
+        states,
     )
