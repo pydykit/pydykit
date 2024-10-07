@@ -112,10 +112,7 @@ def get_flat_list_of_list_attributes(items, key):
 
 
 def get_nbr_elements_dict_list(my_list: list[dict,]):
-    count = 0
-    for entry in my_list:
-        count += len(my_list[entry])
-    return count
+    return sum(map(len, my_list.values()))
 
 
 def get_keys_dict_list(my_list: list[dict,]):
