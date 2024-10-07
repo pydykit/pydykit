@@ -33,10 +33,7 @@ class Manager(base_classes.Manager):
 
     def _set_system(
         self,
-    ) -> (
-        base_classes.AbstractMultiBodySystem
-        | base_classes.AbstractPortHamiltonianSystem
-    ):
+    ) -> base_classes.System:
 
         return self._dynamically_instantiate(
             module_name="systems",

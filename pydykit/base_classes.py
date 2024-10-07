@@ -26,7 +26,11 @@ class Solver(abc.ABC):
         raise NotImplementedError
 
 
-class AbstractMultiBodySystem(abc.ABC):
+class System(abc.ABC):
+    pass
+
+
+class AbstractMultiBodySystem(System):
 
     @abc.abstractmethod
     def __init__(self):
@@ -105,7 +109,7 @@ class AbstractMultiBodySystem(abc.ABC):
         raise NotImplementedError
 
 
-class AbstractPortHamiltonianSystem(abc.ABC):
+class AbstractPortHamiltonianSystem(System):
 
     @abc.abstractmethod
     def __init__(self):
@@ -182,5 +186,5 @@ class Manager(abc.ABC):
     time_stepper: TimeStepper = NotImplemented
     solver: Solver = NotImplemented
     integrator: Integrator = NotImplemented
-    system: AbstractMultiBodySystem | AbstractPortHamiltonianSystem = NotImplemented
+    system: System = NotImplemented
     result: results.Result = NotImplemented
