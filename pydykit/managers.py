@@ -1,6 +1,6 @@
 import copy
 
-from . import integrators, results, solvers, systems, time_steppers, utils
+from . import base_classes, integrators, results, solvers, systems, time_steppers, utils
 from .configuration import Configuration
 
 
@@ -60,12 +60,7 @@ class Manager:
 
     def _set_integrator(
         self,
-    ) -> (
-        integrators.MultiBodyIntegrator
-        | integrators.PortHamiltonianIntegrator
-        | integrators.Midpoint_DAE
-        | integrators.MidpointPH
-    ):
+    ) -> base_classes.MultiBodyIntegrator | base_classes.PortHamiltonianIntegrator:
 
         return self._dynamically_instantiate(
             module=integrators,

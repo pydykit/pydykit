@@ -5,21 +5,10 @@ from functools import partial
 
 import numpy as np
 
-from . import utils
+from . import base_classes, utils
 
 
-class PortHamiltonianIntegrator(abc.ABC):
-    integrator_output = namedtuple("integrator_output", "residuum tangent")
-
-    def __init__(self, manager):
-        self.manager = manager
-
-    @abc.abstractmethod
-    def calc_residuum_tangent(self):
-        pass
-
-
-class MidpointPH(PortHamiltonianIntegrator):
+class MidpointPH(base_classes.PortHamiltonianIntegrator):
 
     def calc_residuum_tangent(self):
         system = self.manager.system
@@ -75,18 +64,7 @@ class MidpointPH(PortHamiltonianIntegrator):
         return residuum
 
 
-class MultiBodyIntegrator(abc.ABC):
-    integrator_output = namedtuple("integrator_output", "residuum tangent")
-
-    def __init__(self, manager):
-        self.manager = manager
-
-    @abc.abstractmethod
-    def calc_residuum_tangent(self):
-        pass
-
-
-class Midpoint_DAE(MultiBodyIntegrator):
+class Midpoint_DAE(base_classes.MultiBodyIntegrator):
 
     def __init__(self, manager):
         super().__init__(manager)
