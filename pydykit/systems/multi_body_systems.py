@@ -46,6 +46,16 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
         self.state_columns = self.get_state_columns()
         self.build_state_vector()
 
+    def get_state_columns(self):
+        return [
+            f"{state_name}{utils.shift_index_python_to_literature(number)}"
+            for state_name in self.state_names[:2]
+            for number in range(self.nbr_dof)
+        ] + [
+            f"lambda{utils.shift_index_python_to_literature(number)}"
+            for number in range(self.nbr_constraints)
+        ]
+
     def build_state_vector(self):
         self.state = np.hstack(list(self.initial_state.values()))
 
@@ -60,16 +70,6 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
                 ],
             )
         )
-
-    def get_state_columns(self):
-        return [
-            f"{state_name}{utils.shift_index_python_to_literature(number)}"
-            for state_name in self.state_names[:2]
-            for number in range(self.nbr_dof)
-        ] + [
-            f"lambda{utils.shift_index_python_to_literature(number)}"
-            for number in range(self.nbr_constraints)
-        ]
 
     def update(self, *states):
         # for each entry in states a system is created
@@ -508,6 +508,9 @@ class ParticleSystem(MultiBodySystem):
             "multiplier": np.zeros(len(self.constraints)),
         }
 
+        # TODO: Remove redundancy... You pass several arguments to a super class and set them as attributes within the super classes init function.
+        # Some of these arguments have already been set as attributes within this childs init function. Why would you do this?
+        # TODO: Remove everything that has to do with parsing config files from system. System is about methods which evaluate physical quantities.
         super().__init__(
             manager=manager,
             nbr_spatial_dimensions=nbr_spatial_dimensions,
