@@ -18,7 +18,8 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
         state,
     ):
         self.manager = manager
-        self.state = state
+
+        self.state = state  # BUG: You set .state here
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
         self.nbr_constraints = nbr_constraints
         self.nbr_dof = nbr_dof
@@ -57,7 +58,9 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
         ]
 
     def build_state_vector(self):
-        self.state = np.hstack(list(self.initial_state.values()))
+        self.state = np.hstack(
+            list(self.initial_state.values())
+        )  # BUG: You set .state here again
 
     def decompose_state(self):
         return dict(
