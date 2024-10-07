@@ -17,13 +17,19 @@ class Newton(SystemSolver):
 
     def __init__(
         self,
+        function_solver_name: str,
         newton_epsilon: float,
         max_iterations: int,
         **kwargs,
     ):
         super().__init__(**kwargs)
 
-        self.function_solver = function_solvers.Newton(
+        function_solver_constructor = getattr(
+            function_solvers,
+            function_solver_name,
+        )
+
+        self.function_solver = function_solver_constructor(
             newton_epsilon=newton_epsilon,
             max_iterations=max_iterations,
         )

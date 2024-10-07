@@ -3,6 +3,7 @@ from typing import Callable
 
 import numpy as np
 import numpy.typing as npt
+from scipy.optimize import root
 
 from . import utils
 
@@ -20,7 +21,6 @@ class FunctionSolver(abc.ABC):
 
 
 class Newton(FunctionSolver):
-
     def __init__(
         self,
         newton_epsilon: float,
@@ -28,6 +28,9 @@ class Newton(FunctionSolver):
     ):
         self.newton_epsilon = newton_epsilon
         self.max_iterations = max_iterations
+
+
+class NewtonPlainPython(Newton):
 
     def solve(self, func, jacobian, initial):
 
@@ -53,3 +56,15 @@ class Newton(FunctionSolver):
             raise utils.PydykitException("Newton convergence not succesful")
 
         return initial
+
+
+class NewtonScipy(Newton):
+    def solve(self, func, jacobian, initial):
+        # TODO: Log the logs of the optimization function
+        return root(
+            fun=func,
+            x0=initial,
+            jac=jacobian,
+            tol=self.newton_epsilon,
+            # maxiter=self.max_iterations,
+        ).x

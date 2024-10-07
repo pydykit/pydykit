@@ -24,6 +24,7 @@ configuration:
     kwargs:
       newton_epsilon: 1.e-10
       max_iterations: 40
+      function_solver_name: NewtonPlainPython
   integrator:
     class_name: MidpointPH
     kwargs:
