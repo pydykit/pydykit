@@ -15,7 +15,7 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
         nbr_dof: int,
         mass: float,
         gravity: list[float,],
-        state,  # NOTE: What is this?
+        state: dict[str, list[float]],  # NOTE: What is this?
     ):
         self.manager = manager
 
