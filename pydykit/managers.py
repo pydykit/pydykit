@@ -57,7 +57,7 @@ class Manager(base_classes.Manager):
 
     def _set_integrator(
         self,
-    ) -> base_classes.MultiBodyIntegrator | base_classes.PortHamiltonianIntegrator:
+    ) -> base_classes.Integrator:
 
         return self._dynamically_instantiate(
             module_name="integrators",

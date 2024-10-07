@@ -1,9 +1,32 @@
-import numpy as np
+import abc
 
-from . import base_classes, utils
+from . import base_classes, function_solvers, utils
 
 
-class Newton(base_classes.Solver):
+class SystemSolver(abc.ABC):
+
+    def __init__(self, manager: base_classes.Manager):
+        self.manager = manager
+
+    @abc.abstractmethod
+    def solve(self):
+        raise NotImplementedError
+
+
+class Newton(SystemSolver):
+
+    def __init__(
+        self,
+        newton_epsilon: float,
+        max_iterations: int,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+
+        self.function_solver = function_solvers.Newton(
+            newton_epsilon=newton_epsilon,
+            max_iterations=max_iterations,
+        )
 
     def solve(self):
         time_stepper = self.manager.time_stepper
@@ -23,8 +46,10 @@ class Newton(base_classes.Solver):
 
             # Update system for NEW time based on previous state
             manager.current_state = manager.next_state
-            manager.next_state = (
-                self.newton_update()  # Note: current time step size can be access through time_stepper.current_step.increment
+            manager.next_state = self.function_solver.solve(
+                func=self.manager.integrator.get_residuum,
+                jacobian=self.manager.integrator.get_tangent,
+                initial=manager.next_state,
             )
 
             # Store results
@@ -35,30 +60,3 @@ class Newton(base_classes.Solver):
             utils.print_current_step(step)
 
         return result
-
-    def newton_update(self):
-        manager = self.manager
-
-        # Newton iteration starts
-        residual_norm = 1e5
-        index_iteration = 0
-
-        # Iterate while residual isnt zero and max. iterations number isnt reached
-        while (residual_norm >= self.newton_epsilon) and (
-            index_iteration < self.max_iterations
-        ):
-            index_iteration += 1
-            residual, tangent_matrix = self.manager.integrator.calc_residuum_tangent()
-            state_delta = -np.linalg.inv(tangent_matrix) @ residual
-            manager.next_state = manager.next_state + state_delta
-            residual_norm = np.linalg.norm(residual)
-            utils.print_residual_norm(value=residual_norm)
-
-        if residual_norm < self.newton_epsilon:
-            pass
-        else:
-            raise utils.PydykitException(
-                f"Newton convergence not succesful in step with index {self.manager.time_stepper.current_step.index}."
-            )
-
-        return manager.next_state

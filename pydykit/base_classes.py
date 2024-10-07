@@ -5,31 +5,28 @@ from typing import Iterator
 from . import results
 
 
-class PortHamiltonianIntegrator(abc.ABC):
-    integrator_output = namedtuple("integrator_output", "residuum tangent")
+class Integrator(abc.ABC):
 
     def __init__(self, manager):
         self.manager = manager
 
     @abc.abstractmethod
-    def calc_residuum_tangent(self):
+    def get_residuum(self, state):
         raise NotImplementedError
 
-
-class MultiBodyIntegrator(abc.ABC):
-    integrator_output = namedtuple("integrator_output", "residuum tangent")
-
-    def __init__(self, manager):
-        self.manager = manager
-
     @abc.abstractmethod
-    def calc_residuum_tangent(self):
+    def get_tangent(self, state):
         raise NotImplementedError
 
 
 class Solver(abc.ABC):
 
-    def __init__(self, manager, newton_epsilon: float, max_iterations: int):
+    def __init__(
+        self,
+        manager,
+        newton_epsilon: float,
+        max_iterations: int,
+    ):
         self.manager = manager
         self.newton_epsilon = newton_epsilon
         self.max_iterations = max_iterations
@@ -194,7 +191,7 @@ class TimeStepper(abc.ABC):
 class Manager(abc.ABC):
     time_stepper: TimeStepper = NotImplemented
     solver: Solver = NotImplemented
-    integrator: MultiBodyIntegrator | PortHamiltonianIntegrator = NotImplemented
+    integrator: Integrator = NotImplemented
     system: AbstractMultiBodySystem | AbstractPortHamiltonianSystem = NotImplemented
     result: results.Result = NotImplemented
 

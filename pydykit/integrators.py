@@ -6,36 +6,42 @@ import numpy as np
 from . import base_classes, utils
 
 
-class MidpointPH(base_classes.PortHamiltonianIntegrator):
+class IntegratorCommon(base_classes.Integrator):
 
-    def calc_residuum_tangent(self):
-        system = self.manager.system
-        manager = self.manager
+    # TODO: Simplify the life of "state".
+    # Why don't we just have a system, which state is defined by its attribute
+    # "state" and that's it?
+    # Why should the manager keep current_state and next_state?
+    # A system does have one state, that's it.
+    # The next state of the system is calculated on the fly by the solver
+    # which could be external and therefore would not like to change
+    # the states of any manager or even system.
+    # If the next state is calculated, than we increment our systems state
+    # and log the old one on the result object.
 
-        current_state = manager.current_state
-        next_state = manager.next_state
-
-        residuum = self.calc_residuum(
-            system=system,
+    def get_residuum(self, state):
+        # TODO: This is silly, improve it
+        return self.calc_residuum(
+            system=self.manager.system,
             time_stepper=self.manager.time_stepper,
-            state_n=current_state.copy(),
-            state_n1=next_state.copy(),
+            state_n=self.manager.current_state.copy(),
+            state_n1=state.copy(),
         )
 
-        tangent = utils.get_numerical_tangent(
+    def get_tangent(self, state):
+        # TODO: This is silly, improve it
+        return utils.get_numerical_tangent(
             func=partial(  # Bind some arguments to values
                 self.calc_residuum,
-                system=system,
+                system=self.manager.system,
                 time_stepper=self.manager.time_stepper,
             ),
-            state_1=current_state.copy(),
-            state_2=next_state.copy(),
+            state_1=self.manager.current_state.copy(),
+            state_2=state.copy(),
         )
 
-        return self.integrator_output(
-            residuum=residuum,
-            tangent=tangent,
-        )
+
+class MidpointPH(IntegratorCommon):
 
     @staticmethod
     def calc_residuum(system, time_stepper, state_n, state_n1):
@@ -62,7 +68,7 @@ class MidpointPH(base_classes.PortHamiltonianIntegrator):
         return residuum
 
 
-class Midpoint_DAE(base_classes.MultiBodyIntegrator):
+class Midpoint_DAE(IntegratorCommon):
 
     def __init__(self, manager):
         super().__init__(manager)
@@ -120,32 +126,3 @@ class Midpoint_DAE(base_classes.MultiBodyIntegrator):
         )
 
         return residuum
-
-    def calc_residuum_tangent(self):
-        system = self.manager.system
-        manager = self.manager
-
-        current_state = manager.current_state
-        next_state = manager.next_state
-
-        residuum = self.calc_residuum(
-            system=system,
-            time_stepper=self.manager.time_stepper,
-            state_n=current_state.copy(),
-            state_n1=next_state.copy(),
-        )
-
-        tangent = utils.get_numerical_tangent(
-            func=partial(  # Bind some arguments to values
-                self.calc_residuum,
-                system=system,
-                time_stepper=self.manager.time_stepper,
-            ),
-            state_1=current_state.copy(),
-            state_2=next_state.copy(),
-        )
-
-        return self.integrator_output(
-            residuum=residuum,
-            tangent=tangent,
-        )
