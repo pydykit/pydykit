@@ -70,9 +70,7 @@ class MidpointPH(IntegratorCommon):
 
 class Midpoint_DAE(IntegratorCommon):
 
-    def __init__(self, manager):
-        super().__init__(manager)
-        self.variable_names = ["position", "momentum", "multiplier"]
+    variable_names = ["position", "momentum", "multiplier"]
 
     @staticmethod
     def calc_residuum(system, time_stepper, state_n, state_n1):
