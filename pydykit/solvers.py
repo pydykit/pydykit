@@ -50,12 +50,12 @@ class Newton(SystemSolver):
             tmp = self.function_solver.solve(
                 func=self.manager.integrator.get_residuum,
                 jacobian=self.manager.integrator.get_tangent,
-                initial=manager.current_state,
+                initial=manager.system.state,
             )
 
             # Store results
             result.times[step.index] = step.time
-            result.results[step.index, :] = manager.current_state = tmp
+            result.results[step.index, :] = manager.system.state = tmp
 
             # Print
             utils.print_current_step(step)

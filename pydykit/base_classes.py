@@ -184,5 +184,3 @@ class Manager(abc.ABC):
     integrator: Integrator = NotImplemented
     system: AbstractMultiBodySystem | AbstractPortHamiltonianSystem = NotImplemented
     result: results.Result = NotImplemented
-
-    current_state = NotImplemented

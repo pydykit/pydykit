@@ -1,13 +1,16 @@
 import abc
-import copy
 
 import numpy as np
 from scipy.linalg import block_diag
 
 from .. import base_classes, utils
+from .system import System
 
 
-class PortHamiltonianSystem(base_classes.AbstractPortHamiltonianSystem):
+class PortHamiltonianSystem(
+    base_classes.AbstractPortHamiltonianSystem,
+    System,  # TODO: Avoid multi-inheritance if possible
+):
     def __init__(self, manager, state):
         self.manager = manager
         self.initialize_state(state)
@@ -23,14 +26,6 @@ class PortHamiltonianSystem(base_classes.AbstractPortHamiltonianSystem):
 
     def build_state_vector(self):
         self.state = np.hstack(list(self.initial_state.values()))
-
-    def update(self, *states):
-        # for each entry in states a system is created
-        systems = []
-        for state in states:
-            self.state = state
-            systems.append(copy.copy(self))
-        return systems
 
     @abc.abstractmethod
     def decompose_state(self):
@@ -135,14 +130,10 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         self.mbs = manager.system
         super().__init__(manager, state=manager.system.initial_state)
 
-    def update(self, *states):
-        systems = super().update(*states)
-
-        for system, state in zip(systems, states):
-            # Assign the corresponding state to the system
-            system.mbs.state = state
-
-        return systems
+    def copy(self, state):
+        system = super().copy(state=state)
+        system.mbs.state = state
+        return system
 
     def get_state_dimensions(self):
         return self.mbs.get_state_dimensions()

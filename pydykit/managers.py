@@ -31,9 +31,6 @@ class Manager(base_classes.Manager):
         self.system = self._set_system()
         self.result = self._set_result()
 
-        # manager shuffles current and next state between objects
-        self.current_state = self.system.state
-
     def _set_system(
         self,
     ) -> (

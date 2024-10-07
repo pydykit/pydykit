@@ -1,12 +1,15 @@
 import abc
-import copy
 
 import numpy as np
 
 from .. import base_classes, operators, utils
+from .system import System
 
 
-class MultiBodySystem(base_classes.AbstractMultiBodySystem):
+class MultiBodySystem(
+    base_classes.AbstractMultiBodySystem,
+    System,  # TODO: Avoid multi-inheritance if possible
+):
     def __init__(
         self,
         manager,
@@ -75,14 +78,6 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
                 ],
             )
         )
-
-    def update(self, *states):
-        # for each entry in states a system is created
-        systems = []
-        for state in states:
-            self.state = state
-            systems.append(copy.copy(self))
-        return systems
 
     @abc.abstractmethod
     def mass_matrix(self, q):
