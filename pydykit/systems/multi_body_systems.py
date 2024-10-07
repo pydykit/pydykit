@@ -33,10 +33,16 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
         self.state_names = utils.get_keys_dict_list(self.initial_state)
+
+        # TODO: Improve attribute name "variable_names" as the current name indicates that the names are variable. It says nearly nothing.
+        # TODO: Use "variable_names" for all integrators, if you think it is a good idea, otherwise remove this check.
+        # TODO: Why do you test, whether integrator and system are compatible here within the function "initialize_state"? Shouldn't this be done somewhere else and separated from action?
         if hasattr(self.manager.integrator, "variable_names"):
             utils.compare_string_lists(
-                list1=self.state_names, list2=self.manager.integrator.variable_names
+                list1=self.state_names,
+                list2=self.manager.integrator.variable_names,
             )
+
         self.state_columns = self.get_state_columns()
         self.build_state_vector()
 

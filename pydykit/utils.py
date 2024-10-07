@@ -126,6 +126,7 @@ def row_array_from_df(df, index):
 
 
 def compare_string_lists(list1, list2):
+    # TODO: Use the "Assert"-statement instead of implementing custom logic
     if list1 == list2:
         pass
     else:
