@@ -1,5 +1,6 @@
 import abc
 from collections import namedtuple
+from typing import Iterator
 
 
 class PortHamiltonianIntegrator(abc.ABC):
@@ -159,4 +160,30 @@ class AbstractPortHamiltonianSystem(abc.ABC):
 
     @abc.abstractmethod
     def output(self, state):
+        pass
+
+
+class TimeStep:
+    def __init__(self, index: int, time: float, increment: float):
+        self.index = index
+        self.time = time
+        self.increment = (
+            increment  # this is next point in time minus current point in time
+        )
+
+
+class TimeStepper(abc.ABC):
+    def __init__(self, manager, step_size: float, start: float, end: float):
+        self.manager = manager
+        self.step_size = step_size
+        self.start = start
+        self.end = end
+
+    @abc.abstractmethod
+    def make_steps(self) -> Iterator[TimeStep]:
+        """Returns a Python generator which returns TimeStep objects"""
+
+    @property
+    @abc.abstractmethod
+    def current_step(self) -> TimeStep:
         pass

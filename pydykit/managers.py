@@ -67,11 +67,7 @@ class Manager:
 
     def _set_time_stepper(
         self,
-    ) -> (
-        time_steppers.TimeStepper
-        | time_steppers.FixedIncrement
-        | time_steppers.FixedIncrementHittingEnd
-    ):
+    ) -> base_classes.TimeStepper:
 
         return self._dynamically_instantiate(
             module=time_steppers,
