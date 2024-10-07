@@ -5,7 +5,7 @@ from . import base_classes, results, utils
 from .configuration import Configuration
 
 
-class Manager:
+class Manager(base_classes.Manager):
 
     def configure(self, configuration: Configuration):
         self._configure(configuration=configuration)
@@ -57,7 +57,7 @@ class Manager:
 
     def _set_integrator(
         self,
-    ) -> base_classes.MultiBodyIntegrator | base_classes.PortHamiltonianIntegrator:
+    ) -> base_classes.Integrator:
 
         return self._dynamically_instantiate(
             module_name="integrators",
