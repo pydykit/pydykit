@@ -3,14 +3,10 @@ import abc
 from . import base_classes, function_solvers, utils
 
 
-class SystemSolver(abc.ABC):
+class SystemSolver(base_classes.Solver):
 
     def __init__(self, manager: base_classes.Manager):
         self.manager = manager
-
-    @abc.abstractmethod
-    def solve(self):
-        raise NotImplementedError
 
 
 class Newton(SystemSolver):
