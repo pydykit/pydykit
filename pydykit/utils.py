@@ -136,7 +136,7 @@ def compare_string_lists(list1, list2):
         raise PydykitException(f"{list1} does not match {list2}")
 
 
-def get_system_copies_from_states(
+def get_system_copies_with_desired_states(
     system: base_classes.System,
     states: list[npt.ArrayLike],
 ):

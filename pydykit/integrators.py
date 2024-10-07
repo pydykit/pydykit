@@ -50,7 +50,7 @@ class MidpointPH(IntegratorCommon):
 
         # create midpoint state and all corresponding discrete-time systems
         state_n05 = 0.5 * (state_n + state_n1)
-        system_n, system_n1, system_n05 = utils.get_system_copies_from_states(
+        system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
             system=system,
             states=[
                 state_n,
@@ -88,7 +88,7 @@ class Midpoint_DAE(IntegratorCommon):
         # create midpoint state and all corresponding discrete-time systems
         state_n05 = 0.5 * (state_n + state_n1)
 
-        system_n, system_n1, system_n05 = utils.get_system_copies_from_states(
+        system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
             system=system,
             states=[
                 state_n,
