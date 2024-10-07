@@ -37,11 +37,8 @@ class Manager:
     def _set_system(
         self,
     ) -> (
-        systems.FourParticleSystem
-        | systems.MultiBodySystem
-        | systems.ParticleSystem
-        | systems.Pendulum2D
-        | systems.Pendulum3DCartesian
+        base_classes.AbstractMultiBodySystem
+        | base_classes.AbstractPortHamiltonianSystem
     ):
 
         return self._dynamically_instantiate(
