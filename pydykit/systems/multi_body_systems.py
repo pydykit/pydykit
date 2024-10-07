@@ -40,14 +40,6 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
         self.state_columns = self.get_state_columns()
         self.build_state_vector()
 
-    def update(self, *states):
-        # for each entry in states a system is created
-        systems = []
-        for state in states:
-            self.state = state
-            systems.append(copy.copy(self))
-        return systems
-
     def build_state_vector(self):
         self.state = np.hstack(list(self.initial_state.values()))
 
@@ -72,6 +64,14 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
             f"lambda{utils.shift_index_python_to_literature(number)}"
             for number in range(self.nbr_constraints)
         ]
+
+    def update(self, *states):
+        # for each entry in states a system is created
+        systems = []
+        for state in states:
+            self.state = state
+            systems.append(copy.copy(self))
+        return systems
 
     @abc.abstractmethod
     def mass_matrix(self, q):
