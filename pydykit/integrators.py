@@ -1,4 +1,3 @@
-from collections import namedtuple
 from functools import partial
 
 import numpy as np
@@ -24,7 +23,7 @@ class IntegratorCommon(base_classes.Integrator):
         return self.calc_residuum(
             system=self.manager.system,
             time_stepper=self.manager.time_stepper,
-            state_n=self.manager.current_state.copy(),
+            state_n=self.manager.system.state.copy(),
             state_n1=state.copy(),
         )
 
@@ -36,7 +35,7 @@ class IntegratorCommon(base_classes.Integrator):
                 system=self.manager.system,
                 time_stepper=self.manager.time_stepper,
             ),
-            state_1=self.manager.current_state.copy(),
+            state_1=self.manager.system.state.copy(),
             state_2=state.copy(),
         )
 
@@ -50,7 +49,14 @@ class MidpointPH(IntegratorCommon):
 
         # create midpoint state and all corresponding discrete-time systems
         state_n05 = 0.5 * (state_n + state_n1)
-        system_n, system_n1, system_n05 = system.update(state_n, state_n1, state_n05)
+        system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
+            system=system,
+            states=[
+                state_n,
+                state_n1,
+                state_n05,
+            ],
+        )
 
         e_n = system_n.descriptor_matrix()
         e_n1 = system_n1.descriptor_matrix()
@@ -70,9 +76,7 @@ class MidpointPH(IntegratorCommon):
 
 class Midpoint_DAE(IntegratorCommon):
 
-    def __init__(self, manager):
-        super().__init__(manager)
-        self.variable_names = ["position", "momentum", "multiplier"]
+    variable_names = ["position", "momentum", "multiplier"]
 
     @staticmethod
     def calc_residuum(system, time_stepper, state_n, state_n1):
@@ -82,7 +86,15 @@ class Midpoint_DAE(IntegratorCommon):
 
         # create midpoint state and all corresponding discrete-time systems
         state_n05 = 0.5 * (state_n + state_n1)
-        system_n, system_n1, system_n05 = system.update(state_n, state_n1, state_n05)
+
+        system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
+            system=system,
+            states=[
+                state_n,
+                state_n1,
+                state_n05,
+            ],
+        )
 
         # get inverse mass matrix
         try:

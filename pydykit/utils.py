@@ -1,5 +1,8 @@
 import numpy as np
+import numpy.typing as npt
 import yaml
+
+from . import base_classes
 
 
 def update_object_from_config_file(
@@ -112,10 +115,7 @@ def get_flat_list_of_list_attributes(items, key):
 
 
 def get_nbr_elements_dict_list(my_list: list[dict,]):
-    count = 0
-    for entry in my_list:
-        count += len(my_list[entry])
-    return count
+    return sum(map(len, my_list.values()))
 
 
 def get_keys_dict_list(my_list: list[dict,]):
@@ -129,7 +129,18 @@ def row_array_from_df(df, index):
 
 
 def compare_string_lists(list1, list2):
+    # TODO: Use the "Assert"-statement instead of implementing custom logic
     if list1 == list2:
         pass
     else:
         raise PydykitException(f"{list1} does not match {list2}")
+
+
+def get_system_copies_with_desired_states(
+    system: base_classes.System,
+    states: list[npt.ArrayLike],
+):
+    return map(
+        lambda state: system.copy(state=state),
+        states,
+    )

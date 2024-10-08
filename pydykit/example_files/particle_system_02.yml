@@ -27,10 +27,10 @@ configuration:
         particle_end: 3
         length: 1
       gravity: 0
-  solver:
-    class_name: Newton
+  simulator:
+    class_name: OneStep
     kwargs:
-      function_solver_name: NewtonPlainPython
+      solver_name: NewtonPlainPython
       newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:

@@ -1,13 +1,15 @@
 import abc
-import copy
 
 import numpy as np
-from scipy.linalg import block_diag
 
-from . import base_classes, operators, utils
+from .. import base_classes, operators, utils
+from .system import System
 
 
-class MultiBodySystem(base_classes.AbstractMultiBodySystem):
+class MultiBodySystem(
+    base_classes.AbstractMultiBodySystem,
+    System,  # TODO: Avoid multi-inheritance if possible
+):
     def __init__(
         self,
         manager,
@@ -16,10 +18,11 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
         nbr_dof: int,
         mass: float,
         gravity: list[float,],
-        state,
+        state: dict[str, list[float]],
     ):
         self.manager = manager
-        self.state = state
+
+        self.state = state  # BUG: You set .state here
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
         self.nbr_constraints = nbr_constraints
         self.nbr_dof = nbr_dof
@@ -34,23 +37,35 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
         self.state_names = utils.get_keys_dict_list(self.initial_state)
+
+        # TODO: Improve attribute name "variable_names" as the current name indicates that the names are variable. It says nearly nothing.
+        # TODO: Use "variable_names" for all integrators, if you think it is a good idea, otherwise remove this check.
+        # TODO: Why do you test, whether integrator and system are compatible here within the function "initialize_state"? Shouldn't this be done somewhere else and separated from action?
         if hasattr(self.manager.integrator, "variable_names"):
             utils.compare_string_lists(
-                list1=self.state_names, list2=self.manager.integrator.variable_names
+                list1=self.state_names,
+                list2=self.manager.integrator.variable_names,
             )
+
         self.state_columns = self.get_state_columns()
         self.build_state_vector()
 
-    def update(self, *states):
-        # for each entry in states a system is created
-        systems = []
-        for state in states:
-            self.state = state
-            systems.append(copy.copy(self))
-        return systems
+    def get_state_columns(self):
+        return [
+            f"{state_name}{utils.shift_index_python_to_literature(number)}"
+            for state_name in self.state_names[
+                :2
+            ]  # NOTE: Why hardcoding here numbers if you already have dictionary-type data? Why indices?
+            for number in range(self.nbr_dof)
+        ] + [
+            f"lambda{utils.shift_index_python_to_literature(number)}"
+            for number in range(self.nbr_constraints)
+        ]
 
     def build_state_vector(self):
-        self.state = np.hstack(list(self.initial_state.values()))
+        self.state = np.hstack(
+            list(self.initial_state.values())
+        )  # BUG: You set .state here again
 
     def decompose_state(self):
         return dict(
@@ -63,16 +78,6 @@ class MultiBodySystem(base_classes.AbstractMultiBodySystem):
                 ],
             )
         )
-
-    def get_state_columns(self):
-        return [
-            f"{state_name}{utils.shift_index_python_to_literature(number)}"
-            for state_name in self.state_names[:2]
-            for number in range(self.nbr_dof)
-        ] + [
-            f"lambda{utils.shift_index_python_to_literature(number)}"
-            for number in range(self.nbr_constraints)
-        ]
 
     @abc.abstractmethod
     def mass_matrix(self, q):
@@ -503,6 +508,9 @@ class ParticleSystem(MultiBodySystem):
             "multiplier": np.zeros(len(self.constraints)),
         }
 
+        # TODO: Remove redundancy... You pass several arguments to a super class and set them as attributes within the super classes init function.
+        # Some of these arguments have already been set as attributes within this childs init function. Why would you do this?
+        # TODO: Remove everything that has to do with parsing config files from system. System is about methods which evaluate physical quantities.
         super().__init__(
             manager=manager,
             nbr_spatial_dimensions=nbr_spatial_dimensions,
@@ -689,210 +697,3 @@ class ParticleSystem(MultiBodySystem):
     def dissipation_matrix(self):
         diss_mat = np.zeros(self.nbr_dof, self.nbr_dof)
         return diss_mat
-
-
-class PortHamiltonianSystem(base_classes.AbstractPortHamiltonianSystem):
-    def __init__(self, manager, state):
-        self.manager = manager
-        self.initialize_state(state)
-
-    def initialize_state(self, state):
-
-        # convert state as dict to array with values
-        self.initial_state = state
-        self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
-        self.state_names = utils.get_keys_dict_list(self.initial_state)
-        self.state_columns = self.get_state_columns()
-        self.build_state_vector()
-
-    def build_state_vector(self):
-        self.state = np.hstack(list(self.initial_state.values()))
-
-    def update(self, *states):
-        # for each entry in states a system is created
-        systems = []
-        for state in states:
-            self.state = state
-            systems.append(copy.copy(self))
-        return systems
-
-    @abc.abstractmethod
-    def decompose_state(self):
-        pass
-
-    @abc.abstractmethod
-    def costates(self, state):
-        pass
-
-    @abc.abstractmethod
-    def hamiltonian(self, state):
-        pass
-
-    @abc.abstractmethod
-    def hamiltonian_gradient(self, state):
-        pass
-
-    @abc.abstractmethod
-    def structure_matrix(self):
-        pass
-
-    @abc.abstractmethod
-    def descriptor_matrix(self, state):
-        pass
-
-    @abc.abstractmethod
-    def dissipation_matrix(self, state):
-        pass
-
-    @abc.abstractmethod
-    def port_matrix(self, state):
-        pass
-
-    @abc.abstractmethod
-    def input(self):
-        pass
-
-    def output(self, state):
-        return self.port_matrix.T @ self.input(state)
-
-
-class Pendulum2D(PortHamiltonianSystem):
-
-    def __init__(
-        self,
-        manager,
-        state,
-        mass: float,
-        gravity: float,
-        length: float,
-    ):
-
-        super().__init__(manager, state)
-        self.mass = 1.0
-        self.gravity = 9.81
-        self.length = 1.0
-
-    def get_state_columns(self):
-        return self.state_names  # special case!
-
-    def decompose_state(self):
-        state = self.state
-        assert len(state) == 2
-        return dict(
-            zip(
-                self.state_names,
-                [state[0], state[1]],
-            )
-        )
-
-    def costates(self):
-        q = self.decompose_state()["position"]
-        v = self.decompose_state()["velocity"]
-        return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
-
-    def hamiltonian(self):
-        pass
-
-    def hamiltonian_gradient(self):
-        q = self.decompose_state()["position"]
-        return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
-
-    def structure_matrix(self):
-        return np.array([[0, 1], [-1, 0]])
-
-    def descriptor_matrix(self):
-        return np.diag([1, self.mass * self.length**2])
-
-    def port_matrix(self):
-        pass
-
-    def input(self):
-        pass
-
-    def dissipation_matrix(self):
-        pass
-
-
-class PortHamiltonianMBS(PortHamiltonianSystem):
-
-    def __init__(self, manager):
-        self.mbs = manager.system
-        super().__init__(manager, state=manager.system.initial_state)
-
-    def update(self, *states):
-        systems = super().update(*states)
-
-        for system, state in zip(systems, states):
-            # Assign the corresponding state to the system
-            system.mbs.state = state
-
-        return systems
-
-    def get_state_dimensions(self):
-        return self.mbs.get_state_dimensions()
-
-    def get_state_columns(self):
-        return self.mbs.get_state_columns()
-
-    def decompose_state(self):
-        return self.mbs.decompose_state()
-
-    def costates(self):
-        decomposed_state = self.decompose_state()
-        potential_forces = (
-            self.mbs.external_potential_gradient()
-            + self.mbs.internal_potential_gradient()
-        )
-
-        return np.hstack(
-            [
-                potential_forces,
-                decomposed_state["velocity"],
-                decomposed_state["multiplier"],
-            ]
-        )
-
-    def hamiltonian_gradient(self):
-        return (
-            self.mbs.external_potential_gradient()
-            + self.mbs.internal_potential_gradient()
-        )
-
-    def structure_matrix(self):
-        decomposed_state = self.decompose_state()
-        q = decomposed_state["position"]
-        v = decomposed_state["velocity"]
-        lambd = decomposed_state["multiplier"]
-        G = self.mbs.constraint_gradient()
-
-        return np.block(
-            [
-                [
-                    np.zeros((len(q), len(q))),
-                    np.eye(len(q)),
-                    np.zeros((len(q), len(lambd))),
-                ],
-                [-np.eye(len(v)), np.zeros((len(v), len(v))), -G.T],
-                [np.zeros((len(lambd), len(q))), G, np.zeros((len(lambd), len(lambd)))],
-            ]
-        )
-
-    def descriptor_matrix(self):
-        identity_mat = np.eye(self.mbs.nbr_dof)
-        mass_matrix = self.mbs.mass_matrix()
-        zeros_matrix = np.zeros((self.mbs.nbr_constraints, self.mbs.nbr_constraints))
-        descriptor_matrix = block_diag(identity_mat, mass_matrix, zeros_matrix)
-
-        return descriptor_matrix
-
-    def hamiltonian(self):
-        pass
-
-    def port_matrix(self):
-        pass
-
-    def input(self):
-        pass
-
-    def dissipation_matrix(self):
-        pass

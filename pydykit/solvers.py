@@ -1,64 +1,70 @@
 import abc
+from typing import Callable
 
-from . import base_classes, function_solvers, utils
+import numpy as np
+import numpy.typing as npt
+from scipy.optimize import root
+
+from . import utils
 
 
-class SystemSolver(base_classes.Solver):
+class Solver(abc.ABC):
 
-    def __init__(self, manager: base_classes.Manager):
-        self.manager = manager
+    @abc.abstractmethod
+    def solve(
+        self,
+        func: Callable,
+        jacobian: Callable,
+        initial: npt.ArrayLike,
+    ):
+        raise NotImplementedError
 
 
-class Newton(SystemSolver):
-
+class Newton(Solver):
     def __init__(
         self,
-        function_solver_name: str,
         newton_epsilon: float,
         max_iterations: int,
-        **kwargs,
     ):
-        super().__init__(**kwargs)
+        self.newton_epsilon = newton_epsilon
+        self.max_iterations = max_iterations
 
-        function_solver_constructor = getattr(
-            function_solvers,
-            function_solver_name,
-        )
 
-        self.function_solver = function_solver_constructor(
-            newton_epsilon=newton_epsilon,
-            max_iterations=max_iterations,
-        )
+class NewtonPlainPython(Newton):
 
-    def solve(self):
-        time_stepper = self.manager.time_stepper
-        manager = self.manager
-        result = manager.result
+    def solve(self, func, jacobian, initial):
 
-        # Initialze the time stepper
-        steps = time_stepper.make_steps()
-        step = next(steps)
+        # Newton iteration starts
+        residual_norm = 1e5
+        index_iteration = 0
 
-        # First step
-        result.times[step.index] = step.time
-        utils.print_current_step(step)
+        # Iterate while residual isnt zero and max. iterations number isnt reached
+        while (residual_norm >= self.newton_epsilon) and (
+            index_iteration < self.max_iterations
+        ):
+            index_iteration += 1
+            residual = func(initial)
+            tangent_matrix = jacobian(initial)
+            state_delta = -np.linalg.inv(tangent_matrix) @ residual
+            initial = initial + state_delta
+            residual_norm = np.linalg.norm(residual)
+            utils.print_residual_norm(value=residual_norm)
 
-        # Do remaining steps, until stepper stops
-        for step in steps:
+        if residual_norm < self.newton_epsilon:
+            pass
+        else:
+            raise utils.PydykitException("Newton convergence not succesful")
 
-            # Update system for NEW time based on previous state
-            manager.current_state = manager.next_state
-            manager.next_state = self.function_solver.solve(
-                func=self.manager.integrator.get_residuum,
-                jacobian=self.manager.integrator.get_tangent,
-                initial=manager.next_state,
-            )
+        return initial
 
-            # Store results
-            result.times[step.index] = step.time
-            result.results[step.index, :] = manager.next_state
 
-            # Print
-            utils.print_current_step(step)
-
-        return result
+class NewtonScipy(Newton):
+    def solve(self, func, jacobian, initial):
+        # TODO: Log the logs of the optimization function
+        return root(
+            fun=func,
+            x0=initial,
+            jac=jacobian,
+            tol=self.newton_epsilon,
+            # maxiter=self.max_iterations,
+        ).x

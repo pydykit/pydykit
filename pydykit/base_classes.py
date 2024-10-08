@@ -1,5 +1,4 @@
 import abc
-from collections import namedtuple
 from typing import Iterator
 
 from . import results
@@ -19,14 +18,18 @@ class Integrator(abc.ABC):
         raise NotImplementedError
 
 
-class Solver(abc.ABC):
+class Simulator(abc.ABC):
 
     @abc.abstractmethod
-    def solve(self):
+    def run(self):
         raise NotImplementedError
 
 
-class AbstractMultiBodySystem(abc.ABC):
+class System(abc.ABC):
+    pass
+
+
+class AbstractMultiBodySystem(System):
 
     @abc.abstractmethod
     def __init__(self):
@@ -105,7 +108,7 @@ class AbstractMultiBodySystem(abc.ABC):
         raise NotImplementedError
 
 
-class AbstractPortHamiltonianSystem(abc.ABC):
+class AbstractPortHamiltonianSystem(System):
 
     @abc.abstractmethod
     def __init__(self):
@@ -180,10 +183,7 @@ class TimeStepper(abc.ABC):
 
 class Manager(abc.ABC):
     time_stepper: TimeStepper = NotImplemented
-    solver: Solver = NotImplemented
+    simulator: Simulator = NotImplemented
     integrator: Integrator = NotImplemented
-    system: AbstractMultiBodySystem | AbstractPortHamiltonianSystem = NotImplemented
+    system: System = NotImplemented
     result: results.Result = NotImplemented
-
-    current_state = NotImplemented
-    next_state = NotImplemented

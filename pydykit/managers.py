@@ -26,20 +26,14 @@ class Manager(base_classes.Manager):
 
         # derive instances of classes
         self.time_stepper = self._set_time_stepper()
-        self.solver = self._set_solver()
+        self.simulator = self._set_simulator()
         self.integrator = self._set_integrator()
         self.system = self._set_system()
         self.result = self._set_result()
 
-        # manager shuffles current and next state between objects
-        self.current_state = self.next_state = self.system.state
-
     def _set_system(
         self,
-    ) -> (
-        base_classes.AbstractMultiBodySystem
-        | base_classes.AbstractPortHamiltonianSystem
-    ):
+    ) -> base_classes.System:
 
         return self._dynamically_instantiate(
             module_name="systems",
@@ -47,12 +41,12 @@ class Manager(base_classes.Manager):
             kwargs=self.configuration.system.kwargs,
         )
 
-    def _set_solver(self) -> base_classes.Solver:
+    def _set_simulator(self) -> base_classes.Simulator:
 
         return self._dynamically_instantiate(
-            module_name="solvers",
-            class_name=self.configuration.solver.class_name,
-            kwargs=self.configuration.solver.kwargs,
+            module_name="simulators",
+            class_name=self.configuration.simulator.class_name,
+            kwargs=self.configuration.simulator.kwargs,
         )
 
     def _set_integrator(
@@ -99,4 +93,4 @@ class Manager(base_classes.Manager):
         )(manager=self, **kwargs)
 
     def manage(self):
-        return self.solver.solve()
+        return self.simulator.run()

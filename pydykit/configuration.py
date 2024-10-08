@@ -8,6 +8,6 @@ class ClassNameKwargs(BaseModel):
 
 class Configuration(BaseModel):
     system: ClassNameKwargs
-    solver: ClassNameKwargs
+    simulator: ClassNameKwargs
     integrator: ClassNameKwargs
     time_stepper: ClassNameKwargs

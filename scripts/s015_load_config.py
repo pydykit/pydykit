@@ -3,6 +3,6 @@ from pydykit import configuration, utils
 file_content = utils.load_yaml_file("./pydykit/example_files/pendulum_2d.yml")
 conf = configuration.Configuration(**file_content["configuration"])
 
-from pydykit import solvers
+from pydykit import simulators
 
-solver = getattr(solvers, conf.solver.class_name)(**conf.solver.kwargs)
+solver = getattr(simulators, conf.simulator.class_name)(**conf.simulator.kwargs)
