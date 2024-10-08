@@ -16,30 +16,30 @@ fig = go.Figure()
 
 pydykit.plotting.plot_3d_trajectory(
     figure=fig,
-    x_components=df["x1"],
-    y_components=df["y1"],
-    z_components=df["z1"],
+    x_components=df["position1"],
+    y_components=df["position2"],
+    z_components=df["position3"],
     time=df["time"],
 )
 pydykit.plotting.plot_3d_trajectory(
     figure=fig,
-    x_components=df["x2"],
-    y_components=df["y2"],
-    z_components=df["z2"],
+    x_components=df["position4"],
+    y_components=df["position5"],
+    z_components=df["position6"],
     time=df["time"],
 )
 pydykit.plotting.plot_3d_trajectory(
     figure=fig,
-    x_components=df["x3"],
-    y_components=df["y3"],
-    z_components=df["z3"],
+    x_components=df["position7"],
+    y_components=df["position8"],
+    z_components=df["position9"],
     time=df["time"],
 )
 pydykit.plotting.plot_3d_trajectory(
     figure=fig,
-    x_components=df["x4"],
-    y_components=df["y4"],
-    z_components=df["z4"],
+    x_components=df["position10"],
+    y_components=df["position11"],
+    z_components=df["position12"],
     time=df["time"],
 )
 
