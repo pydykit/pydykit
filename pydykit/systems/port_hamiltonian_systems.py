@@ -32,15 +32,15 @@ class PortHamiltonianSystem(
         pass
 
     @abc.abstractmethod
-    def costates(self, state):
+    def costates(self):
         pass
 
     @abc.abstractmethod
-    def hamiltonian(self, state):
+    def hamiltonian(self):
         pass
 
     @abc.abstractmethod
-    def hamiltonian_gradient(self, state):
+    def hamiltonian_gradient(self):
         pass
 
     @abc.abstractmethod
@@ -48,23 +48,23 @@ class PortHamiltonianSystem(
         pass
 
     @abc.abstractmethod
-    def descriptor_matrix(self, state):
+    def descriptor_matrix(self):
         pass
 
     @abc.abstractmethod
-    def dissipation_matrix(self, state):
+    def dissipation_matrix(self):
         pass
 
     @abc.abstractmethod
-    def port_matrix(self, state):
+    def port_matrix(self):
         pass
 
     @abc.abstractmethod
     def input(self):
         pass
 
-    def output(self, state):
-        return self.port_matrix.T @ self.input(state)
+    def output(self):
+        return self.port_matrix.T @ self.input()
 
 
 class Pendulum2D(PortHamiltonianSystem):
