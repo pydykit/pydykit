@@ -17,9 +17,9 @@ df = result.to_df()
 # postprocess
 fig = go.Figure(
     data=go.Scatter3d(
-        x=df["x"],
-        y=df["y"],
-        z=df["z"],
+        x=df["position1"],
+        y=df["position2"],
+        z=df["position3"],
         marker=dict(
             size=3,
             color=df["time"],
