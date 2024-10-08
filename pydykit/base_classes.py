@@ -1,5 +1,4 @@
 import abc
-from collections import namedtuple
 from typing import Iterator
 
 from . import results
