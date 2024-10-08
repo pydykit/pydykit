@@ -38,10 +38,10 @@ configuration:
         particle_end: 4
         length: 1
       gravity: 0
-  solver:
-    class_name: Newton
+  simulator:
+    class_name: OneStep
     kwargs:
-      function_solver_name: NewtonScipy
+      solver_name: NewtonScipy
       newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:
