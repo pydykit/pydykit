@@ -40,71 +40,71 @@ class AbstractMultiBodySystem(System):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def mass_matrix(self, q):
+    def mass_matrix(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def inverse_mass_matrix(self, q):
+    def inverse_mass_matrix(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def kinetic_energy(self, q, p):
+    def kinetic_energy(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def kinetic_energy_gradient_from_momentum(self, q, p):
+    def kinetic_energy_gradient_from_momentum(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def kinetic_energy_gradient_from_velocity(self, q, v):
+    def kinetic_energy_gradient_from_velocity(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def external_potential(self, q):
+    def external_potential(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def external_potential_gradient(self, q):
+    def external_potential_gradient(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def internal_potential(self, q):
+    def internal_potential(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def internal_potential_gradient(self, q):
+    def internal_potential_gradient(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def potential_energy(self, q):
+    def potential_energy(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def potential_energy_gradient(self, q):
+    def potential_energy_gradient(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def total_energy(self, q, p):
+    def total_energy(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def constraint(self, q):
+    def constraint(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def constraint_gradient(self, q):
+    def constraint_gradient(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def constraint_velocity(self, q, p):
+    def constraint_velocity(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def dissipation_matrix(self, q, v):
+    def dissipation_matrix(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def rayleigh_dissipation(self, q, v):
+    def rayleigh_dissipation(self):
         raise NotImplementedError
 
 
@@ -119,15 +119,15 @@ class AbstractPortHamiltonianSystem(System):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def costates(self, state):
+    def costates(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def hamiltonian(self, state):
+    def hamiltonian(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def hamiltonian_gradient(self, state):
+    def hamiltonian_gradient(self):
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -135,11 +135,11 @@ class AbstractPortHamiltonianSystem(System):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def descriptor_matrix(self, state):
+    def descriptor_matrix(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def dissipation_matrix(self, state):
+    def dissipation_matrix(self):
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -151,7 +151,7 @@ class AbstractPortHamiltonianSystem(System):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def output(self, state):
+    def output(self):
         raise NotImplementedError
 
 
