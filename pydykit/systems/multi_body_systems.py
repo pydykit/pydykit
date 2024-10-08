@@ -81,11 +81,11 @@ class MultiBodySystem(
 
     @abc.abstractmethod
     def mass_matrix(self):
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def inverse_mass_matrix(self):
-        pass
+        raise NotImplementedError
 
     def kinetic_energy(self):
         q = self.state.decompose_state()["position"]
@@ -94,30 +94,27 @@ class MultiBodySystem(
 
     @abc.abstractmethod
     def kinetic_energy_gradient_from_momentum(self):
-        "q:position, p:momentum"
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def kinetic_energy_gradient_from_velocity(self):
-        "v: velocity"
-        # Note: A given integrator needs kinetic_energy_gradient_from_momentum or kinetic_energy_gradient_from_velocity, not both
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def external_potential(self):
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def external_potential_gradient(self):
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def internal_potential(self):
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def internal_potential_gradient(self):
-        pass
+        raise NotImplementedError
 
     def potential_energy(self):
         return self.external_potential() + self.internal_potential()
@@ -130,11 +127,11 @@ class MultiBodySystem(
 
     @abc.abstractmethod
     def constraint(self):
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def constraint_gradient(self):
-        pass
+        raise NotImplementedError
 
     def constraint_velocity(self):
         p = self.decompose_state()["momentum"]
@@ -142,7 +139,7 @@ class MultiBodySystem(
 
     @abc.abstractmethod
     def dissipation_matrix(self):
-        pass
+        raise NotImplementedError
 
     def rayleigh_dissipation(self):
         v = self.decompose_state()["velocity"]
