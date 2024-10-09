@@ -29,39 +29,39 @@ class PortHamiltonianSystem(
 
     @abc.abstractmethod
     def decompose_state(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def costates(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def hamiltonian(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def hamiltonian_gradient(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def structure_matrix(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def descriptor_matrix(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def dissipation_matrix(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def port_matrix(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def input(self):
-        raise NotImplementedError
+        pass
 
     def output(self):
         return self.port_matrix.T @ self.input()
@@ -102,7 +102,7 @@ class Pendulum2D(PortHamiltonianSystem):
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
 
     def hamiltonian(self):
-        raise NotImplementedError
+        pass
 
     def hamiltonian_gradient(self):
         q = self.decompose_state()["position"]
@@ -115,13 +115,13 @@ class Pendulum2D(PortHamiltonianSystem):
         return np.diag([1, self.mass * self.length**2])
 
     def port_matrix(self):
-        raise NotImplementedError
+        pass
 
     def input(self):
-        raise NotImplementedError
+        pass
 
     def dissipation_matrix(self):
-        raise NotImplementedError
+        pass
 
 
 class PortHamiltonianMBS(PortHamiltonianSystem):
@@ -193,13 +193,13 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         return descriptor_matrix
 
     def hamiltonian(self):
-        raise NotImplementedError
+        pass
 
     def port_matrix(self):
-        raise NotImplementedError
+        pass
 
     def input(self):
-        raise NotImplementedError
+        pass
 
     def dissipation_matrix(self):
-        raise NotImplementedError
+        pass

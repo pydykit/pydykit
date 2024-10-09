@@ -11,18 +11,18 @@ class Integrator(abc.ABC):
 
     @abc.abstractmethod
     def get_residuum(self, state):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def get_tangent(self, state):
-        raise NotImplementedError
+        pass
 
 
 class Simulator(abc.ABC):
 
     @abc.abstractmethod
     def run(self):
-        raise NotImplementedError
+        pass
 
 
 class System(abc.ABC):
@@ -33,126 +33,126 @@ class AbstractMultiBodySystem(System):
 
     @abc.abstractmethod
     def __init__(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def decompose_state(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def mass_matrix(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def inverse_mass_matrix(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def kinetic_energy(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def kinetic_energy_gradient_from_momentum(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def kinetic_energy_gradient_from_velocity(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def external_potential(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def external_potential_gradient(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def internal_potential(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def internal_potential_gradient(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def potential_energy(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def potential_energy_gradient(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def total_energy(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def constraint(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def constraint_gradient(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def constraint_velocity(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def dissipation_matrix(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def rayleigh_dissipation(self):
-        raise NotImplementedError
+        pass
 
 
 class AbstractPortHamiltonianSystem(System):
 
     @abc.abstractmethod
     def __init__(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def decompose_state(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def costates(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def hamiltonian(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def hamiltonian_gradient(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def structure_matrix(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def descriptor_matrix(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def dissipation_matrix(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def port_matrix(self, state):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def input(self):
-        raise NotImplementedError
+        pass
 
     @abc.abstractmethod
     def output(self):
-        raise NotImplementedError
+        pass
 
 
 class TimeStep:
@@ -178,7 +178,7 @@ class TimeStepper(abc.ABC):
     @property
     @abc.abstractmethod
     def current_step(self) -> TimeStep:
-        raise NotImplementedError
+        pass
 
 
 class Manager(abc.ABC):

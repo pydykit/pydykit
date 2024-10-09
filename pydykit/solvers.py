@@ -17,7 +17,7 @@ class Solver(abc.ABC):
         jacobian: Callable,
         initial: npt.ArrayLike,
     ):
-        raise NotImplementedError
+        pass
 
 
 class Newton(Solver):
