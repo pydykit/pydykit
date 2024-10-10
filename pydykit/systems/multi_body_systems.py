@@ -80,71 +80,70 @@ class MultiBodySystem(
         )
 
     @abc.abstractmethod
-    def mass_matrix(self, q):
+    def mass_matrix(self):
         pass
 
     @abc.abstractmethod
-    def inverse_mass_matrix(self, q):
+    def inverse_mass_matrix(self):
         pass
 
-    def kinetic_energy(self, q, p):
+    def kinetic_energy(self):
+        q = self.state.decompose_state()["position"]
+        p = self.state.decompose_state()["momentum"]
         return 0.5 * p.T @ self.inverse_mass_matrix(q=q) @ p
 
     @abc.abstractmethod
-    def kinetic_energy_gradient_from_momentum(self, q, p):
-        "q:position, p:momentum"
+    def kinetic_energy_gradient_from_momentum(self):
         pass
 
     @abc.abstractmethod
-    def kinetic_energy_gradient_from_velocity(self, q, v):
-        "v: velocity"
-        # Note: A given integrator needs kinetic_energy_gradient_from_momentum or kinetic_energy_gradient_from_velocity, not both
+    def kinetic_energy_gradient_from_velocity(self):
         pass
 
     @abc.abstractmethod
-    def external_potential(self, q):
+    def external_potential(self):
         pass
 
     @abc.abstractmethod
-    def external_potential_gradient(self, q):
+    def external_potential_gradient(self):
         pass
 
     @abc.abstractmethod
-    def internal_potential(self, q):
+    def internal_potential(self):
         pass
 
     @abc.abstractmethod
-    def internal_potential_gradient(self, q):
+    def internal_potential_gradient(self):
         pass
 
-    def potential_energy(self, q):
-        return self.external_potential(q) + self.internal_potential(q)
+    def potential_energy(self):
+        return self.external_potential() + self.internal_potential()
 
-    def potential_energy_gradient(self, q):
-        return self.external_potential_gradient(q=q) + self.internal_potential_gradient(
-            q=q
-        )
+    def potential_energy_gradient(self):
+        return self.external_potential_gradient() + self.internal_potential_gradient()
 
-    def total_energy(self, q, p):
-        return self.kinetic_energy(q, p) + self.potential_energy(q)
+    def total_energy(self):
+        return self.kinetic_energy() + self.potential_energy()
 
     @abc.abstractmethod
-    def constraint(self, q):
+    def constraint(self):
         pass
 
     @abc.abstractmethod
-    def constraint_gradient(self, q):
+    def constraint_gradient(self):
         pass
 
-    def constraint_velocity(self, q, p):
-        return self.constraint_gradient(q) @ self.inverse_mass_matrix(q) @ p
+    def constraint_velocity(self):
+        p = self.decompose_state()["momentum"]
+        return self.constraint_gradient() @ self.inverse_mass_matrix() @ p
 
     @abc.abstractmethod
-    def dissipation_matrix(self, q, v):
+    def dissipation_matrix(self):
         pass
 
-    def rayleigh_dissipation(self, q, v):
-        return 0.5 * v.T @ self.dissipation_matrix(q=q, v=v) @ v
+    def rayleigh_dissipation(self):
+        v = self.decompose_state()["velocity"]
+        return 0.5 * v.T @ self.dissipation_matrix() @ v
 
 
 class Pendulum3DCartesian(MultiBodySystem):
