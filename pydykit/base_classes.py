@@ -147,7 +147,7 @@ class AbstractPortHamiltonianSystem(System):
         pass
 
     @abc.abstractmethod
-    def input(self):
+    def input_vector(self):
         pass
 
     @abc.abstractmethod

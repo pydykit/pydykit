@@ -60,11 +60,11 @@ class PortHamiltonianSystem(
         pass
 
     @abc.abstractmethod
-    def input(self):
+    def input_vector(self):
         pass
 
     def output(self):
-        return self.port_matrix.T @ self.input()
+        return self.port_matrix.T @ self.input_vector()
 
 
 class Pendulum2D(PortHamiltonianSystem):
@@ -117,7 +117,7 @@ class Pendulum2D(PortHamiltonianSystem):
     def port_matrix(self):
         pass
 
-    def input(self):
+    def input_vector(self):
         pass
 
     def dissipation_matrix(self):
@@ -198,7 +198,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
     def port_matrix(self):
         pass
 
-    def input(self):
+    def input_vector(self):
         pass
 
     def dissipation_matrix(self):
