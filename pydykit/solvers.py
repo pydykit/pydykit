@@ -20,7 +20,7 @@ class Solver(abc.ABC):
         pass
 
 
-class Newton(Solver):
+class Iterative(Solver):
     def __init__(
         self,
         newton_epsilon: float,
@@ -30,7 +30,7 @@ class Newton(Solver):
         self.max_iterations = max_iterations
 
 
-class NewtonPlainPython(Newton):
+class NewtonPlainPython(Iterative):
 
     def solve(self, func, jacobian, initial):
 
@@ -58,7 +58,7 @@ class NewtonPlainPython(Newton):
         return initial
 
 
-class NewtonScipy(Newton):
+class RootScipy(Iterative):
     def solve(self, func, jacobian, initial):
         # TODO: Log the logs of the optimization function
         return root(
