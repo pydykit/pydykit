@@ -1,7 +1,9 @@
 import abc
 from typing import Callable, Iterator
 
+import numpy as np
 import numpy.typing as npt
+import pandas as pd
 
 from . import results
 
@@ -201,3 +203,15 @@ class Manager(abc.ABC):
     integrator: Integrator = NotImplemented
     system: System = NotImplemented
     result: results.Result = NotImplemented
+
+
+class Quantity(abc.ABC):
+
+    def __init__(self):
+        pass
+
+    def create_dataframe(self, nbr_time_point):
+        self.df = pd.DataFrame(
+            data=np.zeros((nbr_time_point, sum(self.dimension))),
+            columns=self.functions,
+        )
