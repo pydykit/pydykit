@@ -10,8 +10,9 @@ from . import results
 
 class Integrator(abc.ABC):
 
+    @abc.abstractmethod
     def __init__(self, manager):
-        self.manager = manager
+        pass
 
     @abc.abstractmethod
     def get_residuum(self, state):
