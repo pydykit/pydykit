@@ -1,10 +1,8 @@
-import abc
-
 import numpy as np
 import pandas as pd
 
 
-class Result(abc.ABC):
+class Result:
     def __init__(self, manager):
         self.manager = manager
         self.results = np.zeros(
