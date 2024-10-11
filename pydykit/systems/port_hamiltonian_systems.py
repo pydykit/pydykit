@@ -27,42 +27,6 @@ class PortHamiltonianSystem(
     def build_state_vector(self):
         self.state = np.hstack(list(self.initial_state.values()))
 
-    @abc.abstractmethod
-    def decompose_state(self):
-        pass
-
-    @abc.abstractmethod
-    def costates(self):
-        pass
-
-    @abc.abstractmethod
-    def hamiltonian(self):
-        pass
-
-    @abc.abstractmethod
-    def hamiltonian_gradient(self):
-        pass
-
-    @abc.abstractmethod
-    def structure_matrix(self):
-        pass
-
-    @abc.abstractmethod
-    def descriptor_matrix(self):
-        pass
-
-    @abc.abstractmethod
-    def dissipation_matrix(self):
-        pass
-
-    @abc.abstractmethod
-    def port_matrix(self):
-        pass
-
-    @abc.abstractmethod
-    def input_vector(self):
-        pass
-
     def output(self):
         return self.port_matrix.T @ self.input_vector()
 
