@@ -1,5 +1,7 @@
 import abc
-from typing import Iterator
+from typing import Callable, Iterator
+
+import numpy.typing as npt
 
 from . import results
 
@@ -22,6 +24,18 @@ class Simulator(abc.ABC):
 
     @abc.abstractmethod
     def run(self):
+        pass
+
+
+class Solver(abc.ABC):
+
+    @abc.abstractmethod
+    def solve(
+        self,
+        func: Callable,
+        jacobian: Callable,
+        initial: npt.ArrayLike,
+    ):
         pass
 
 
