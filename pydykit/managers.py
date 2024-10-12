@@ -1,11 +1,11 @@
 import copy
 import importlib
 
-from . import base_classes, results, utils
+from . import abstract_base_classes, results, utils
 from .configuration import Configuration
 
 
-class Manager(base_classes.Manager):
+class Manager(abstract_base_classes.Manager):
 
     def configure(self, configuration: Configuration):
         self._configure(configuration=configuration)
@@ -33,7 +33,7 @@ class Manager(base_classes.Manager):
 
     def _set_system(
         self,
-    ) -> base_classes.System:
+    ) -> abstract_base_classes.System:
 
         return self._dynamically_instantiate(
             module_name="systems",
@@ -41,7 +41,7 @@ class Manager(base_classes.Manager):
             kwargs=self.configuration.system.kwargs,
         )
 
-    def _set_simulator(self) -> base_classes.Simulator:
+    def _set_simulator(self) -> abstract_base_classes.Simulator:
 
         return self._dynamically_instantiate(
             module_name="simulators",
@@ -51,7 +51,7 @@ class Manager(base_classes.Manager):
 
     def _set_integrator(
         self,
-    ) -> base_classes.Integrator:
+    ) -> abstract_base_classes.Integrator:
 
         return self._dynamically_instantiate(
             module_name="integrators",
@@ -61,7 +61,7 @@ class Manager(base_classes.Manager):
 
     def _set_time_stepper(
         self,
-    ) -> base_classes.TimeStepper:
+    ) -> abstract_base_classes.TimeStepper:
 
         return self._dynamically_instantiate(
             module_name="time_steppers",

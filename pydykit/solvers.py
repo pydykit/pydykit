@@ -1,10 +1,10 @@
 import numpy as np
 from scipy.optimize import root
 
-from . import base_classes, utils
+from . import abstract_base_classes, utils
 
 
-class Newton(base_classes.Solver):
+class Newton(abstract_base_classes.Solver):
     def __init__(
         self,
         newton_epsilon: float,

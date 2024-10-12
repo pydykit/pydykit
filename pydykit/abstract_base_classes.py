@@ -1,9 +1,7 @@
 import abc
 from typing import Callable, Iterator
 
-import numpy as np
 import numpy.typing as npt
-import pandas as pd
 
 from . import results
 
@@ -172,25 +170,15 @@ class AbstractPortHamiltonianSystem(System):
         pass
 
 
-class TimeStep:
-    def __init__(self, index: int, time: float, increment: float):
-        self.index = index
-        self.time = time
-        self.increment = (
-            increment  # this is next point in time minus current point in time
-        )
+class TimeStep(abc.ABC):
+    pass
 
 
 class TimeStepper(abc.ABC):
-    def __init__(self, manager, step_size: float, start: float, end: float):
-        self.manager = manager
-        self.step_size = step_size
-        self.start = start
-        self.end = end
 
     @abc.abstractmethod
     def make_steps(self) -> Iterator[TimeStep]:
-        """Returns a Python generator which returns TimeStep objects"""
+        pass
 
     @property
     @abc.abstractmethod
@@ -208,11 +196,6 @@ class Manager(abc.ABC):
 
 class Quantity(abc.ABC):
 
-    def __init__(self):
-        pass
-
+    @abc.abstractmethod
     def create_dataframe(self, nbr_time_point):
-        self.df = pd.DataFrame(
-            data=np.zeros((nbr_time_point, sum(self.dimension))),
-            columns=self.functions,
-        )
+        pass

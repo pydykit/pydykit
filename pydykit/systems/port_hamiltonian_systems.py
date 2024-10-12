@@ -1,12 +1,12 @@
 import numpy as np
 from scipy.linalg import block_diag
 
-from .. import base_classes, utils
+from .. import abstract_base_classes, utils
 from .system import System
 
 
 class PortHamiltonianSystem(
-    base_classes.AbstractPortHamiltonianSystem,
+    abstract_base_classes.AbstractPortHamiltonianSystem,
     System,  # TODO: Avoid multi-inheritance if possible
 ):
     def __init__(self, manager, state):

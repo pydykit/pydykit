@@ -2,7 +2,7 @@ import numpy as np
 import numpy.typing as npt
 import yaml
 
-from . import base_classes
+from . import abstract_base_classes
 
 
 def update_object_from_config_file(
@@ -137,7 +137,7 @@ def compare_string_lists(list1, list2):
 
 
 def get_system_copies_with_desired_states(
-    system: base_classes.System,
+    system: abstract_base_classes.System,
     states: list[npt.ArrayLike],
 ):
     return map(

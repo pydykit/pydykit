@@ -1,11 +1,11 @@
 import numpy as np
 
-from .. import base_classes, operators, utils
+from .. import abstract_base_classes, operators, utils
 from .system import System
 
 
 class MultiBodySystem(
-    base_classes.AbstractMultiBodySystem,
+    abstract_base_classes.AbstractMultiBodySystem,
     System,  # TODO: Avoid multi-inheritance if possible
 ):
     def __init__(

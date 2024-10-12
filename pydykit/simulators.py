@@ -1,9 +1,9 @@
-from . import base_classes, solvers, utils
+from . import abstract_base_classes, solvers, utils
 
 
-class Simulator(base_classes.Simulator):
+class Simulator(abstract_base_classes.Simulator):
 
-    def __init__(self, manager: base_classes.Manager):
+    def __init__(self, manager: abstract_base_classes.Manager):
         self.manager = manager
 
 

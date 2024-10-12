@@ -2,10 +2,27 @@ from itertools import pairwise
 
 import numpy as np
 
-from . import base_classes, utils
+from . import abstract_base_classes, utils
 
 
-class FixedIncrement(base_classes.TimeStepper):
+class TimeStep(abstract_base_classes.TimeStep):
+    def __init__(self, index: int, time: float, increment: float):
+        self.index = index
+        self.time = time
+        self.increment = (
+            increment  # this is next point in time minus current point in time
+        )
+
+
+class TimeStepper(abstract_base_classes.TimeStepper):
+    def __init__(self, manager, step_size: float, start: float, end: float):
+        self.manager = manager
+        self.step_size = step_size
+        self.start = start
+        self.end = end
+
+
+class FixedIncrement(TimeStepper):
     def __init__(self, manager, step_size: float, start: float, end: float):
 
         super().__init__(
@@ -29,7 +46,7 @@ class FixedIncrement(base_classes.TimeStepper):
     def make_steps(self):
         for index, time in enumerate(self.times):
 
-            self._current_step = base_classes.TimeStep(
+            self._current_step = TimeStep(
                 index=index,
                 time=time,
                 increment=self.step_size,  # fixed time step size
@@ -59,7 +76,7 @@ class FixedIncrement(base_classes.TimeStepper):
         return step_size
 
 
-class FixedIncrementHittingEnd(base_classes.TimeStepper):
+class FixedIncrementHittingEnd(TimeStepper):
     def __init__(self, start, end, step_size, manager):
 
         super().__init__(
@@ -76,7 +93,7 @@ class FixedIncrementHittingEnd(base_classes.TimeStepper):
     def make_steps(self):
         for index, time in enumerate(self.times):
 
-            self._current_step = base_classes.TimeStep(
+            self._current_step = TimeStep(
                 index=index,
                 time=time,
                 increment=time - self.times[index - 1],  # variable time step size
