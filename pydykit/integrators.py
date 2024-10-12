@@ -1,5 +1,3 @@
-from functools import partial
-
 import numpy as np
 
 from . import abstract_base_classes, utils
@@ -11,9 +9,8 @@ class IntegratorCommon(abstract_base_classes.Integrator):
         self.manager = manager
 
     def get_tangent(self, state):
-        # TODO: This is silly, improve it
         return utils.get_numerical_tangent(
-            func=partial(self.get_residuum),  # Bind some arguments to values
+            func=self.get_residuum,
             incrementing_state=state.copy(),
         )
 
