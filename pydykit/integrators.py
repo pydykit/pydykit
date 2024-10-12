@@ -9,6 +9,7 @@ class IntegratorCommon(abstract_base_classes.Integrator):
         self.manager = manager
 
     def get_tangent(self, state):
+        # will be used if no analytical tangent has been implemented
         return utils.get_numerical_tangent(
             func=self.get_residuum,
             incrementing_state=state.copy(),
