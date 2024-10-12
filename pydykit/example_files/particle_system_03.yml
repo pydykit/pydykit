@@ -6,23 +6,31 @@ configuration:
       nbr_spatial_dimensions: 3
       particles:
       - index: 1
-        initial_position: [0.0, 0.0, 0.0]
+        initial_position: [0.0, 0.0, 1.0]
         initial_momentum: [0.0, 0.0, 0.0]
         mass: 1.0
       - index: 2
-        initial_position: [0.0, 0.0, 1.0]
+        initial_position: [0.0, 0.0, 2.0]
         initial_momentum: [0.0, 3.0, 0.0]
         mass: 1.0
+      supports:
+      - index: 1
+        type: fixed
+        position: [0.0, 0.0, 0.0]
       springs:
       - particle_start: 1
         particle_end: 2
         stiffness: 50
-        equilibrium_length: 1
+        equilibrium_length: 1.0
       constraints:
-      - particle_start: 2
-        particle_end: 3
-        length: 1
-      gravity: 0
+      - start:
+          type: support
+          index: 1
+        end:
+          type: particle
+          index: 1
+        length: 1.0
+      gravity: 0.0
   simulator:
     class_name: OneStep
     kwargs:
@@ -35,6 +43,6 @@ configuration:
   time_stepper:
     class_name: FixedIncrement
     kwargs:
-      step_size: 0.1 # 0.01
+      step_size: 0.05 # 0.01
       start: 0.0
-      end: 0.5 # 10.0
+      end: 3.5 # 10.0
