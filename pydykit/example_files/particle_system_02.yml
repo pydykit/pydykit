@@ -23,8 +23,12 @@ configuration:
         stiffness: 50
         equilibrium_length: 0.5
       constraints:
-      - particle_start: 2
-        particle_end: 3
+      - start:
+          type: particle
+          index: 2
+        end:
+          type: particle
+          index: 3
         length: 1
       gravity: 0
   simulator:

@@ -475,13 +475,23 @@ class ParticleSystem(MultiBodySystem):
         )
 
         # TODO: Find a better solution (e.g. switching to Python indices), as this is a hacky fix of indices
-        for attribute_name in ["springs", "dampers", "constraints"]:
+        for attribute_name in ["springs", "dampers"]:
             if hasattr(self, attribute_name):
                 attribute = getattr(self, attribute_name)
                 for entry in attribute:
                     for name in ["particle_start", "particle_end"]:
                         value = utils.shift_index_iterature_to_python(index=entry[name])
                         entry[name] = value
+                setattr(self, attribute_name, attribute)
+        for attribute_name in ["constraints"]:
+            if hasattr(self, attribute_name):
+                attribute = getattr(self, attribute_name)
+                for entry in attribute:
+                    for position in ["start", "end"]:
+                        value = utils.shift_index_iterature_to_python(
+                            index=entry[position]["index"]
+                        )
+                        entry[position]["index"] = value
                 setattr(self, attribute_name, attribute)
 
     def get_state_columns(self):
@@ -593,12 +603,21 @@ class ParticleSystem(MultiBodySystem):
 
     def constraint(self):
         q = self.decompose_state()["position"]
-        position_vectors = self.decompose_into_particles(q)
+        position_vectors = dict(particle=self.decompose_into_particles(q))
+
         return [
             self._constraint(
                 length=constraint["length"],
-                start=position_vectors[constraint["particle_start"]],
-                end=position_vectors[constraint["particle_end"]],
+                start=utils.select(
+                    position_vectors=position_vectors,
+                    constraint=constraint,
+                    endpoint="start",
+                ),
+                end=utils.select(
+                    position_vectors=position_vectors,
+                    constraint=constraint,
+                    endpoint="end",
+                ),
             )
             for constraint in self.constraints
         ]
@@ -626,14 +645,22 @@ class ParticleSystem(MultiBodySystem):
 
     def constraint_gradient(self):
         q = self.decompose_state()["position"]
-        position_vectors = self.decompose_into_particles(q)
+        position_vectors = dict(particle=self.decompose_into_particles(q))
 
         contributions = [
             self._constraint_gradient(
-                start_vector=position_vectors[constraint["particle_start"]],
-                end_vector=position_vectors[constraint["particle_end"]],
-                start_index=constraint["particle_start"],
-                end_index=constraint["particle_end"],
+                start_vector=utils.select(
+                    position_vectors=position_vectors,
+                    constraint=constraint,
+                    endpoint="start",
+                ),
+                end_vector=utils.select(
+                    position_vectors=position_vectors,
+                    constraint=constraint,
+                    endpoint="end",
+                ),
+                start_index=constraint["start"]["index"],
+                end_index=constraint["end"]["index"],
                 nbr_particles=self.nbr_particles,
             )
             for constraint in self.constraints
