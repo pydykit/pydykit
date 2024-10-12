@@ -46,4 +46,4 @@ pydykit.plotting.fix_scene_bounds_to_extrema(figure=fig, df=df)
 
 fig.show()
 
-# df.to_csv(f"test/reference_results/{name}.csv")
+df.to_csv(f"test/reference_results/{name}.csv")
