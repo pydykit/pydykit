@@ -12,17 +12,17 @@ class IntegratorCommon(abstract_base_classes.Integrator):
         # will be used if no analytical tangent has been implemented
         return utils.get_numerical_tangent(
             func=self.get_residuum,
-            incrementing_state=state.copy(),
+            state=state.copy(),
         )
 
 
 class MidpointPH(IntegratorCommon):
 
-    def get_residuum(self, state):
+    def get_residuum(self, next_state):
 
         # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
-        state_n = self.manager.system.state.copy()
-        state_n1 = state.copy()
+        state_n = self.manager.system.state
+        state_n1 = next_state
 
         time_step_size = self.manager.time_stepper.current_step.increment
 
@@ -57,11 +57,11 @@ class Midpoint_DAE(IntegratorCommon):
 
     variable_names = ["position", "momentum", "multiplier"]
 
-    def get_residuum(self, state):
+    def get_residuum(self, next_state):
 
         # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
-        state_n = self.manager.system.state.copy()
-        state_n1 = state.copy()
+        state_n = self.manager.system.state
+        state_n1 = next_state
 
         # read time step size
         step_size = self.manager.time_stepper.current_step.increment

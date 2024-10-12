@@ -49,9 +49,7 @@ class PydykitException(Exception):
     pass
 
 
-def get_numerical_tangent(func, incrementing_state, incrementation_factor=1e-10):
-
-    state = incrementing_state.copy()
+def get_numerical_tangent(func, state, incrementation_factor=1e-10):
 
     state_dimension = len(state)
     numerical_tangent = np.zeros((state_dimension, state_dimension))
@@ -64,13 +62,13 @@ def get_numerical_tangent(func, incrementing_state, incrementation_factor=1e-10)
         state[index] = saved_state_entry + increment
 
         forward_incremented_function = func(
-            state=state,
+            next_state=state,
         )
 
         state[index] = saved_state_entry - increment
 
         backward_incremented_function = func(
-            state=state,
+            next_state=state,
         )
 
         state[index] = saved_state_entry
