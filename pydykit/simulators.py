@@ -46,8 +46,8 @@ class OneStep(Simulator):
 
             # Calc next state
             next_state = self.solver.solve(
-                func=self.manager.integrator.get_residuum,
-                jacobian=self.manager.integrator.get_tangent,
+                func=manager.integrator.get_residuum,
+                jacobian=manager.integrator.get_tangent,
                 initial=manager.system.state,
             )
 

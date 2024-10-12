@@ -1,5 +1,3 @@
-from functools import partial
-
 import numpy as np
 
 from . import abstract_base_classes, utils
@@ -10,50 +8,28 @@ class IntegratorCommon(abstract_base_classes.Integrator):
     def __init__(self, manager):
         self.manager = manager
 
-    # TODO: Simplify the life of "state".
-    # Why don't we just have a system, which state is defined by its attribute
-    # "state" and that's it?
-    # Why should the manager keep current_state and next_state?
-    # A system does have one state, that's it.
-    # The next state of the system is calculated on the fly by the solver
-    # which could be external and therefore would not like to change
-    # the states of any manager or even system.
-    # If the next state is calculated, than we increment our systems state
-    # and log the old one on the result object.
-
-    def get_residuum(self, state):
-        # TODO: This is silly, improve it
-        return self.calc_residuum(
-            system=self.manager.system,
-            time_stepper=self.manager.time_stepper,
-            state_n=self.manager.system.state.copy(),
-            state_n1=state.copy(),
-        )
-
     def get_tangent(self, state):
-        # TODO: This is silly, improve it
+        # will be used if no analytical tangent has been implemented
         return utils.get_numerical_tangent(
-            func=partial(  # Bind some arguments to values
-                self.calc_residuum,
-                system=self.manager.system,
-                time_stepper=self.manager.time_stepper,
-            ),
-            state_1=self.manager.system.state.copy(),
-            state_2=state.copy(),
+            func=self.get_residuum,
+            state=state.copy(),
         )
 
 
 class MidpointPH(IntegratorCommon):
 
-    @staticmethod
-    def calc_residuum(system, time_stepper, state_n, state_n1):
+    def get_residuum(self, next_state):
 
-        time_step_size = time_stepper.current_step.increment
+        # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
+        state_n = self.manager.system.state
+        state_n1 = next_state
+
+        time_step_size = self.manager.time_stepper.current_step.increment
 
         # create midpoint state and all corresponding discrete-time systems
         state_n05 = 0.5 * (state_n + state_n1)
         system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
-            system=system,
+            system=self.manager.system,
             states=[
                 state_n,
                 state_n1,
@@ -81,17 +57,20 @@ class Midpoint_DAE(IntegratorCommon):
 
     variable_names = ["position", "momentum", "multiplier"]
 
-    @staticmethod
-    def calc_residuum(system, time_stepper, state_n, state_n1):
+    def get_residuum(self, next_state):
+
+        # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
+        state_n = self.manager.system.state
+        state_n1 = next_state
 
         # read time step size
-        step_size = time_stepper.current_step.increment
+        step_size = self.manager.time_stepper.current_step.increment
 
         # create midpoint state and all corresponding discrete-time systems
         state_n05 = 0.5 * (state_n + state_n1)
 
         system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
-            system=system,
+            system=self.manager.system,
             states=[
                 state_n,
                 state_n1,

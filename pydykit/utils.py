@@ -49,38 +49,35 @@ class PydykitException(Exception):
     pass
 
 
-def get_numerical_tangent(func, state_1, state_2, epsilon=1e-10):
+def get_numerical_tangent(func, state, incrementation_factor=1e-10):
 
-    state_1 = state_1.copy()
-    state_2 = state_2.copy()
+    state_dimension = len(state)
+    numerical_tangent = np.zeros((state_dimension, state_dimension))
 
-    N = len(state_2)
-    tang_num = np.zeros((N, N))
+    for index in range(state_dimension):
 
-    for j in range(N):
+        saved_state_entry = state[index]
 
-        xsave = state_2[j]
+        increment = incrementation_factor * (1.0 + abs(saved_state_entry))
+        state[index] = saved_state_entry + increment
 
-        delp = epsilon * (1.0 + abs(xsave))
-        state_2[j] = xsave + delp
-
-        R1 = func(
-            state_n=state_1,
-            state_n1=state_2,
+        forward_incremented_function = func(
+            next_state=state,
         )
 
-        state_2[j] = xsave - delp
+        state[index] = saved_state_entry - increment
 
-        R2 = func(
-            state_n=state_1,
-            state_n1=state_2,
+        backward_incremented_function = func(
+            next_state=state,
         )
 
-        state_2[j] = xsave
+        state[index] = saved_state_entry
 
-        tang_num[:, j] = (R1 - R2) / (2.0 * delp)
+        numerical_tangent[:, index] = (
+            forward_incremented_function - backward_incremented_function
+        ) / (2.0 * increment)
 
-    return tang_num
+    return numerical_tangent
 
 
 def print_current_step(step):
