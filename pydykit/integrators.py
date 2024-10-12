@@ -2,10 +2,13 @@ from functools import partial
 
 import numpy as np
 
-from . import base_classes, utils
+from . import abstract_base_classes, utils
 
 
-class IntegratorCommon(base_classes.Integrator):
+class IntegratorCommon(abstract_base_classes.Integrator):
+
+    def __init__(self, manager):
+        self.manager = manager
 
     # TODO: Simplify the life of "state".
     # Why don't we just have a system, which state is defined by its attribute

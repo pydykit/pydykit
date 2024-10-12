@@ -1,13 +1,11 @@
-import abc
-
 import numpy as np
 
-from .. import base_classes, operators, utils
+from .. import abstract_base_classes, operators, utils
 from .system import System
 
 
 class MultiBodySystem(
-    base_classes.AbstractMultiBodySystem,
+    abstract_base_classes.AbstractMultiBodySystem,
     System,  # TODO: Avoid multi-inheritance if possible
 ):
     def __init__(
@@ -79,42 +77,10 @@ class MultiBodySystem(
             )
         )
 
-    @abc.abstractmethod
-    def mass_matrix(self):
-        pass
-
-    @abc.abstractmethod
-    def inverse_mass_matrix(self):
-        pass
-
     def kinetic_energy(self):
         q = self.state.decompose_state()["position"]
         p = self.state.decompose_state()["momentum"]
         return 0.5 * p.T @ self.inverse_mass_matrix(q=q) @ p
-
-    @abc.abstractmethod
-    def kinetic_energy_gradient_from_momentum(self):
-        pass
-
-    @abc.abstractmethod
-    def kinetic_energy_gradient_from_velocity(self):
-        pass
-
-    @abc.abstractmethod
-    def external_potential(self):
-        pass
-
-    @abc.abstractmethod
-    def external_potential_gradient(self):
-        pass
-
-    @abc.abstractmethod
-    def internal_potential(self):
-        pass
-
-    @abc.abstractmethod
-    def internal_potential_gradient(self):
-        pass
 
     def potential_energy(self):
         return self.external_potential() + self.internal_potential()
@@ -125,21 +91,9 @@ class MultiBodySystem(
     def total_energy(self):
         return self.kinetic_energy() + self.potential_energy()
 
-    @abc.abstractmethod
-    def constraint(self):
-        pass
-
-    @abc.abstractmethod
-    def constraint_gradient(self):
-        pass
-
     def constraint_velocity(self):
         p = self.decompose_state()["momentum"]
         return self.constraint_gradient() @ self.inverse_mass_matrix() @ p
-
-    @abc.abstractmethod
-    def dissipation_matrix(self):
-        pass
 
     def rayleigh_dissipation(self):
         v = self.decompose_state()["velocity"]
