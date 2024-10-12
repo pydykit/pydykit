@@ -431,6 +431,7 @@ class ParticleSystem(MultiBodySystem):
         particles: list[dict,],
         springs: list[dict,],
         constraints: list[dict,],
+        supports: list[dict,],
         gravity: float,
     ):
 
@@ -438,6 +439,7 @@ class ParticleSystem(MultiBodySystem):
         self.particles = particles
         self.springs = springs
         self.constraints = constraints
+        self.supports = supports
 
         self.particles = utils.sort_list_of_dicts_based_on_special_value(
             my_list=self.particles,

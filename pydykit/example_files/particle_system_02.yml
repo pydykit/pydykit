@@ -17,6 +17,7 @@ configuration:
         initial_position: [2.0, 0.0, 0.0]
         initial_momentum: [0.0, 0.0, 0.0]
         mass: 1.0
+      supports: None
       springs:
       - particle_start: 1
         particle_end: 2
