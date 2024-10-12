@@ -436,15 +436,16 @@ class ParticleSystem(MultiBodySystem):
     ):
 
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
-        self.particles = particles
-        self.springs = springs
-        self.constraints = constraints
-        self.supports = supports
-
         self.particles = utils.sort_list_of_dicts_based_on_special_value(
-            my_list=self.particles,
+            my_list=particles,
             key="index",
         )
+        self.springs = springs
+        self.constraints = constraints
+        self.supports = utils.sort_list_of_dicts_based_on_special_value(
+            my_list=supports, key="index"
+        )
+
         self.nbr_particles = len(self.particles)
         nbr_dof = self.nbr_spatial_dimensions * self.nbr_particles
 
@@ -605,7 +606,10 @@ class ParticleSystem(MultiBodySystem):
 
     def constraint(self):
         q = self.decompose_state()["position"]
-        position_vectors = dict(particle=self.decompose_into_particles(q))
+        position_vectors = dict(
+            particle=self.decompose_into_particles(q),
+            support=self.get_positions_supports(),
+        )
 
         return [
             self._constraint(
@@ -647,7 +651,10 @@ class ParticleSystem(MultiBodySystem):
 
     def constraint_gradient(self):
         q = self.decompose_state()["position"]
-        position_vectors = dict(particle=self.decompose_into_particles(q))
+        position_vectors = dict(
+            particle=self.decompose_into_particles(q),
+            support=self.get_positions_supports(),
+        )
 
         contributions = [
             self._constraint_gradient(
@@ -661,8 +668,16 @@ class ParticleSystem(MultiBodySystem):
                     constraint=constraint,
                     endpoint="end",
                 ),
-                start_index=constraint["start"]["index"],
-                end_index=constraint["end"]["index"],
+                start_index=(
+                    constraint["start"]["index"]
+                    if constraint["start"]["type"] == "particle"
+                    else None
+                ),
+                end_index=(
+                    constraint["end"]["index"]
+                    if constraint["end"]["type"] == "particle"
+                    else None
+                ),
                 nbr_particles=self.nbr_particles,
             )
             for constraint in self.constraints
@@ -675,6 +690,9 @@ class ParticleSystem(MultiBodySystem):
         assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
 
         return np.split(vector, self.nbr_particles)
+
+    def get_positions_supports(self):
+        return [np.array(support["position"]) for support in self.supports]
 
     def dissipation_matrix(self):
         diss_mat = np.zeros(self.nbr_dof, self.nbr_dof)
