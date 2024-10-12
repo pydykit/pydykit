@@ -1,10 +1,11 @@
 import inspect
 
+import numpy as np
 import pandas as pd
 
 import pydykit
 
-from . import base_classes, utils
+from . import abstract_base_classes, utils
 
 
 class Postprocessor:
@@ -97,7 +98,16 @@ class Postprocessor:
         return dict(zip(args_list, z))
 
 
-class Energy(base_classes.Quantity):
+class Quantity(abstract_base_classes.Quantity):
+
+    def create_dataframe(self, nbr_time_point):
+        self.df = pd.DataFrame(
+            data=np.zeros((nbr_time_point, sum(self.dimension))),
+            columns=self.functions,
+        )
+
+
+class Energy(Quantity):
     def __init__(self):
         super().__init__()
         self.dimension = [1, 1, 1]
@@ -108,21 +118,21 @@ class Energy(base_classes.Quantity):
         ]
 
 
-class Constraint(base_classes.Quantity):
+class Constraint(Quantity):
     def __init__(self):
         super().__init__()
         self.dimension = [1]
         self.functions = ["constraint"]
 
 
-class Constraint_Velocity(base_classes.Quantity):
+class Constraint_Velocity(Quantity):
     def __init__(self):
         super().__init__()
         self.dimension = [1]
         self.functions = ["constraint_velocity"]
 
 
-class Angular_Momentum(base_classes.Quantity):
+class Angular_Momentum(Quantity):
     def __init__(self):
         super().__init__()
         self.dimension = [3]
