@@ -4,7 +4,9 @@ from scipy.optimize import root
 from . import abstract_base_classes, utils
 
 
-class Newton(abstract_base_classes.Solver):
+
+class Iterative(abstract_base_classes.Solver):
+
     def __init__(
         self,
         newton_epsilon: float,
@@ -14,7 +16,7 @@ class Newton(abstract_base_classes.Solver):
         self.max_iterations = max_iterations
 
 
-class NewtonPlainPython(Newton):
+class NewtonPlainPython(Iterative):
 
     def solve(self, func, jacobian, initial):
 
@@ -42,7 +44,7 @@ class NewtonPlainPython(Newton):
         return initial
 
 
-class NewtonScipy(Newton):
+class RootScipy(Iterative):
     def solve(self, func, jacobian, initial):
         # TODO: Log the logs of the optimization function
         return root(
