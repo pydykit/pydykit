@@ -1,13 +1,16 @@
 import abc
-from typing import Iterator
+from typing import Callable, Iterator
+
+import numpy.typing as npt
 
 from . import results
 
 
 class Integrator(abc.ABC):
 
+    @abc.abstractmethod
     def __init__(self, manager):
-        self.manager = manager
+        pass
 
     @abc.abstractmethod
     def get_residuum(self, state):
@@ -22,6 +25,18 @@ class Simulator(abc.ABC):
 
     @abc.abstractmethod
     def run(self):
+        pass
+
+
+class Solver(abc.ABC):
+
+    @abc.abstractmethod
+    def solve(
+        self,
+        func: Callable,
+        jacobian: Callable,
+        initial: npt.ArrayLike,
+    ):
         pass
 
 
@@ -155,25 +170,15 @@ class AbstractPortHamiltonianSystem(System):
         pass
 
 
-class TimeStep:
-    def __init__(self, index: int, time: float, increment: float):
-        self.index = index
-        self.time = time
-        self.increment = (
-            increment  # this is next point in time minus current point in time
-        )
+class TimeStep(abc.ABC):
+    pass
 
 
 class TimeStepper(abc.ABC):
-    def __init__(self, manager, step_size: float, start: float, end: float):
-        self.manager = manager
-        self.step_size = step_size
-        self.start = start
-        self.end = end
 
     @abc.abstractmethod
     def make_steps(self) -> Iterator[TimeStep]:
-        """Returns a Python generator which returns TimeStep objects"""
+        pass
 
     @property
     @abc.abstractmethod
@@ -187,3 +192,10 @@ class Manager(abc.ABC):
     integrator: Integrator = NotImplemented
     system: System = NotImplemented
     result: results.Result = NotImplemented
+
+
+class Quantity(abc.ABC):
+
+    @abc.abstractmethod
+    def create_dataframe(self, nbr_time_point):
+        pass

@@ -1,26 +1,12 @@
-import abc
-from typing import Callable
-
 import numpy as np
-import numpy.typing as npt
 from scipy.optimize import root
 
-from . import utils
+from . import abstract_base_classes, utils
 
 
-class Solver(abc.ABC):
 
-    @abc.abstractmethod
-    def solve(
-        self,
-        func: Callable,
-        jacobian: Callable,
-        initial: npt.ArrayLike,
-    ):
-        pass
+class Iterative(abstract_base_classes.Solver):
 
-
-class Iterative(Solver):
     def __init__(
         self,
         newton_epsilon: float,

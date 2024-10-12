@@ -1,4 +1,3 @@
-import abc
 import inspect
 
 import numpy as np
@@ -6,7 +5,7 @@ import pandas as pd
 
 import pydykit
 
-from . import utils
+from . import abstract_base_classes, utils
 
 
 class Postprocessor:
@@ -99,10 +98,7 @@ class Postprocessor:
         return dict(zip(args_list, z))
 
 
-class Quantity(abc.ABC):
-
-    def __init__(self):
-        pass
+class Quantity(abstract_base_classes.Quantity):
 
     def create_dataframe(self, nbr_time_point):
         self.df = pd.DataFrame(
