@@ -1,8 +1,7 @@
 import numpy as np
-from scipy.optimize import root
+from scipy.optimize import fsolve
 
 from . import abstract_base_classes, utils
-
 
 
 class Iterative(abstract_base_classes.Solver):
@@ -46,11 +45,18 @@ class NewtonPlainPython(Iterative):
 
 class RootScipy(Iterative):
     def solve(self, func, jacobian, initial):
-        # TODO: Log the logs of the optimization function
-        return root(
-            fun=func,
+
+        self.func = func
+
+        solution = fsolve(
+            func=func,
             x0=initial,
-            jac=jacobian,
-            tol=self.newton_epsilon,
+            fprime=jacobian,
+            xtol=self.newton_epsilon,
             # maxiter=self.max_iterations,
-        ).x
+        )
+
+        residual_norm = np.linalg.norm(func(solution))
+        utils.print_residual_norm(value=residual_norm)
+
+        return solution
