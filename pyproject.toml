@@ -12,6 +12,7 @@ dependencies = [
   "scipy",
   "pyyaml",
   "pydantic",
+  "pytest"
 ]
 requires-python = ">=3.11"
 authors = [
