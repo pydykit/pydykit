@@ -141,3 +141,11 @@ def get_system_copies_with_desired_states(
         lambda state: system.copy(state=state),
         states,
     )
+
+
+def select(
+    position_vectors,
+    constraint,
+    endpoint,
+):
+    return position_vectors[constraint[endpoint]["type"]][constraint[endpoint]["index"]]

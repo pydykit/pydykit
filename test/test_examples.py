@@ -16,6 +16,7 @@ example_worklist = [
     "pendulum_2d",
     "particle_system_01",
     "particle_system_02",
+    "particle_system_03",
 ]
 
 

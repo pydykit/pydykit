@@ -2,8 +2,9 @@ import plotly.graph_objects as go
 
 import pydykit
 
-name = "particle_system_01"
+# name = "particle_system_01"
 # name = "particle_system_02"
+name = "particle_system_03"
 
 manager = pydykit.managers.Manager()
 
@@ -45,4 +46,4 @@ pydykit.plotting.fix_scene_bounds_to_extrema(figure=fig, df=df)
 
 fig.show()
 
-# df.to_csv(f"test/reference_results/{name}.csv")
+df.to_csv(f"test/reference_results/{name}.csv")
