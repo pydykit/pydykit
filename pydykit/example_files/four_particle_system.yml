@@ -1,24 +1,52 @@
 name: four_particle_system
 configuration:
   system:
-    class_name: FourParticleSystem
+    class_name: ParticleSystem
     kwargs:
       nbr_spatial_dimensions: 3
-      nbr_dof: 12
-      nbr_constraints: 2
-      mass: [1.0, 3.0, 2.3, 1.7]
-      gravity: [0.0, 0.0, 0.0]
-      rigid_constraint_length_12: 1
-      rigid_constraint_length_34: 1
-      natural_spring_length_13: 1
-      natural_spring_length_24: 1
-      spring_stiffness_parameter_13: 50
-      spring_stiffness_parameter_24: 500
-      damper_viscosity_parameter_23: 0
-      state:
-        position: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]
-        momentum: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2]
-        multiplier: [0.0, 0.0]
+      particles:
+      - index: 1
+        initial_position: [0.0, 0.0, 0.0]
+        initial_momentum: [0.0, 0.0, 0.0]
+        mass: 1.0
+      - index: 2
+        initial_position: [1.0, 0.0, 0.0]
+        initial_momentum: [0.0, 0.0, 0.0]
+        mass: 3.0
+      - index: 3
+        initial_position: [0.0, 1.0, 0.0]
+        initial_momentum: [0.0, 0.0, 0.0]
+        mass: 2.3
+      - index: 4
+        initial_position: [1.0, 1.0, 0.0]
+        initial_momentum: [0.0, 0.0, 2]
+        mass: 1.7
+      supports: {}
+      springs:
+      - particle_start: 1
+        particle_end: 3
+        stiffness: 50
+        equilibrium_length: 1
+      - particle_start: 2
+        particle_end: 4
+        stiffness: 500
+        equilibrium_length: 1
+      constraints:
+      - start:
+          type: particle
+          index: 1
+        end:
+          type: particle
+          index: 2
+        length: 1
+      - start:
+          type: particle
+          index: 3
+        end:
+          type: particle
+          index: 4
+        length: 1
+      gravity: 0
   simulator:
     class_name: OneStep
     kwargs:
