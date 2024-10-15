@@ -1,18 +1,28 @@
 name: pendulum_3d_cartesian
 configuration:
   system:
-    class_name: Pendulum3DCartesian
+    class_name: ParticleSystem
     kwargs:
       nbr_spatial_dimensions: 3
-      nbr_constraints: 1
-      nbr_dof: 3
-      mass: 1.0
-      gravity: [0.0, 0.0, -9.81]
-      length: 1.0
-      state:
-        position: [1.0, 0.0, 0.0]
-        momentum: [0.0, 1.0, 0.0]
-        multiplier: [0.0]
+      particles:
+      - index: 1
+        initial_position: [1.0, 0.0, 0.0]
+        initial_momentum: [0.0, 1.0, 0.0]
+        mass: 1.0
+      supports:
+      - index: 1
+        type: fixed
+        position: [0.0, 0.0, 0.0]
+      springs: {}
+      constraints:
+      - start:
+          type: support
+          index: 1
+        end:
+          type: particle
+          index: 1
+        length: 1.0
+      gravity: -9.81
   simulator:
     class_name: OneStep
     kwargs:
