@@ -525,10 +525,23 @@ class ParticleSystem(MultiBodySystem):
         return np.zeros(self.nbr_dof)
 
     def external_potential(self):
-        return 0
+        q = self.decompose_state()["position"]
+        body_force = self._body_force()
+        return body_force.T @ q
 
     def external_potential_gradient(self):
-        return np.zeros(self.nbr_dof)
+
+        return self._body_force()
+
+    def _body_force(self):
+        single_particle_gravity = np.zeros(self.nbr_spatial_dimensions)
+        single_particle_gravity[
+            utils.shift_index_iterature_to_python(index=self.nbr_spatial_dimensions)
+        ] = self.gravity
+        body_force = self.mass_matrix() @ np.repeat(
+            single_particle_gravity, self.nbr_particles
+        )
+        return body_force
 
     @staticmethod
     def _spring_energy(stiffness, equilibrium_length, start, end):
