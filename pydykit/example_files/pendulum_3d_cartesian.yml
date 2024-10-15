@@ -22,7 +22,7 @@ configuration:
           type: particle
           index: 1
         length: 1.0
-      gravity: -9.81
+      gravity: 9.81
   simulator:
     class_name: OneStep
     kwargs:
