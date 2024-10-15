@@ -4,7 +4,7 @@ import pydykit
 
 # name = "particle_system_01"
 # name = "particle_system_02"
-name = "particle_system_03"
+name = "particle_system_04"
 
 manager = pydykit.managers.Manager()
 
