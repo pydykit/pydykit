@@ -267,6 +267,7 @@ class ParticleSystem(MultiBodySystem):
         )
 
         # TODO: Find a better solution (e.g. switching to Python indices), as this is a hacky fix of indices
+        # TODO: Also lets not nest this much!
         for attribute_name in ["springs", "dampers"]:
             if hasattr(self, attribute_name):
                 attribute = getattr(self, attribute_name)
