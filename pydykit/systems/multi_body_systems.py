@@ -47,9 +47,7 @@ class MultiBodySystem(
     def get_state_columns(self):
         return [
             f"{state_name}{number+1}"
-            for state_name in self.state_names[
-                :2
-            ]  # NOTE: Why hardcoding here numbers if you already have dictionary-type data? Why indices?
+            for state_name in ["position", "momentum"]
             for number in range(self.nbr_dof)
         ] + [f"lambda{number+1}" for number in range(self.nbr_constraints)]
 
@@ -262,7 +260,7 @@ class ParticleSystem(MultiBodySystem):
     def get_state_columns(self):
         return [
             f"{state_name}_{letter}{number+1}"
-            for state_name in self.state_names[:2]
+            for state_name in ["position", "momentum"]
             for number in range(self.nbr_particles)
             for letter in ["x", "y", "z"]
         ] + [f"lambda{number+1}" for number in range(self.nbr_constraints)]
