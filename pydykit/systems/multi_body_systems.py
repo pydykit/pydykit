@@ -370,9 +370,7 @@ class ParticleSystem(MultiBodySystem):
     @staticmethod
     def _constraint(length, start, end):
         vector = end - start
-        return 0.5 * (
-            vector.T @ vector - length**2
-        )  # TODO: Define reusable functions for common operations and avoid redundancy
+        return 0.5 * (vector.T @ vector - length**2)
 
     def constraint(self):
         q = self.decompose_state()["position"]
