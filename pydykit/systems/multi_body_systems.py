@@ -20,7 +20,6 @@ class MultiBodySystem(
     ):
         self.manager = manager
 
-        self.state = state  # BUG: You set .state here
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
         self.nbr_constraints = nbr_constraints
         self.nbr_dof = nbr_dof
