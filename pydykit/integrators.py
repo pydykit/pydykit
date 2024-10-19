@@ -55,7 +55,7 @@ class MidpointPH(IntegratorCommon):
 
 class Midpoint_DAE(IntegratorCommon):
 
-    variable_names = ["position", "momentum", "multiplier"]
+    names_of_used_variables = ["position", "momentum", "multiplier"]
 
     def get_residuum(self, next_state):
 
