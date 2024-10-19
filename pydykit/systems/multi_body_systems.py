@@ -306,12 +306,8 @@ class ParticleSystem(MultiBodySystem):
 
     @staticmethod
     def _spring_energy(stiffness, equilibrium_length, start, end):
-        import scipy.linalg as linalg
-
         vector = end - start
-        current_length = linalg.norm(vector)
-        # return 0.5 * stiffness * (vector.T @ vector - equilibrium_length**2) ** 2  # This fits PLK solution but is wrong
-        return 0.5 * stiffness * ((current_length - equilibrium_length)) ** 2
+        return 0.5 * stiffness * (vector.T @ vector - equilibrium_length**2) ** 2
 
     def internal_potential(self):
         q = self.decompose_state()["position"]
