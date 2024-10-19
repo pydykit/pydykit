@@ -20,6 +20,7 @@ df = result.to_df()
 fig = go.Figure()
 
 for index in range(manager.system.nbr_particles):
+    index = index + 1
 
     pydykit.plotting.plot_3d_trajectory(
         figure=fig,
