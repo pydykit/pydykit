@@ -194,7 +194,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
     def constraint(self):
         q = self.decompose_state()["position"]
-        return np.array([0.5 * (q.T @ q - 1.0)])
+        return np.array([utils.quadratic_length_constraint(vector=q, length=1.0)])
 
     def constraint_gradient(self):
         q = self.decompose_state()["position"]
@@ -370,7 +370,7 @@ class ParticleSystem(MultiBodySystem):
     @staticmethod
     def _constraint(length, start, end):
         vector = end - start
-        return 0.5 * (vector.T @ vector - length**2)
+        return utils.quadratic_length_constraint(vector=vector, length=length)
 
     def constraint(self):
         q = self.decompose_state()["position"]

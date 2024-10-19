@@ -137,3 +137,7 @@ def select(
     endpoint,
 ):
     return position_vectors[constraint[endpoint]["type"]][constraint[endpoint]["index"]]
+
+
+def quadratic_length_constraint(vector, length):
+    return 0.5 * (vector.T @ vector - length**2)
