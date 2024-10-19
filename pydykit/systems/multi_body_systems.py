@@ -52,9 +52,7 @@ class MultiBodySystem(
         ] + [f"lambda{number+1}" for number in range(self.nbr_constraints)]
 
     def build_state_vector(self):
-        self.state = np.hstack(
-            list(self.initial_state.values())
-        )  # BUG: You set .state here again
+        self.state = np.hstack(list(self.initial_state.values()))
 
     def decompose_state(self):
         return dict(
