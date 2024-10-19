@@ -2,10 +2,9 @@ import plotly.graph_objects as go
 
 import pydykit
 
-# name = "particle_system_01"
 # name = "particle_system_02"
-# name = "particle_system_04"
-name = "pendulum_3d_cartesian"
+name = "particle_system_03"
+# name = "pendulum_3d_cartesian"
 
 manager = pydykit.managers.Manager()
 

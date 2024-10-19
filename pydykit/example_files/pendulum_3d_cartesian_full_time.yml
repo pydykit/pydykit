@@ -5,22 +5,22 @@ configuration:
     kwargs:
       nbr_spatial_dimensions: 3
       particles:
-      - index: 1
+      - index: 0
         initial_position: [1.0, 0.0, 0.0]
         initial_momentum: [0.0, 1.0, 0.0]
         mass: 1.0
       supports:
-      - index: 1
+      - index: 0
         type: fixed
         position: [0.0, 0.0, 0.0]
       springs: {}
       constraints:
       - start:
           type: support
-          index: 1
+          index: 0
         end:
           type: particle
-          index: 1
+          index: 0
         length: 1.0
       gravity: 9.81
   simulator:

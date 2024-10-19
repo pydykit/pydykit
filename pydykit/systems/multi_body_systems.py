@@ -50,15 +50,12 @@ class MultiBodySystem(
 
     def get_state_columns(self):
         return [
-            f"{state_name}{utils.shift_index_python_to_literature(number)}"
+            f"{state_name}{number+1}"
             for state_name in self.state_names[
                 :2
             ]  # NOTE: Why hardcoding here numbers if you already have dictionary-type data? Why indices?
             for number in range(self.nbr_dof)
-        ] + [
-            f"lambda{utils.shift_index_python_to_literature(number)}"
-            for number in range(self.nbr_constraints)
-        ]
+        ] + [f"lambda{number+1}" for number in range(self.nbr_constraints)]
 
     def build_state_vector(self):
         self.state = np.hstack(
@@ -266,37 +263,13 @@ class ParticleSystem(MultiBodySystem):
             state=self.initial_state,
         )
 
-        # TODO: Find a better solution (e.g. switching to Python indices), as this is a hacky fix of indices
-        # TODO: Also lets not nest this much!
-        for attribute_name in ["springs", "dampers"]:
-            if hasattr(self, attribute_name):
-                attribute = getattr(self, attribute_name)
-                for entry in attribute:
-                    for name in ["particle_start", "particle_end"]:
-                        value = utils.shift_index_iterature_to_python(index=entry[name])
-                        entry[name] = value
-                setattr(self, attribute_name, attribute)
-        for attribute_name in ["constraints"]:
-            if hasattr(self, attribute_name):
-                attribute = getattr(self, attribute_name)
-                for entry in attribute:
-                    for position in ["start", "end"]:
-                        value = utils.shift_index_iterature_to_python(
-                            index=entry[position]["index"]
-                        )
-                        entry[position]["index"] = value
-                setattr(self, attribute_name, attribute)
-
     def get_state_columns(self):
         return [
-            f"{state_name}_{letter}{utils.shift_index_python_to_literature(number)}"
+            f"{state_name}_{letter}{number+1}"
             for state_name in self.state_names[:2]
             for number in range(self.nbr_particles)
             for letter in ["x", "y", "z"]
-        ] + [
-            f"lambda{utils.shift_index_python_to_literature(number)}"
-            for number in range(self.nbr_constraints)
-        ]
+        ] + [f"lambda{number+1}" for number in range(self.nbr_constraints)]
 
     def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
@@ -325,9 +298,7 @@ class ParticleSystem(MultiBodySystem):
 
     def _body_force(self):
         single_particle_gravity = np.zeros(self.nbr_spatial_dimensions)
-        single_particle_gravity[
-            utils.shift_index_iterature_to_python(index=self.nbr_spatial_dimensions)
-        ] = self.gravity
+        single_particle_gravity[-1] = self.gravity
         body_force = self.mass_matrix() @ np.repeat(
             single_particle_gravity, self.nbr_particles
         )

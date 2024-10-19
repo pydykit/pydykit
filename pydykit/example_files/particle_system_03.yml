@@ -5,30 +5,30 @@ configuration:
     kwargs:
       nbr_spatial_dimensions: 3
       particles:
-      - index: 1
+      - index: 0
         initial_position: [0.0, 0.0, 1.0]
         initial_momentum: [0.0, 0.0, 0.0]
         mass: 1.0
-      - index: 2
+      - index: 1
         initial_position: [0.0, 0.0, 2.0]
         initial_momentum: [0.0, 3.0, 0.0]
         mass: 1.0
       supports:
-      - index: 1
+      - index: 0
         type: fixed
         position: [0.0, 0.0, 0.0]
       springs:
-      - particle_start: 1
-        particle_end: 2
+      - particle_start: 0
+        particle_end: 1
         stiffness: 50
         equilibrium_length: 1.0
       constraints:
       - start:
           type: support
-          index: 1
+          index: 0
         end:
           type: particle
-          index: 1
+          index: 0
         length: 1.0
       gravity: 0.0
   simulator:
