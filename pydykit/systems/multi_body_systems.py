@@ -26,7 +26,7 @@ class MultiBodySystem(
         self.mass = mass
         self.gravity = gravity
         self.initialize_state(state)
-        self.assert_used_integrator()
+        self.validate_compatibility_with_integrator()
 
     def initialize_state(self, state):
 
@@ -37,11 +37,17 @@ class MultiBodySystem(
         self.state_columns = self.get_state_columns()
         self.build_state_vector()
 
-    def assert_used_integrator(self):
+    def validate_compatibility_with_integrator(self):
         if hasattr(self.manager.integrator, "parametrization"):
             utils.compare_string_lists(
                 list1=self.state_names,
                 list2=self.manager.integrator.parametrization,
+            )
+        else:
+            # @PLK: What should happen here?
+            raise utils.PydykitException(
+                "Could ot validate compatibilty with integrator."
+                + " Integrator does not have attribute `parametrization`"
             )
 
     def get_state_columns(self):
