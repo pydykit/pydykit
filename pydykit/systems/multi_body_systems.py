@@ -210,7 +210,7 @@ class ParticleSystem(MultiBodySystem):
         springs: list[dict,],
         constraints: list[dict,],
         supports: list[dict,],
-        gravity: float,
+        gravity: list[float],
     ):
 
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
@@ -289,11 +289,7 @@ class ParticleSystem(MultiBodySystem):
         return self._body_force()
 
     def _body_force(self):
-        single_particle_gravity = np.zeros(self.nbr_spatial_dimensions)
-        single_particle_gravity[-1] = self.gravity
-        body_force = self.mass_matrix() @ np.repeat(
-            single_particle_gravity, self.nbr_particles
-        )
+        body_force = self.mass_matrix() @ np.repeat(self.gravity, self.nbr_particles)
         return body_force
 
     @staticmethod

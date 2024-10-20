@@ -46,7 +46,7 @@ configuration:
           type: particle
           index: 3
         length: 1
-      gravity: 0
+      gravity: [0.0, 0.0, 0.0]
   simulator:
     class_name: OneStep
     kwargs:
