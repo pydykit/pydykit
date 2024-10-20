@@ -46,7 +46,7 @@ class MultiBodySystem(
         else:
             # @PLK: What should happen here?
             raise utils.PydykitException(
-                "Could ot validate compatibilty with integrator."
+                "Could not validate compatibilty with integrator."
                 + " Integrator does not have attribute `parametrization`"
             )
 
