@@ -18,6 +18,8 @@ class IntegratorCommon(abstract_base_classes.Integrator):
 
 class MidpointPH(IntegratorCommon):
 
+    parametrization = ["position", "momentum", "multiplier"]
+
     def get_residuum(self, next_state):
 
         # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
