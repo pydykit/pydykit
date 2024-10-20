@@ -41,9 +41,9 @@ class Pendulum2D(PortHamiltonianSystem):
     ):
 
         super().__init__(manager, state)
-        self.mass = 1.0
-        self.gravity = 9.81
-        self.length = 1.0
+        self.mass = mass
+        self.gravity = gravity
+        self.length = length
 
     def get_state_columns(self):
         return self.state_names  # special case!
