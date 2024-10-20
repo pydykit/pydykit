@@ -20,14 +20,13 @@ class MultiBodySystem(
     ):
         self.manager = manager
 
-        self.state = state  # BUG: You set .state here
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
         self.nbr_constraints = nbr_constraints
         self.nbr_dof = nbr_dof
         self.mass = mass
         self.gravity = gravity
-
         self.initialize_state(state)
+        self.assert_used_integrator()
 
     def initialize_state(self, state):
 
@@ -35,35 +34,25 @@ class MultiBodySystem(
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
         self.state_names = utils.get_keys_dict_list(self.initial_state)
-
-        # TODO: Improve attribute name "variable_names" as the current name indicates that the names are variable. It says nearly nothing.
-        # TODO: Use "variable_names" for all integrators, if you think it is a good idea, otherwise remove this check.
-        # TODO: Why do you test, whether integrator and system are compatible here within the function "initialize_state"? Shouldn't this be done somewhere else and separated from action?
-        if hasattr(self.manager.integrator, "variable_names"):
-            utils.compare_string_lists(
-                list1=self.state_names,
-                list2=self.manager.integrator.variable_names,
-            )
-
         self.state_columns = self.get_state_columns()
         self.build_state_vector()
 
+    def assert_used_integrator(self):
+        if hasattr(self.manager.integrator, "names_of_used_variables"):
+            utils.compare_string_lists(
+                list1=self.state_names,
+                list2=self.manager.integrator.names_of_used_variables,
+            )
+
     def get_state_columns(self):
         return [
-            f"{state_name}{utils.shift_index_python_to_literature(number)}"
-            for state_name in self.state_names[
-                :2
-            ]  # NOTE: Why hardcoding here numbers if you already have dictionary-type data? Why indices?
+            f"{state_name}{number+1}"
+            for state_name in ["position", "momentum"]
             for number in range(self.nbr_dof)
-        ] + [
-            f"lambda{utils.shift_index_python_to_literature(number)}"
-            for number in range(self.nbr_constraints)
-        ]
+        ] + [f"lambda{number+1}" for number in range(self.nbr_constraints)]
 
     def build_state_vector(self):
-        self.state = np.hstack(
-            list(self.initial_state.values())
-        )  # BUG: You set .state here again
+        self.state = np.hstack(list(self.initial_state.values()))
 
     def decompose_state(self):
         return dict(
@@ -98,80 +87,6 @@ class MultiBodySystem(
     def rayleigh_dissipation(self):
         v = self.decompose_state()["velocity"]
         return 0.5 * v.T @ self.dissipation_matrix() @ v
-
-
-class Pendulum3DCartesian(MultiBodySystem):
-
-    def __init__(
-        self,
-        manager,
-        state,
-        nbr_spatial_dimensions: int,
-        nbr_constraints: int,
-        nbr_dof: int,
-        mass: float,
-        gravity: list[float,],
-        length: float,
-    ):
-
-        super().__init__(
-            manager=manager,
-            nbr_spatial_dimensions=nbr_spatial_dimensions,
-            nbr_constraints=nbr_constraints,
-            nbr_dof=nbr_dof,
-            mass=mass,
-            state=state,
-            gravity=gravity,
-        )
-
-        self.length = length
-        self.gravity = np.array(self.gravity)
-
-    def mass_matrix(self):
-        return self.mass * np.eye(self.nbr_dof)
-
-    def inverse_mass_matrix(self):
-        return 1 / self.mass * np.eye(self.nbr_dof)
-
-    def kinetic_energy_gradient_from_momentum(self):
-        q = self.decompose_state()["position"]
-        return np.zeros(q.shape)
-
-    def kinetic_energy_gradient_from_velocity(self):
-        q = self.decompose_state()["position"]
-        return np.zeros(q.shape)
-
-    def external_potential(self):
-        q = self.decompose_state()["position"]
-        return -(self.mass_matrix() @ self.gravity).T @ q
-
-    def external_potential_gradient(self):
-        return -self.mass_matrix() @ self.gravity
-
-    def internal_potential(self):
-        return 0.0
-
-    def internal_potential_gradient(self):
-        q = self.decompose_state()["position"]
-        return np.zeros(q.shape)
-
-    def constraint(self):
-        q = self.decompose_state()["position"]
-        return np.array([0.5 * (q.T @ q / self.length**2 - 1.0)])
-
-    def constraint_gradient(self):
-        q = self.decompose_state()["position"]
-        return q.T[np.newaxis, :] / self.length**2
-
-    def dissipation_matrix(self):
-        q = self.decompose_state()["position"]
-        diss_mat = np.zeros(q.shape, q.shape)
-        return diss_mat
-
-    def angular_momentum(self):
-        q = self.decompose_state()["position"]
-        p = self.decompose_state()["momentum"]
-        return np.cross(q, p)
 
 
 class RigidBodyRotatingQuaternions(MultiBodySystem):
@@ -271,7 +186,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
     def constraint(self):
         q = self.decompose_state()["position"]
-        return np.array([0.5 * (q.T @ q - 1.0)])
+        return np.array([utils.quadratic_length_constraint(vector=q, length=1.0)])
 
     def constraint_gradient(self):
         q = self.decompose_state()["position"]
@@ -282,143 +197,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         v = self.decompose_state()["velocity"]
 
         diss_mat = np.zeros(q.shape, v.shape)
-        return diss_mat
-
-
-class FourParticleSystem(MultiBodySystem):
-
-    def __init__(
-        self,
-        manager,
-        state,
-        nbr_spatial_dimensions: int,
-        nbr_constraints: int,
-        nbr_dof: int,
-        mass: list[float,],
-        gravity: list[float,],
-        rigid_constraint_length_12: float,
-        rigid_constraint_length_34: float,
-        natural_spring_length_13: float,
-        natural_spring_length_24: float,
-        spring_stiffness_parameter_13: float,
-        spring_stiffness_parameter_24: float,
-        damper_viscosity_parameter_23: float,
-    ):
-
-        super().__init__(
-            manager=manager,
-            state=state,
-            nbr_spatial_dimensions=nbr_spatial_dimensions,
-            nbr_constraints=nbr_constraints,
-            nbr_dof=nbr_dof,
-            mass=mass,
-            gravity=gravity,
-        )
-        self.rigid_constraint_length_12 = rigid_constraint_length_12
-        self.rigid_constraint_length_34 = rigid_constraint_length_34
-        self.natural_spring_length_13 = natural_spring_length_13
-        self.natural_spring_length_24 = natural_spring_length_24
-        self.spring_stiffness_parameter_13 = spring_stiffness_parameter_13
-        self.spring_stiffness_parameter_24 = spring_stiffness_parameter_24
-        self.damper_viscosity_parameter_23 = damper_viscosity_parameter_23
-        self.nbr_particles = 4
-
-        self.gravity_vector = np.repeat(
-            self.gravity,
-            repeats=self.nbr_particles,
-            axis=0,
-        )
-
-    def mass_matrix(self):
-        diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
-        return np.diag(diagonal_elements)
-
-    def inverse_mass_matrix(self):
-        diagonal_elements = np.reciprocal(
-            np.repeat(self.mass, self.nbr_spatial_dimensions).astype(float)
-        )
-        return np.diag(diagonal_elements)
-
-    def kinetic_energy_gradient_from_momentum(self):
-        return np.zeros(self.nbr_dof)
-
-    def kinetic_energy_gradient_from_velocity(self):
-        return np.zeros(self.nbr_dof)
-
-    def external_potential(self):
-        return 0
-
-    def external_potential_gradient(self):
-        return np.zeros(self.nbr_dof)
-
-    def internal_potential(self):
-        q = self.decompose_state()["position"]
-        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
-
-        contribution_first_spring = (
-            0.5
-            * self.spring_stiffness_parameter_13
-            * ((q_3 - q_1).T @ (q_3 - q_1) - self.natural_spring_length_13**2) ** 2
-        )
-
-        contribution_second_spring = (
-            0.5
-            * self.spring_stiffness_parameter_24
-            * ((q_4 - q_2).T @ (q_4 - q_2) - self.natural_spring_length_24**2) ** 2
-        )
-
-        return contribution_first_spring + contribution_second_spring
-
-    def internal_potential_gradient(self):
-        q = self.decompose_state()["position"]
-        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
-
-        contribution_first_spring = (
-            self.spring_stiffness_parameter_13
-            * ((q_3 - q_1).T @ (q_3 - q_1) - self.natural_spring_length_13**2)
-            * np.hstack([-2 * (q_3 - q_1), np.zeros(3), 2 * (q_3 - q_1), np.zeros(3)])
-        )
-
-        contribution_second_spring = (
-            self.spring_stiffness_parameter_24
-            * ((q_4 - q_2).T @ (q_4 - q_2) - self.natural_spring_length_24**2)
-            * np.hstack([np.zeros(3), -2 * (q_4 - q_2), np.zeros(3), 2 * (q_4 - q_2)])
-        )
-
-        return contribution_first_spring + contribution_second_spring
-
-    def constraint(self):
-        q = self.decompose_state()["position"]
-        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
-        first_constraint = 0.5 * (
-            (q_2 - q_1).T @ (q_2 - q_1) - self.rigid_constraint_length_12**2
-        )
-        second_constraint = 0.5 * (
-            (q_4 - q_3).T @ (q_4 - q_3) - self.rigid_constraint_length_34**2
-        )
-
-        return np.hstack([first_constraint, second_constraint])
-
-    def constraint_gradient(self):
-        q = self.decompose_state()["position"]
-        q_1, q_2, q_3, q_4 = self.decompose_into_particles(q)
-
-        first_constraint_gradient = np.hstack(
-            [-(q_2 - q_1), (q_2 - q_1), np.zeros(3), np.zeros(3)]
-        )
-        second_constraint_gradient = np.hstack(
-            [np.zeros(3), np.zeros(3), -(q_4 - q_3), (q_4 - q_3)]
-        )
-        return np.vstack([first_constraint_gradient, second_constraint_gradient])
-
-    def decompose_into_particles(self, vector):
-
-        assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
-
-        return np.split(vector, self.nbr_particles)
-
-    def dissipation_matrix(self):
-        diss_mat = np.zeros(self.nbr_dof, self.nbr_dof)
         return diss_mat
 
 
@@ -477,36 +255,13 @@ class ParticleSystem(MultiBodySystem):
             state=self.initial_state,
         )
 
-        # TODO: Find a better solution (e.g. switching to Python indices), as this is a hacky fix of indices
-        for attribute_name in ["springs", "dampers"]:
-            if hasattr(self, attribute_name):
-                attribute = getattr(self, attribute_name)
-                for entry in attribute:
-                    for name in ["particle_start", "particle_end"]:
-                        value = utils.shift_index_iterature_to_python(index=entry[name])
-                        entry[name] = value
-                setattr(self, attribute_name, attribute)
-        for attribute_name in ["constraints"]:
-            if hasattr(self, attribute_name):
-                attribute = getattr(self, attribute_name)
-                for entry in attribute:
-                    for position in ["start", "end"]:
-                        value = utils.shift_index_iterature_to_python(
-                            index=entry[position]["index"]
-                        )
-                        entry[position]["index"] = value
-                setattr(self, attribute_name, attribute)
-
     def get_state_columns(self):
         return [
-            f"{state_name}_{letter}{utils.shift_index_python_to_literature(number)}"
-            for state_name in self.state_names[:2]
+            f"{state_name}_{letter}{number+1}"
+            for state_name in ["position", "momentum"]
             for number in range(self.nbr_particles)
             for letter in ["x", "y", "z"]
-        ] + [
-            f"lambda{utils.shift_index_python_to_literature(number)}"
-            for number in range(self.nbr_constraints)
-        ]
+        ] + [f"lambda{number+1}" for number in range(self.nbr_constraints)]
 
     def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
@@ -525,19 +280,26 @@ class ParticleSystem(MultiBodySystem):
         return np.zeros(self.nbr_dof)
 
     def external_potential(self):
-        return 0
+        q = self.decompose_state()["position"]
+        body_force = self._body_force()
+        return body_force.T @ q
 
     def external_potential_gradient(self):
-        return np.zeros(self.nbr_dof)
+
+        return self._body_force()
+
+    def _body_force(self):
+        single_particle_gravity = np.zeros(self.nbr_spatial_dimensions)
+        single_particle_gravity[-1] = self.gravity
+        body_force = self.mass_matrix() @ np.repeat(
+            single_particle_gravity, self.nbr_particles
+        )
+        return body_force
 
     @staticmethod
     def _spring_energy(stiffness, equilibrium_length, start, end):
-        import scipy.linalg as linalg
-
         vector = end - start
-        current_length = linalg.norm(vector)
-        # return 0.5 * stiffness * (vector.T @ vector - equilibrium_length**2) ** 2  # This fits PLK solution but is wrong
-        return 0.5 * stiffness * ((current_length - equilibrium_length)) ** 2
+        return 0.5 * stiffness * (vector.T @ vector - equilibrium_length**2) ** 2
 
     def internal_potential(self):
         q = self.decompose_state()["position"]
@@ -600,9 +362,7 @@ class ParticleSystem(MultiBodySystem):
     @staticmethod
     def _constraint(length, start, end):
         vector = end - start
-        return 0.5 * (
-            vector.T @ vector - length**2
-        )  # TODO: Define reusable functions for common operations and avoid redundancy
+        return utils.quadratic_length_constraint(vector=vector, length=length)
 
     def constraint(self):
         q = self.decompose_state()["position"]

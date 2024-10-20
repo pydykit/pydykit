@@ -116,7 +116,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         return np.hstack(
             [
                 potential_forces,
-                decomposed_state["velocity"],
+                decomposed_state["momentum"],
                 decomposed_state["multiplier"],
             ]
         )
@@ -130,7 +130,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
     def structure_matrix(self):
         decomposed_state = self.decompose_state()
         q = decomposed_state["position"]
-        v = decomposed_state["velocity"]
+        p = decomposed_state["momentum"]
         lambd = decomposed_state["multiplier"]
         G = self.mbs.constraint_gradient()
 
@@ -141,7 +141,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
                     np.eye(len(q)),
                     np.zeros((len(q), len(lambd))),
                 ],
-                [-np.eye(len(v)), np.zeros((len(v), len(v))), -G.T],
+                [-np.eye(len(p)), np.zeros((len(p), len(p))), -G.T],
                 [np.zeros((len(lambd), len(q))), G, np.zeros((len(lambd), len(lambd)))],
             ]
         )

@@ -95,14 +95,6 @@ def print_residual_norm(value):
     print(f"residual norm = {value:.4E}")
 
 
-def shift_index_python_to_literature(index):
-    return index + 1
-
-
-def shift_index_iterature_to_python(index):
-    return index - 1
-
-
 def sort_list_of_dicts_based_on_special_value(my_list, key):
     return sorted(my_list, key=lambda d: d[key])
 
@@ -126,11 +118,7 @@ def row_array_from_df(df, index):
 
 
 def compare_string_lists(list1, list2):
-    # TODO: Use the "Assert"-statement instead of implementing custom logic
-    if list1 == list2:
-        pass
-    else:
-        raise PydykitException(f"{list1} does not match {list2}")
+    assert list1 == list2, f"Strings {list1} and {list2} do not match"
 
 
 def get_system_copies_with_desired_states(
@@ -149,3 +137,7 @@ def select(
     endpoint,
 ):
     return position_vectors[constraint[endpoint]["type"]][constraint[endpoint]["index"]]
+
+
+def quadratic_length_constraint(vector, length):
+    return 0.5 * (vector.T @ vector - length**2)

@@ -2,9 +2,9 @@ import plotly.graph_objects as go
 
 import pydykit
 
-# name = "particle_system_01"
 # name = "particle_system_02"
 name = "particle_system_03"
+# name = "pendulum_3d_cartesian"
 
 manager = pydykit.managers.Manager()
 
@@ -20,7 +20,7 @@ df = result.to_df()
 fig = go.Figure()
 
 for index in range(manager.system.nbr_particles):
-    index = pydykit.utils.shift_index_python_to_literature(index)
+    index = index + 1
 
     pydykit.plotting.plot_3d_trajectory(
         figure=fig,
