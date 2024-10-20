@@ -38,10 +38,10 @@ class MultiBodySystem(
         self.build_state_vector()
 
     def assert_used_integrator(self):
-        if hasattr(self.manager.integrator, "names_of_used_variables"):
+        if hasattr(self.manager.integrator, "parametrization"):
             utils.compare_string_lists(
                 list1=self.state_names,
-                list2=self.manager.integrator.names_of_used_variables,
+                list2=self.manager.integrator.parametrization,
             )
 
     def get_state_columns(self):
