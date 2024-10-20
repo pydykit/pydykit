@@ -53,10 +53,10 @@ class MultiBodySystem(
 
     def get_state_columns(self):
         return [
-            f"{state_name}{number+1}"
+            f"{state_name}{number}"
             for state_name in ["position", "momentum"]
             for number in range(self.nbr_dof)
-        ] + [f"lambda{number+1}" for number in range(self.nbr_constraints)]
+        ] + [f"lambda{number}" for number in range(self.nbr_constraints)]
 
     def build_state_vector(self):
         self.state = np.hstack(list(self.initial_state.values()))
@@ -264,11 +264,15 @@ class ParticleSystem(MultiBodySystem):
 
     def get_state_columns(self):
         return [
-            f"{state_name}_{letter}{number+1}"
+            f"{state_name}_{letter}{number}"
             for state_name in ["position", "momentum"]
             for number in range(self.nbr_particles)
-            for letter in ["x", "y", "z"]
-        ] + [f"lambda{number+1}" for number in range(self.nbr_constraints)]
+            for letter in [
+                "x",
+                "y",
+                "z",
+            ]  # TODO: Avoid x, y, z. Proposal: position_0_particle_0, position_1_particle_0, position_2_particle_0, position_0_particle_1, position_1_particle_1, position_2_particle_1 ... and so on
+        ] + [f"lambda{number}" for number in range(self.nbr_constraints)]
 
     def mass_matrix(self):
         diagonal_elements = np.repeat(self.mass, self.nbr_spatial_dimensions)
