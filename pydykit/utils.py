@@ -117,10 +117,6 @@ def row_array_from_df(df, index):
     return row.to_numpy()
 
 
-def compare_string_lists(list1, list2):
-    assert list1 == list2, f"Strings {list1} and {list2} do not match"
-
-
 def get_system_copies_with_desired_states(
     system: abstract_base_classes.System,
     states: list[npt.ArrayLike],

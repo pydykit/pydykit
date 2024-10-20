@@ -38,11 +38,12 @@ class MultiBodySystem(
         self.build_state_vector()
 
     def validate_compatibility_with_integrator(self):
+
         if hasattr(self.manager.integrator, "parametrization"):
-            utils.compare_string_lists(
-                list1=self.state_names,
-                list2=self.manager.integrator.parametrization,
-            )
+            assert (
+                self.state_names == self.manager.integrator.parametrization
+            ), "System and integrator are not compatible."
+
         else:
             # @PLK: What should happen here?
             raise utils.PydykitException(
