@@ -32,7 +32,7 @@ class MultiBodySystem(
         # convert state as dict to array with values
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
-        self.state_names = utils.get_keys_dict_list(self.initial_state)
+        self.parametrization = utils.get_keys_dict_list(self.initial_state)
         self.state_columns = self.get_state_columns()
         self.build_state_vector()
 
@@ -49,7 +49,7 @@ class MultiBodySystem(
     def decompose_state(self):
         return dict(
             zip(
-                self.state_names,
+                self.parametrization,
                 [
                     self.state[0 : self.nbr_dof],
                     self.state[self.nbr_dof : 2 * self.nbr_dof],
