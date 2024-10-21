@@ -13,35 +13,14 @@ result = manager.manage()
 
 df = result.to_df()
 fig = go.Figure()
-
-pydykit.plotting.plot_3d_trajectory(
-    figure=fig,
-    x_components=df["position_x0"],
-    y_components=df["position_y0"],
-    z_components=df["position_z0"],
-    time=df["time"],
-)
-pydykit.plotting.plot_3d_trajectory(
-    figure=fig,
-    x_components=df["position_x1"],
-    y_components=df["position_y1"],
-    z_components=df["position_z1"],
-    time=df["time"],
-)
-pydykit.plotting.plot_3d_trajectory(
-    figure=fig,
-    x_components=df["position_x2"],
-    y_components=df["position_y2"],
-    z_components=df["position_z2"],
-    time=df["time"],
-)
-pydykit.plotting.plot_3d_trajectory(
-    figure=fig,
-    x_components=df["position_x3"],
-    y_components=df["position_y3"],
-    z_components=df["position_z3"],
-    time=df["time"],
-)
+for index in range(manager.system.nbr_particles):
+    pydykit.plotting.plot_3d_trajectory(
+        figure=fig,
+        x_components=df[f"position0_particle{index}"],
+        y_components=df[f"position1_particle{index}"],
+        z_components=df[f"position2_particle{index}"],
+        time=df["time"],
+    )
 
 fig.update_layout(font_family="Serif")
 
