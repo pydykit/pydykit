@@ -18,7 +18,7 @@ class IntegratorCommon(abstract_base_classes.Integrator):
 
 class MidpointPH(IntegratorCommon):
 
-    parametrization = ["position", "momentum", "multiplier"]
+    parametrization = ["state"]
 
     def get_residuum(self, next_state):
 

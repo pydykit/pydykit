@@ -94,3 +94,19 @@ class Manager(abstract_base_classes.Manager):
 
     def manage(self):
         return self.simulator.run()
+
+    def validate_integrator_system_combination(self):
+
+        if hasattr(self.integrator, "parametrization") and hasattr(
+            self.system, "parametrization"
+        ):
+            assert (
+                self.system.parametrization == self.integrator.parametrization
+            ), "System and integrator are not compatible."
+
+        else:
+            raise utils.PydykitException(
+                "Could not validate compatibilty of system and integrator."
+                + " Integrator does not have attribute `parametrization`"
+                + " System does not have attribute `parametrization`"
+            )

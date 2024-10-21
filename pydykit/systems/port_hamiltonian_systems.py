@@ -18,7 +18,7 @@ class PortHamiltonianSystem(
         # convert state as dict to array with values
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
-        self.state_names = utils.get_keys_dict_list(self.initial_state)
+        self.parametrization = utils.get_keys_dict_list(self.initial_state)
         self.state_columns = self.get_state_columns()
         self.build_state_vector()
 
@@ -46,28 +46,28 @@ class Pendulum2D(PortHamiltonianSystem):
         self.length = length
 
     def get_state_columns(self):
-        return self.state_names  # special case!
+        return ["angle", "angular_velocity"]
 
     def decompose_state(self):
         state = self.state
         assert len(state) == 2
         return dict(
             zip(
-                self.state_names,
+                ["angle", "angular_velocity"],
                 [state[0], state[1]],
             )
         )
 
     def costates(self):
-        q = self.decompose_state()["position"]
-        v = self.decompose_state()["velocity"]
+        q = self.decompose_state()["angle"]
+        v = self.decompose_state()["angular_velocity"]
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
 
     def hamiltonian(self):
         pass
 
     def hamiltonian_gradient(self):
-        q = self.decompose_state()["position"]
+        q = self.decompose_state()["angle"]
         return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
 
     def structure_matrix(self):
@@ -91,6 +91,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
     def __init__(self, manager):
         self.mbs = manager.system
         super().__init__(manager, state=manager.system.initial_state)
+        self.parametrization = ["state"]
 
     def copy(self, state):
         system = super().copy(state=state)
