@@ -249,14 +249,10 @@ class ParticleSystem(MultiBodySystem):
 
     def get_state_columns(self):
         return [
-            f"{state_name}_{letter}{number}"
+            f"{state_name}{dimension}_particle{number}"
             for state_name in ["position", "momentum"]
             for number in range(self.nbr_particles)
-            for letter in [
-                "x",
-                "y",
-                "z",
-            ]  # TODO: Avoid x, y, z. Proposal: position_0_particle_0, position_1_particle_0, position_2_particle_0, position_0_particle_1, position_1_particle_1, position_2_particle_1 ... and so on
+            for dimension in range(self.nbr_spatial_dimensions)
         ] + [f"lambda{number}" for number in range(self.nbr_constraints)]
 
     def mass_matrix(self):
