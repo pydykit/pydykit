@@ -7,7 +7,8 @@ configuration:
       gravity: 9.81
       length: 1.0
       state:
-        state: [0.0, 1.0] # position, velocity
+        angle: [0.0]
+        angular_velocity: [1.0]
   simulator:
     class_name: OneStep
     kwargs:
