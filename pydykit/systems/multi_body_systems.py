@@ -26,30 +26,15 @@ class MultiBodySystem(
         self.mass = mass
         self.gravity = gravity
         self.initialize_state(state)
-        self.validate_compatibility_with_integrator()
 
     def initialize_state(self, state):
 
         # convert state as dict to array with values
         self.initial_state = state
         self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
-        self.state_names = utils.get_keys_dict_list(self.initial_state)
+        self.parametrization = utils.get_keys(self.initial_state)
         self.state_columns = self.get_state_columns()
         self.build_state_vector()
-
-    def validate_compatibility_with_integrator(self):
-
-        if hasattr(self.manager.integrator, "parametrization"):
-            assert (
-                self.state_names == self.manager.integrator.parametrization
-            ), "System and integrator are not compatible."
-
-        else:
-            # @PLK: What should happen here?
-            raise utils.PydykitException(
-                "Could not validate compatibilty with integrator."
-                + " Integrator does not have attribute `parametrization`"
-            )
 
     def get_state_columns(self):
         return [
@@ -64,7 +49,7 @@ class MultiBodySystem(
     def decompose_state(self):
         return dict(
             zip(
-                self.state_names,
+                self.parametrization,
                 [
                     self.state[0 : self.nbr_dof],
                     self.state[self.nbr_dof : 2 * self.nbr_dof],
@@ -264,14 +249,10 @@ class ParticleSystem(MultiBodySystem):
 
     def get_state_columns(self):
         return [
-            f"{state_name}_{letter}{number}"
+            f"{state_name}{dimension}_particle{number}"
             for state_name in ["position", "momentum"]
             for number in range(self.nbr_particles)
-            for letter in [
-                "x",
-                "y",
-                "z",
-            ]  # TODO: Avoid x, y, z. Proposal: position_0_particle_0, position_1_particle_0, position_2_particle_0, position_0_particle_1, position_1_particle_1, position_2_particle_1 ... and so on
+            for dimension in range(self.nbr_spatial_dimensions)
         ] + [f"lambda{number}" for number in range(self.nbr_constraints)]
 
     def mass_matrix(self):

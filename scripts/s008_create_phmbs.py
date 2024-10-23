@@ -20,33 +20,14 @@ df = result.to_df()
 
 fig = go.Figure()
 
-pydykit.plotting.plot_3d_trajectory(
-    figure=fig,
-    x_components=df["position1"],
-    y_components=df["position2"],
-    z_components=df["position3"],
-    time=df["time"],
-)
-pydykit.plotting.plot_3d_trajectory(
-    figure=fig,
-    x_components=df["position4"],
-    y_components=df["position5"],
-    z_components=df["position6"],
-    time=df["time"],
-)
-pydykit.plotting.plot_3d_trajectory(
-    figure=fig,
-    x_components=df["position7"],
-    y_components=df["position8"],
-    z_components=df["position9"],
-    time=df["time"],
-)
-pydykit.plotting.plot_3d_trajectory(
-    figure=fig,
-    x_components=df["position10"],
-    y_components=df["position11"],
-    z_components=df["position12"],
-    time=df["time"],
-)
+for index in range(manager.system.mbs.nbr_particles):
+    pydykit.plotting.plot_3d_trajectory(
+        figure=fig,
+        x_components=df[f"position0_particle{index}"],
+        y_components=df[f"position1_particle{index}"],
+        z_components=df[f"position2_particle{index}"],
+        time=df["time"],
+    )
+
 
 fig.show()

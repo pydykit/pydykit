@@ -20,9 +20,9 @@ df = result.to_df()
 
 fig = go.Figure(
     data=go.Scatter3d(
-        x=df["position_x0"],
-        y=df["position_y0"],
-        z=df["position_z0"],
+        x=df["position0_particle0"],
+        y=df["position1_particle0"],
+        z=df["position2_particle0"],
         marker=dict(
             size=3,
             color=df["time"],
