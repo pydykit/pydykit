@@ -10,6 +10,7 @@ class GeneralODESystem(
     def __init__(self, manager, state):
         self.manager = manager
         self.initialize_state(state)
+        self.parametrization = ["state"]
 
     def build_state_vector(self):
         self.state = np.hstack(list(self.initial_state.values()))
