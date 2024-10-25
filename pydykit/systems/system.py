@@ -48,7 +48,7 @@ class Lorenz(GeneralODESystem):
         assert len(state) == 3
         return dict(
             zip(
-                ["x", "y", "z"],
+                self.get_state_columns(),
                 [state[0], state[1], state[2]],
             )
         )
