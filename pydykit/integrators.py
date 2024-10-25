@@ -122,3 +122,43 @@ class Midpoint_DAE(IntegratorCommon):
         )
 
         return residuum
+
+
+class MidpointODE(IntegratorCommon):
+
+    parametrization = ["state"]
+
+    def get_residuum(self, next_state):
+        # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
+        state_n = self.manager.system.state
+        state_n1 = next_state
+
+        # read time step size
+        step_size = self.manager.time_stepper.current_step.increment
+
+        # create midpoint state and all corresponding discrete-time systems
+        state_n05 = 0.5 * (state_n + state_n1)
+
+        system_n05, system_n1 = utils.get_system_copies_with_desired_states(
+            system=self.manager.system,
+            states=[state_n05, state_n1],
+        )
+
+        return state_n1 - state_n - step_size * system_n05.right_hand_side()
+
+    def get_tangent(self, state):
+        # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
+        state_n = self.manager.system.state
+        state_n1 = state
+
+        # read time step size
+        step_size = self.manager.time_stepper.current_step.increment
+
+        # create midpoint state and all corresponding discrete-time systems
+        state_n05 = 0.5 * (state_n + state_n1)
+
+        system_n05, system_n1 = utils.get_system_copies_with_desired_states(
+            system=self.manager.system,
+            states=[state_n05, state_n1],
+        )
+        return np.eye(3) - step_size * system_n05.jacobian() * 0.5
