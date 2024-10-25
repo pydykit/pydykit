@@ -1,13 +1,12 @@
 import numpy as np
 
-from .. import utils
 from .system import System
 
 
 class GeneralODESystem(
     System,
 ):
-    def __init__(self, manager, state):
+    def __init__(self, manager, state: dict):
         self.manager = manager
         self.initialize_state(state)
         self.parametrization = ["state"]
@@ -17,7 +16,7 @@ class GeneralODESystem(
 
 
 class Lorenz(GeneralODESystem):
-    def __init__(self, manager, state, sigma, rho, beta):
+    def __init__(self, manager, state, sigma: float, rho: float, beta: float):
         super().__init__(manager, state)
         self.sigma = sigma
         self.rho = rho
