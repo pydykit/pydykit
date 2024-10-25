@@ -14,9 +14,6 @@ class PortHamiltonianSystem(
         self.initialize_state(state)
         self.parametrization = ["state"]
 
-    def build_state_vector(self):
-        self.state = np.hstack(list(self.initial_state.values()))
-
     def output(self):
         return self.port_matrix.T @ self.input_vector()
 

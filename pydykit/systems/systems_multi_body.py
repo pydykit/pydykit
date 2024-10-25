@@ -35,9 +35,6 @@ class MultiBodySystem(
             for number in range(self.nbr_dof)
         ] + [f"lambda{number}" for number in range(self.nbr_constraints)]
 
-    def build_state_vector(self):
-        self.state = np.hstack(list(self.initial_state.values()))
-
     def decompose_state(self):
         return dict(
             zip(
