@@ -42,7 +42,7 @@ class Pendulum2D(PortHamiltonianSystem):
         assert len(state) == 2
         return dict(
             zip(
-                ["angle", "angular_velocity"],
+                self.get_state_columns(),
                 [state[0], state[1]],
             )
         )
