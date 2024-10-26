@@ -2,6 +2,7 @@ from . import abstract_base_classes
 from .integrators import Midpoint_DAE, MidpointODE, MidpointPH
 from .simulators import OneStep
 from .systems import Lorenz, ParticleSystem, Pendulum2D, RigidBodyRotatingQuaternions
+from .time_steppers import FixedIncrement, FixedIncrementHittingEnd
 
 
 class Factory:
@@ -33,6 +34,11 @@ class IntegratorFactory(Factory):
         return self.create(key, **kwargs)
 
 
+class TimeStepperFactory(Factory):
+    def get(self, key, **kwargs) -> abstract_base_classes.TimeStepper:
+        return self.create(key, **kwargs)
+
+
 system_factory = SystemFactory()
 for key, constructor in [
     ("ParticleSystem", ParticleSystem),
@@ -57,3 +63,10 @@ for key, constructor in [
     ("MidpointODE", MidpointODE),
 ]:
     integrator_factory.register_constructor(key=key, constructor=constructor)
+
+time_stepper_factory = TimeStepperFactory()
+for key, constructor in [
+    ("FixedIncrement", FixedIncrement),
+    ("FixedIncrementHittingEnd", FixedIncrementHittingEnd),
+]:
+    time_stepper_factory.register_constructor(key=key, constructor=constructor)

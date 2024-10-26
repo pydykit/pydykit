@@ -3,7 +3,12 @@ import importlib
 
 from . import abstract_base_classes, results, utils
 from .configuration import Configuration
-from .factories import integrator_factory, simulator_factory, system_factory
+from .factories import (
+    integrator_factory,
+    simulator_factory,
+    system_factory,
+    time_stepper_factory,
+)
 
 
 class Manager(abstract_base_classes.Manager):
@@ -60,11 +65,10 @@ class Manager(abstract_base_classes.Manager):
     def _get_time_stepper(
         self,
     ) -> abstract_base_classes.TimeStepper:
-
-        return self._dynamically_instantiate(
-            module_name="time_steppers",
-            class_name=self.configuration.time_stepper.class_name,
-            kwargs=self.configuration.time_stepper.kwargs,
+        return time_stepper_factory.get(
+            key=self.configuration.time_stepper.class_name,
+            manager=self,
+            **self.configuration.time_stepper.kwargs,
         )
 
     def _get_result(
