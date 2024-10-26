@@ -1,0 +1,30 @@
+from . import abstract_base_classes
+from .systems import Lorenz, ParticleSystem, Pendulum2D, RigidBodyRotatingQuaternions
+
+
+class Factory:
+
+    def __init__(self):
+        self.constructors = {}
+
+    def register_constructor(self, key, constructor):
+        self.constructors[key] = constructor
+
+    def create(self, key, **kwargs):
+        method = self.constructors[key]
+        return method(**kwargs)
+
+
+class SystemFactory(Factory):
+    def get(self, key, **kwargs) -> abstract_base_classes.System:
+        return self.create(key, **kwargs)
+
+
+system_factory = SystemFactory()
+for key, constructor in [
+    ("ParticleSystem", ParticleSystem),
+    ("RigidBodyRotatingQuaternions", RigidBodyRotatingQuaternions),
+    ("Pendulum2D", Pendulum2D),
+    ("Lorenz", Lorenz),
+]:
+    system_factory.register_constructor(key=key, constructor=constructor)

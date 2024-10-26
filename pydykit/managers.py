@@ -3,6 +3,7 @@ import importlib
 
 from . import abstract_base_classes, results, utils
 from .configuration import Configuration
+from .factories import system_factory
 
 
 class Manager(abstract_base_classes.Manager):
@@ -31,14 +32,11 @@ class Manager(abstract_base_classes.Manager):
         self.system = self._get_system()
         self.result = self._get_result()
 
-    def _get_system(
-        self,
-    ) -> abstract_base_classes.System:
-
-        return self._dynamically_instantiate(
-            module_name="systems",
-            class_name=self.configuration.system.class_name,
-            kwargs=self.configuration.system.kwargs,
+    def _get_system(self) -> abstract_base_classes.System:
+        return system_factory.get(
+            key=self.configuration.system.class_name,
+            manager=self,
+            **self.configuration.system.kwargs,
         )
 
     def _get_simulator(self) -> abstract_base_classes.Simulator:
