@@ -3,7 +3,7 @@ import importlib
 
 from . import abstract_base_classes, results, utils
 from .configuration import Configuration
-from .factories import system_factory
+from .factories import simulator_factory, system_factory
 
 
 class Manager(abstract_base_classes.Manager):
@@ -41,10 +41,10 @@ class Manager(abstract_base_classes.Manager):
 
     def _get_simulator(self) -> abstract_base_classes.Simulator:
 
-        return self._dynamically_instantiate(
-            module_name="simulators",
-            class_name=self.configuration.simulator.class_name,
-            kwargs=self.configuration.simulator.kwargs,
+        return simulator_factory.get(
+            key=self.configuration.simulator.class_name,
+            manager=self,
+            **self.configuration.simulator.kwargs,
         )
 
     def _get_integrator(

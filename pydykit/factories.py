@@ -1,4 +1,5 @@
 from . import abstract_base_classes
+from .simulators import OneStep
 from .systems import Lorenz, ParticleSystem, Pendulum2D, RigidBodyRotatingQuaternions
 
 
@@ -29,3 +30,15 @@ for key, constructor in [
     ("Lorenz", Lorenz),
 ]:
     system_factory.register_constructor(key=key, constructor=constructor)
+
+
+class SimulatorFactory(Factory):
+    def get(self, key, **kwargs) -> abstract_base_classes.Simulator:
+        return self.create(key, **kwargs)
+
+
+simulator_factory = SimulatorFactory()
+for key, constructor in [
+    ("OneStep", OneStep),
+]:
+    simulator_factory.register_constructor(key=key, constructor=constructor)
