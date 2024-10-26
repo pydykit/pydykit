@@ -1,4 +1,5 @@
 from . import abstract_base_classes
+from .integrators import Midpoint_DAE, MidpointODE, MidpointPH
 from .simulators import OneStep
 from .systems import Lorenz, ParticleSystem, Pendulum2D, RigidBodyRotatingQuaternions
 
@@ -27,6 +28,11 @@ class SimulatorFactory(Factory):
         return self.create(key, **kwargs)
 
 
+class IntegratorFactory(Factory):
+    def get(self, key, **kwargs) -> abstract_base_classes.Integrator:
+        return self.create(key, **kwargs)
+
+
 system_factory = SystemFactory()
 for key, constructor in [
     ("ParticleSystem", ParticleSystem),
@@ -42,3 +48,12 @@ for key, constructor in [
     ("OneStep", OneStep),
 ]:
     simulator_factory.register_constructor(key=key, constructor=constructor)
+
+
+integrator_factory = IntegratorFactory()
+for key, constructor in [
+    ("MidpointPH", MidpointPH),
+    ("Midpoint_DAE", Midpoint_DAE),
+    ("MidpointODE", MidpointODE),
+]:
+    integrator_factory.register_constructor(key=key, constructor=constructor)

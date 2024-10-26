@@ -3,7 +3,7 @@ import importlib
 
 from . import abstract_base_classes, results, utils
 from .configuration import Configuration
-from .factories import simulator_factory, system_factory
+from .factories import integrator_factory, simulator_factory, system_factory
 
 
 class Manager(abstract_base_classes.Manager):
@@ -47,14 +47,14 @@ class Manager(abstract_base_classes.Manager):
             **self.configuration.simulator.kwargs,
         )
 
-    def _get_integrator(
-        self,
-    ) -> abstract_base_classes.Integrator:
-
-        return self._dynamically_instantiate(
-            module_name="integrators",
-            class_name=self.configuration.integrator.class_name,
-            kwargs=self.configuration.integrator.kwargs,
+    def _get_integrator(self) -> abstract_base_classes.Integrator:
+        kwargs = utils.handle_none_as_empty_dict(
+            self.configuration.integrator.kwargs
+        )  # TODO: Handly the problem of kwargs=None in Model validation using pydantic
+        return integrator_factory.get(
+            key=self.configuration.integrator.class_name,
+            manager=self,
+            **kwargs,
         )
 
     def _get_time_stepper(

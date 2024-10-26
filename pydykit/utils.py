@@ -137,3 +137,7 @@ def select(
 
 def quadratic_length_constraint(vector, length):
     return 0.5 * (vector.T @ vector - length**2)
+
+
+def handle_none_as_empty_dict(kwargs):
+    return {} if (kwargs is None) else kwargs
