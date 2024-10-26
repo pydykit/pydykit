@@ -22,6 +22,11 @@ class SystemFactory(Factory):
         return self.create(key, **kwargs)
 
 
+class SimulatorFactory(Factory):
+    def get(self, key, **kwargs) -> abstract_base_classes.Simulator:
+        return self.create(key, **kwargs)
+
+
 system_factory = SystemFactory()
 for key, constructor in [
     ("ParticleSystem", ParticleSystem),
@@ -30,11 +35,6 @@ for key, constructor in [
     ("Lorenz", Lorenz),
 ]:
     system_factory.register_constructor(key=key, constructor=constructor)
-
-
-class SimulatorFactory(Factory):
-    def get(self, key, **kwargs) -> abstract_base_classes.Simulator:
-        return self.create(key, **kwargs)
 
 
 simulator_factory = SimulatorFactory()
