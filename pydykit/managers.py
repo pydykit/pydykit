@@ -25,13 +25,13 @@ class Manager(abstract_base_classes.Manager):
         self.configuration = configuration
 
         # derive instances of classes
-        self.time_stepper = self._set_time_stepper()
-        self.simulator = self._set_simulator()
-        self.integrator = self._set_integrator()
-        self.system = self._set_system()
-        self.result = self._set_result()
+        self.time_stepper = self._get_time_stepper()
+        self.simulator = self._get_simulator()
+        self.integrator = self._get_integrator()
+        self.system = self._get_system()
+        self.result = self._get_result()
 
-    def _set_system(
+    def _get_system(
         self,
     ) -> abstract_base_classes.System:
 
@@ -41,7 +41,7 @@ class Manager(abstract_base_classes.Manager):
             kwargs=self.configuration.system.kwargs,
         )
 
-    def _set_simulator(self) -> abstract_base_classes.Simulator:
+    def _get_simulator(self) -> abstract_base_classes.Simulator:
 
         return self._dynamically_instantiate(
             module_name="simulators",
@@ -49,7 +49,7 @@ class Manager(abstract_base_classes.Manager):
             kwargs=self.configuration.simulator.kwargs,
         )
 
-    def _set_integrator(
+    def _get_integrator(
         self,
     ) -> abstract_base_classes.Integrator:
 
@@ -59,7 +59,7 @@ class Manager(abstract_base_classes.Manager):
             kwargs=self.configuration.integrator.kwargs,
         )
 
-    def _set_time_stepper(
+    def _get_time_stepper(
         self,
     ) -> abstract_base_classes.TimeStepper:
 
@@ -69,7 +69,7 @@ class Manager(abstract_base_classes.Manager):
             kwargs=self.configuration.time_stepper.kwargs,
         )
 
-    def _set_result(
+    def _get_result(
         self,
     ) -> results.Result:
 
