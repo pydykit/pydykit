@@ -81,19 +81,6 @@ class Manager(abstract_base_classes.Manager):
             manager=self,
         )
 
-    def _dynamically_instantiate(self, module_name, class_name, kwargs):
-
-        # Deepcopy and handle empty kwargs
-        kwargs = {} if (kwargs is None) else copy.deepcopy(kwargs)
-
-        return getattr(
-            importlib.import_module(
-                name=f".{module_name}",
-                package="pydykit",
-            ),
-            class_name,
-        )(manager=self, **kwargs)
-
     def manage(self):
         return self.simulator.run()
 
