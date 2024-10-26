@@ -12,18 +12,7 @@ class PortHamiltonianSystem(
     def __init__(self, manager, state):
         self.manager = manager
         self.initialize_state(state)
-
-    def initialize_state(self, state):
-
-        # convert state as dict to array with values
-        self.initial_state = state
-        self.dim_state = utils.get_nbr_elements_dict_list(self.initial_state)
         self.parametrization = ["state"]
-        self.state_columns = self.get_state_columns()
-        self.build_state_vector()
-
-    def build_state_vector(self):
-        self.state = np.hstack(list(self.initial_state.values()))
 
     def output(self):
         return self.port_matrix.T @ self.input_vector()
@@ -53,7 +42,7 @@ class Pendulum2D(PortHamiltonianSystem):
         assert len(state) == 2
         return dict(
             zip(
-                ["angle", "angular_velocity"],
+                self.get_state_columns(),
                 [state[0], state[1]],
             )
         )
