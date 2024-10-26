@@ -5,6 +5,7 @@ from . import abstract_base_classes, results, utils
 from .configuration import Configuration
 from .factories import (
     integrator_factory,
+    result_factory,
     simulator_factory,
     system_factory,
     time_stepper_factory,
@@ -74,11 +75,10 @@ class Manager(abstract_base_classes.Manager):
     def _get_result(
         self,
     ) -> results.Result:
-
-        return self._dynamically_instantiate(
-            module_name="results",
-            class_name="Result",
-            kwargs=None,
+        # TODO: Do not break the pattern, i.e., move to config file it this is dynamic or move elsehwere if it is static, i.e., the same for all simulations
+        return result_factory.get(
+            key="Result",
+            manager=self,
         )
 
     def _dynamically_instantiate(self, module_name, class_name, kwargs):
