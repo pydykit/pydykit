@@ -25,6 +25,9 @@ class ClassNameKwargs(BaseModel):
     def validator(cls, class_name, info):
 
         title_base_model = info.config["title"]
+        # Example: During validation of any field of model "System",
+        # the expression "info.config['title'] will return 'System'"
+
         options = valid_options[title_base_model]
 
         if class_name not in options:
