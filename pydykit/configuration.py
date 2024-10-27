@@ -19,7 +19,7 @@ valid_options = dict(
 
 class ClassNameKwargs(BaseModel):
     class_name: str
-    kwargs: dict | None
+    kwargs: dict
 
     @field_validator("class_name")
     def validator(cls, class_name, info):
