@@ -54,13 +54,10 @@ class Manager(abstract_base_classes.Manager):
         )
 
     def _get_integrator(self) -> abstract_base_classes.Integrator:
-        kwargs = utils.handle_none_as_empty_dict(
-            self.configuration.integrator.kwargs
-        )  # TODO: Handly the problem of kwargs=None in Model validation using pydantic
         return integrator_factory.get(
             key=self.configuration.integrator.class_name,
             manager=self,
-            **kwargs,
+            **self.configuration.integrator.kwargs,
         )
 
     def _get_time_stepper(
