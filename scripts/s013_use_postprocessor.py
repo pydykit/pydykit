@@ -10,7 +10,7 @@ current_parent_path = pathlib.Path(__file__).parent.resolve()
 relative_config_file_path = "../pydykit/example_files/pendulum_3d_cartesian.yml"
 absolute_config_file_path = (current_parent_path / relative_config_file_path).resolve()
 
-manager = pydykit.Manager(path_config_file=absolute_config_file_path)
+manager = pydykit.managers.Manager().configure_from_path(path=absolute_config_file_path)
 result = manager.manage()
 
 print("Success, start plotting")

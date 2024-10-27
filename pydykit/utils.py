@@ -103,11 +103,11 @@ def get_flat_list_of_list_attributes(items, key):
     return np.array([item[key] for item in items]).flatten()
 
 
-def get_nbr_elements_dict_list(my_list: list[dict,]):
+def get_nbr_elements_dict_list(my_list: dict):
     return sum(map(len, my_list.values()))
 
 
-def get_keys(my_list: list[dict]):
+def get_keys(my_list: dict):
     return list(my_list.keys())
 
 
