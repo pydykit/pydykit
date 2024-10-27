@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 
 import pydykit
+import pydykit.systems_port_hamiltonian
 
 name = "four_particle_system_port_hamiltonian"
 
@@ -10,7 +11,9 @@ path_config_file = f"./pydykit/example_files/{name}.yml"
 
 manager.configure_from_path(path=path_config_file)
 
-porthamiltonian_system = pydykit.systems.PortHamiltonianMBS(manager=manager)
+porthamiltonian_system = pydykit.systems_port_hamiltonian.PortHamiltonianMBS(
+    manager=manager
+)
 # creates an instance of PHS with attribute MBS
 manager.system = porthamiltonian_system
 

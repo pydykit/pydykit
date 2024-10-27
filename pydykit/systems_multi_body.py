@@ -1,7 +1,7 @@
 import numpy as np
 
-from .. import abstract_base_classes, operators, utils
-from .system import System
+from . import abstract_base_classes, operators, utils
+from .systems import System
 
 
 class MultiBodySystem(

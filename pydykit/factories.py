@@ -2,7 +2,9 @@ from . import abstract_base_classes, results
 from .integrators import Midpoint_DAE, MidpointODE, MidpointPH
 from .results import Result
 from .simulators import OneStep
-from .systems import Lorenz, ParticleSystem, Pendulum2D, RigidBodyRotatingQuaternions
+from .systems_multi_body import ParticleSystem, RigidBodyRotatingQuaternions
+from .systems_ode import Lorenz
+from .systems_port_hamiltonian import Pendulum2D
 from .time_steppers import FixedIncrement, FixedIncrementHittingEnd
 
 
