@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.linalg import block_diag
 
-from .. import abstract_base_classes, utils
-from .system import System
+from . import abstract_base_classes, utils
+from .systems import System
 
 
 class PortHamiltonianSystem(

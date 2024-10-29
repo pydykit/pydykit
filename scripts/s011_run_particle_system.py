@@ -13,8 +13,6 @@ path_config_file = f"./pydykit/example_files/{name}.yml"
 manager.configure_from_path(path=path_config_file)
 result = manager.manage()
 
-tmp = manager.system.internal_potential()
-print(tmp)
 
 df = result.to_df()
 fig = go.Figure()

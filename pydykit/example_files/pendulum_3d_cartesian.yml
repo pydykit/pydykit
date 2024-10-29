@@ -31,7 +31,7 @@ configuration:
       max_iterations: 40
   integrator:
     class_name: Midpoint_DAE
-    kwargs:
+    kwargs: {}
   time_stepper:
     class_name: FixedIncrement
     kwargs:

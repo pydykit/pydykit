@@ -3,6 +3,7 @@ import pytest
 
 import pydykit
 import pydykit.examples
+import pydykit.systems_port_hamiltonian
 
 from . import constants, utils
 
@@ -39,7 +40,9 @@ class TestCompareWithMetis:
         manager._configure(configuration=configuration)
 
         # intermediate steps if conversion to PH system is necessary
-        porthamiltonian_system = pydykit.systems.PortHamiltonianMBS(manager=manager)
+        porthamiltonian_system = pydykit.systems_port_hamiltonian.PortHamiltonianMBS(
+            manager=manager
+        )
         # creates an instance of PHS with attribute MBS
         manager.system = porthamiltonian_system
 

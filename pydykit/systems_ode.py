@@ -1,6 +1,6 @@
 import numpy as np
 
-from .system import System
+from .systems import System
 
 
 class GeneralODESystem(

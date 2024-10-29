@@ -6,7 +6,10 @@ import pydykit
 
 # name = "particle_system_01"
 name = "particle_system_02"
-manager = pydykit.Manager(path_config_file=f"./pydykit/example_files/{name}.yml")
+manager = pydykit.managers.Manager().configure_from_path(
+    path=f"./pydykit/example_files/{name}.yml"
+)
+
 manager.system.initialize()
 
 df = pd.read_csv(f"test/reference_results/{name}.csv")
@@ -23,7 +26,7 @@ for k in range(len(x) - 1):
     data = []
     traces = []
     for index_python in range(manager.system.nbr_particles):
-        index = pydykit.utils.shift_index_python_to_literature(index_python)
+        index = index_python
 
         data.append(
             pydykit.plotting.get_trace_3d_trajectory(
@@ -49,8 +52,7 @@ fig = go.Figure(data=[go.Scatter3d() for trace in frames[0]])
 fig.update(frames=frames)
 
 for index_python in range(manager.system.nbr_particles):
-    index = pydykit.utils.shift_index_python_to_literature(index_python)
-
+    index = index_python
     index_time = 0
     pydykit.plotting.add_3d_annotation(
         figure=fig,

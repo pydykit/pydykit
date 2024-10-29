@@ -1,7 +1,7 @@
 import numpy as np
 
-from .. import abstract_base_classes, operators, utils
-from .system import System
+from . import abstract_base_classes, operators, utils
+from .systems import System
 
 
 class MultiBodySystem(
@@ -14,7 +14,7 @@ class MultiBodySystem(
         nbr_spatial_dimensions: int,
         nbr_constraints: int,
         nbr_dof: int,
-        mass: float,
+        mass: list[float,],
         gravity: list[float,],
         state: dict[str, list[float]],
     ):
@@ -78,7 +78,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         nbr_spatial_dimensions: int,
         nbr_constraints: int,
         nbr_dof: int,
-        mass: float,
+        mass: list[float,],
         gravity: list[float,],
         inertias: list[float,],
     ):
