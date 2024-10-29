@@ -2,19 +2,14 @@ from enum import Enum
 
 from pydantic import BaseModel, field_validator
 
-from .factories import (
-    integrator_factory,
-    simulator_factory,
-    system_factory,
-    time_stepper_factory,
-)
+from .factories import factories
 
-valid_options = dict(
-    System=system_factory.constructors,
-    Simulator=simulator_factory.constructors,
-    Integrator=integrator_factory.constructors,
-    TimeStepper=time_stepper_factory.constructors,
-)
+map_class_name_to_config_file_param = {
+    "System": "system",
+    "Simulator": "simulator",
+    "Integrator": "integrator",
+    "TimeStepper": "time_stepper",
+}
 
 
 class ClassNameKwargs(BaseModel):
@@ -24,16 +19,15 @@ class ClassNameKwargs(BaseModel):
     @field_validator("class_name")
     def validator(cls, class_name, info):
 
-        title_base_model = info.config["title"]
+        title = info.config["title"]
         # Example: During validation of any field of model "System",
         # the expression "info.config['title'] will return 'System'"
 
-        options = valid_options[title_base_model]
+        key = map_class_name_to_config_file_param[title]
+        options = factories[key].constructors
 
         if class_name not in options:
-            raise ValueError(
-                f"supported options for {title_base_model} are {options.keys()}"
-            )
+            raise ValueError(f"supported options for {title} are {options.keys()}")
 
         return class_name
 

@@ -1,12 +1,6 @@
 from . import abstract_base_classes, results, utils
 from .configuration import Configuration
-from .factories import (
-    integrator_factory,
-    result_factory,
-    simulator_factory,
-    system_factory,
-    time_stepper_factory,
-)
+from .factories import factories, result_factory
 
 
 class Manager(abstract_base_classes.Manager):
@@ -29,51 +23,19 @@ class Manager(abstract_base_classes.Manager):
         self.configuration = configuration
 
         # derive instances of classes
-        self.time_stepper = self._get_time_stepper()
-        self.simulator = self._get_simulator()
-        self.integrator = self._get_integrator()
-        self.system = self._get_system()
-        self.result = self._get_result()
+        for key in factories.keys():
+            setattr(self, key, self.get_instance(key=key))
 
-    def _get_system(self) -> abstract_base_classes.System:
-        return system_factory.get(
-            key=self.configuration.system.class_name,
-            manager=self,
-            **self.configuration.system.kwargs,
-        )
-
-    def _get_simulator(self) -> abstract_base_classes.Simulator:
-
-        return simulator_factory.get(
-            key=self.configuration.simulator.class_name,
-            manager=self,
-            **self.configuration.simulator.kwargs,
-        )
-
-    def _get_integrator(self) -> abstract_base_classes.Integrator:
-        return integrator_factory.get(
-            key=self.configuration.integrator.class_name,
-            manager=self,
-            **self.configuration.integrator.kwargs,
-        )
-
-    def _get_time_stepper(
-        self,
-    ) -> abstract_base_classes.TimeStepper:
-        return time_stepper_factory.get(
-            key=self.configuration.time_stepper.class_name,
-            manager=self,
-            **self.configuration.time_stepper.kwargs,
-        )
-
-    def _get_result(
-        self,
-    ) -> results.Result:
-        # TODO: Do not break the pattern, i.e., move to config file it this is dynamic or move elsehwere if it is static, i.e., the same for all simulations
-        return result_factory.get(
+        self.result = result_factory.get(
             key="Result",
             manager=self,
         )
+
+    def get_instance(self, key):
+        obj = getattr(self.configuration, key)
+        factory = factories[key]
+
+        return factory.get(key=obj.class_name, manager=self, **obj.kwargs)
 
     def manage(self):
         return self.simulator.run()

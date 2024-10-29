@@ -84,3 +84,10 @@ for key, constructor in [
     ("Result", Result),
 ]:
     result_factory.register_constructor(key=key, constructor=constructor)
+
+factories = dict(
+    system=system_factory,
+    simulator=simulator_factory,
+    integrator=integrator_factory,
+    time_stepper=time_stepper_factory,
+)
