@@ -38,7 +38,7 @@ configuration:
       newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:
-    class_name: Midpoint_DAE
+    class_name: MidpointMultibody
     kwargs: {}
   time_stepper:
     class_name: FixedIncrement

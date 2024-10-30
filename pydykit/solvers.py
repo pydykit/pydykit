@@ -53,7 +53,6 @@ class RootScipy(Iterative):
             x0=initial,
             fprime=jacobian,
             xtol=self.newton_epsilon,
-            # maxiter=self.max_iterations,
         )
 
         residual_norm = np.linalg.norm(func(solution))

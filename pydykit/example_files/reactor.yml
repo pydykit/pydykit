@@ -1,18 +1,19 @@
-name: lorenz
+name: reactor
 configuration:
   system:
-    class_name: Lorenz
+    class_name: ChemicalReactor
     kwargs:
-      sigma: 10.0
-      rho: 28.0
-      beta: 2.6666666667
+      constants: [1.0, 1.0, 1.0, -100.0]
+      cooling_temperature: 10.0
+      reactant_concentration: 0.5
+      initial_temperature: 50.0
       state:
-        state: [2.0, 1.0, 1.0]
+        state: [0.0, 50.0, 0.0]
   simulator:
     class_name: OneStep
     kwargs:
       solver_name: NewtonPlainPython
-      newton_epsilon: 1.e-07
+      newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:
     class_name: MidpointDAE
@@ -20,6 +21,6 @@ configuration:
   time_stepper:
     class_name: FixedIncrement
     kwargs:
-      step_size: 0.02
+      step_size: 0.01
       start: 0.0
-      end: 0.1
+      end: 1

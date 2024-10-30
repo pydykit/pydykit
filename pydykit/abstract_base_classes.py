@@ -170,6 +170,29 @@ class AbstractPortHamiltonianSystem(System):
         pass
 
 
+class AbstractQuasiLinearDAESystem(System):
+
+    @abc.abstractmethod
+    def __init__(self):
+        pass
+
+    @abc.abstractmethod
+    def decompose_state(self):
+        pass
+
+    @abc.abstractmethod
+    def get_state_columns(self):
+        pass
+
+    @abc.abstractmethod
+    def right_hand_side(self):
+        pass
+
+    @abc.abstractmethod
+    def descriptor_matrix(self):
+        pass
+
+
 class TimeStep(abc.ABC):
     pass
 
