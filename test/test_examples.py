@@ -17,6 +17,7 @@ example_worklist = [
     "particle_system_02",
     "particle_system_03",
     "lorenz",
+    "reactor",
 ]
 
 
