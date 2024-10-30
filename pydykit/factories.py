@@ -1,9 +1,9 @@
 from . import abstract_base_classes, results
-from .integrators import Midpoint_DAE, MidpointODE, MidpointPH
+from .integrators import MidpointDAE, MidpointMultibody, MidpointPH
 from .results import Result
 from .simulators import OneStep
+from .systems_dae import ChemicalReactor, Lorenz
 from .systems_multi_body import ParticleSystem, RigidBodyRotatingQuaternions
-from .systems_ode import Lorenz
 from .systems_port_hamiltonian import Pendulum2D
 from .time_steppers import FixedIncrement, FixedIncrementHittingEnd
 
@@ -53,6 +53,7 @@ for key, constructor in [
     ("RigidBodyRotatingQuaternions", RigidBodyRotatingQuaternions),
     ("Pendulum2D", Pendulum2D),
     ("Lorenz", Lorenz),
+    ("ChemicalReactor", ChemicalReactor),
 ]:
     system_factory.register_constructor(key=key, constructor=constructor)
 
@@ -67,8 +68,8 @@ for key, constructor in [
 integrator_factory = IntegratorFactory()
 for key, constructor in [
     ("MidpointPH", MidpointPH),
-    ("Midpoint_DAE", Midpoint_DAE),
-    ("MidpointODE", MidpointODE),
+    ("MidpointMultibody", MidpointMultibody),
+    ("MidpointDAE", MidpointDAE),
 ]:
     integrator_factory.register_constructor(key=key, constructor=constructor)
 

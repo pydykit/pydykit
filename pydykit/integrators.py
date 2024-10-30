@@ -55,7 +55,7 @@ class MidpointPH(IntegratorCommon):
         return residuum
 
 
-class Midpoint_DAE(IntegratorCommon):
+class MidpointMultibody(IntegratorCommon):
 
     parametrization = ["position", "momentum", "multiplier"]
 
@@ -124,7 +124,7 @@ class Midpoint_DAE(IntegratorCommon):
         return residuum
 
 
-class MidpointODE(IntegratorCommon):
+class MidpointDAE(IntegratorCommon):
 
     parametrization = ["state"]
 
@@ -144,7 +144,10 @@ class MidpointODE(IntegratorCommon):
             states=[state_n05, state_n1],
         )
 
-        return state_n1 - state_n - step_size * system_n05.right_hand_side()
+        return (
+            system_n05.descriptor_matrix() @ (state_n1 - state_n)
+            - step_size * system_n05.right_hand_side()
+        )
 
     def get_tangent(self, state):
         # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
@@ -161,4 +164,4 @@ class MidpointODE(IntegratorCommon):
             system=self.manager.system,
             states=[state_n05, state_n1],
         )
-        return np.eye(3) - step_size * system_n05.jacobian() * 0.5
+        return system_n05.descriptor_matrix() - step_size * system_n05.jacobian() * 0.5

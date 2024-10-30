@@ -27,8 +27,8 @@ class TestConfiguration:
 class TestIntegratorConfig:
     def test_valid_keys(self):
         for key in [
-            "Midpoint_DAE",
+            "MidpointMultibody",
             "MidpointPH",
-            "MidpointODE",
+            "MidpointDAE",
         ]:
             Integrator(class_name=key, kwargs={})
