@@ -9,6 +9,24 @@ class PortHamiltonianSystem(
     abstract_base_classes.AbstractPortHamiltonianSystem,
     System,  # TODO: Avoid multi-inheritance if possible
 ):
+    """
+    These systems follow the pattern:
+    E(x) \dot{x} = (J(x)-R(x))z(x) + B(x)u
+     E(x)^T z(x) = \nabla H(x)
+               y = B(x)^T z(x)
+    where x: state
+          E: descriptor matrix
+          J: structure matrix
+          R: dissipation matrix
+          z: co-state
+          B: port matrix
+          u: input vector
+          H: Hamiltonian
+          y: output
+          \nabla H(x): Hamiltonian gradient
+    It includes ODEs for E(x) = I. Singular E induce true DAEs.
+    """
+
     def __init__(self, manager, state):
         self.manager = manager
         self.initialize_state(state)

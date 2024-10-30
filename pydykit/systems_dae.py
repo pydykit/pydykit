@@ -5,6 +5,16 @@ from .systems import System
 
 
 class QuasiLinearDAESystem(System, abstract_base_classes.AbstractQuasiLinearDAESystem):
+    """
+    These systems follow the pattern:
+    E(x) \dot{x} = f(x)
+    where x: state
+          E: descriptor matrix
+          f: right-hand side
+          \nabla f(x): Jacobian
+    It includes ODEs for E(x) = I. Singular E induce true DAEs.
+    """
+
     def __init__(self, manager, state: dict):
         self.manager = manager
         self.initialize_state(state)
