@@ -26,10 +26,9 @@ class Manager(abstract_base_classes.Manager):
         for key in factories.keys():
             setattr(self, key, self.get_instance(key=key))
 
-        self.result = result_factory.get(
-            key="Result",
-            manager=self,
-        )
+        # self.result = result_factory.get(
+        #     key="Result",
+        # )
 
     def get_instance(self, key):
         obj = getattr(self.configuration, key)
