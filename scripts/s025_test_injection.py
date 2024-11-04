@@ -1,19 +1,27 @@
 import plotly.graph_objects as go
 
 import pydykit
+import pydykit.configuration
 import pydykit.containers
-import pydykit.factories as factories
 
 container = pydykit.containers.Container()
-manager = container.manager_factory()
 
 name = "reactor"
 path_config_file = f"./pydykit/example_files/{name}.yml"
 
-manager.configure_from_path(path=path_config_file)
-manager.result = factories.result_factory.get(
-    key="Result",
+file_content = pydykit.utils.load_yaml_file(
+    path=path_config_file,
 )
+configuration = pydykit.configurations.Configuration(
+    **file_content["configuration"],
+)
+
+container.config = configuration
+
+manager = (
+    container.manager()
+)  # <-- inject dependency on configuration, system, simulator, integrator, time_stepper and result here
+
 result = manager.manage()
 df = result.to_df()
 

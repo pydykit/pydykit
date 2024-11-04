@@ -1,6 +1,7 @@
 import numpy as np
+from dependency_injector.wiring import Provide, inject
 
-from . import abstract_base_classes
+from . import abstract_base_classes, containers
 from .systems import System
 
 
@@ -15,15 +16,29 @@ class QuasiLinearDAESystem(System, abstract_base_classes.AbstractQuasiLinearDAES
     It includes ODEs for E(x) = I. Singular E induce true DAEs.
     """
 
-    def __init__(self, manager, state: dict):
+    @inject
+    def __init__(
+        self,
+        manager=Provide[containers.Container.manager],
+        state=Provide[containers.Container.state],
+    ):
         self.manager = manager
         self.initialize_state(state)
         self.parametrization = ["state"]
 
 
 class Lorenz(QuasiLinearDAESystem):
-    def __init__(self, manager, state, sigma: float, rho: float, beta: float):
-        super().__init__(manager, state)
+
+    @inject
+    def __init__(
+        self,
+        sigma: float,
+        rho: float,
+        beta: float,
+        manager=Provide[containers.Container.manager],
+        state=Provide[containers.Container.state],
+    ):
+        super().__init__()  # <-- inject dependency on state and manager here
         self.sigma = sigma
         self.rho = rho
         self.beta = beta
@@ -71,14 +86,14 @@ class ChemicalReactor(QuasiLinearDAESystem):
 
     def __init__(
         self,
-        manager,
-        state,
         constants: list[float],
         cooling_temperature: float,
         reactant_concentration: float,
         initial_temperature: float,
+        manager=Provide[containers.Container.manager],
+        state=Provide[containers.Container.state],
     ):
-        super().__init__(manager, state)
+        super().__init__()  # <-- inject dependency on state and manager here
         self.constants = constants
         self.cooling_temperature = cooling_temperature
         self.reactant_concentration = reactant_concentration

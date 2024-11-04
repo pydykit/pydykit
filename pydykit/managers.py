@@ -1,40 +1,30 @@
-from . import abstract_base_classes, results, utils
+from dependency_injector.wiring import Provide, inject
+
+from . import abstract_base_classes, containers, utils
 from .configuration import Configuration
-from .factories import factories, result_factory
 
 
 class Manager(abstract_base_classes.Manager):
 
-    def configure(self, configuration: Configuration):
-        self._configure(configuration=configuration)
-
-    def configure_from_path(self, path):
-        file_content = utils.load_yaml_file(
-            path=path,
-        )
-        configuration = Configuration(
-            **file_content["configuration"],
-        )
-
-        self._configure(configuration=configuration)
-
-    def _configure(self, configuration):
+    @inject
+    def __init__(
+        self,
+        configuration: Configuration = Provide[containers.Container.service],
+        system=Provide[containers.Container.system],
+        simulator=Provide[containers.Container.simulator],
+        integrator=Provide[containers.Container.integrator],
+        time_stepper=Provide[containers.Container.time_stepper],
+        result=Provide[containers.Container.result],
+    ):
         # set configuration
         self.configuration = configuration
 
         # derive instances of classes
-        for key in factories.keys():
-            setattr(self, key, self.get_instance(key=key))
-
-        # self.result = result_factory.get(
-        #     key="Result",
-        # )
-
-    def get_instance(self, key):
-        obj = getattr(self.configuration, key)
-        factory = factories[key]
-
-        return factory.get(key=obj.class_name, manager=self, **obj.kwargs)
+        self.system = system
+        self.simulator = simulator
+        self.integrator = integrator
+        self.time_stepper = time_stepper
+        self.result = result
 
     def manage(self):
         return self.simulator.run()
