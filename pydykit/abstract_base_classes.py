@@ -3,8 +3,6 @@ from typing import Callable, Iterator
 
 import numpy.typing as npt
 
-from . import results
-
 
 class Integrator(abc.ABC):
 
@@ -197,6 +195,10 @@ class TimeStep(abc.ABC):
     pass
 
 
+class Result(abc.ABC):
+    pass
+
+
 class TimeStepper(abc.ABC):
 
     @abc.abstractmethod
@@ -214,7 +216,7 @@ class Manager(abc.ABC):
     simulator: Simulator = NotImplemented
     integrator: Integrator = NotImplemented
     system: System = NotImplemented
-    result: results.Result = NotImplemented
+    result: Result = NotImplemented
 
 
 class Quantity(abc.ABC):

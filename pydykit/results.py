@@ -2,14 +2,12 @@ import numpy as np
 import pandas as pd
 from dependency_injector.wiring import Provide, inject
 
-from . import containers, managers
+from . import containers
 
 
 class Result:
     @inject
-    def __init__(
-        self, manager: managers.Manager = Provide[containers.Container.manager]
-    ):
+    def __init__(self, manager=Provide[containers.Container.manager]):
         self.manager = manager
         self.results = np.zeros(
             (self.manager.time_stepper.nbr_time_points, self.manager.system.dim_state)

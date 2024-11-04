@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.linalg import block_diag
 
-from . import abstract_base_classes, utils
+from . import abstract_base_classes
 from .systems import System
 
 

@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from . import factories, managers
+from . import factories
 
 
 class Container(containers.DeclarativeContainer):
@@ -9,7 +9,7 @@ class Container(containers.DeclarativeContainer):
 
     state = providers.Singleton()
 
-    manager = providers.Singleton(managers.Manager)
+    manager = providers.Singleton()
 
     system = providers.Factory(
         factories.SystemFactory.get(),

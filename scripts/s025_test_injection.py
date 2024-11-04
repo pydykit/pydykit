@@ -1,8 +1,6 @@
 import plotly.graph_objects as go
 
 import pydykit
-import pydykit.configuration
-import pydykit.containers
 
 container = pydykit.containers.Container()
 
@@ -18,8 +16,10 @@ configuration = pydykit.configurations.Configuration(
 
 container.config = configuration
 
+container.wire(modules=[__name__])
+
 manager = (
-    container.manager()
+    pydykit.managers.Manager
 )  # <-- inject dependency on configuration, system, simulator, integrator, time_stepper and result here
 
 result = manager.manage()
