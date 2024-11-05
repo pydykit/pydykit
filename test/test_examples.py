@@ -14,6 +14,8 @@ example_worklist = [
     "pendulum_2d",
     "particle_system_02",
     "particle_system_03",
+    "four_particle_system",
+    "four_particle_system_discrete_gradient",
     "lorenz",
     "reactor",
 ]
