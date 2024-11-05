@@ -1,6 +1,6 @@
 import numpy as np
 
-from . import abstract_base_classes, utils
+from . import abstract_base_classes, operators, utils
 
 
 class IntegratorCommon(abstract_base_classes.Integrator):
@@ -111,6 +111,110 @@ class MidpointMultibody(IntegratorCommon):
             + step_size * (DV_int_n05 + DV_ext_n05)
             + step_size * DTq_n05
             + step_size * G_n05.T @ lambd_n05
+        )
+        residuum = np.concatenate(
+            [
+                q_n1 - q_n - step_size * inv_mass_matrix_n05 @ p_n05,
+                residuum_p,
+                g_n1,
+            ],
+            axis=0,
+        )
+
+        return residuum
+
+
+class DiscreteGradientMultibody(IntegratorCommon):
+
+    parametrization = ["position", "momentum", "multiplier"]
+
+    def __init__(self, manager, increment_tolerance):
+        super().__init__(manager)
+        self.increment_tolerance = increment_tolerance
+
+    def get_residuum(self, next_state):
+
+        # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
+        state_n = self.manager.system.state
+        state_n1 = next_state
+
+        # read time step size
+        step_size = self.manager.time_stepper.current_step.increment
+
+        # create midpoint state and all corresponding discrete-time systems
+        state_n05 = 0.5 * (state_n + state_n1)
+
+        system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
+            system=self.manager.system,
+            states=[
+                state_n,
+                state_n1,
+                state_n05,
+            ],
+        )
+
+        # get inverse mass matrix
+        try:
+            inv_mass_matrix_n05 = system_n05.inverse_mass_matrix()
+        except AttributeError:
+            mass_matrix_n05 = system_n05.mass_matrix()
+            inv_mass_matrix_n05 = np.linalg.inv(mass_matrix_n05)
+
+        # constraint
+        g_n1 = system_n1.constraint()
+
+        # state contributions
+        p_n = system_n.decompose_state()["momentum"]
+        p_n1 = system_n1.decompose_state()["momentum"]
+        p_n05 = system_n05.decompose_state()["momentum"]
+        q_n = system_n.decompose_state()["position"]
+        q_n1 = system_n1.decompose_state()["position"]
+        q_n05 = system_n05.decompose_state()["position"]
+        lambd_n05 = system_n05.decompose_state()["multiplier"]
+
+        # discrete gradients
+        G_DG = operators.discrete_gradient(
+            system_n=system_n,
+            system_n1=system_n1,
+            system_n05=system_n05,
+            func_name="constraint",
+            jacobian_name="constraint_gradient",
+            argument_n=q_n,
+            argument_n1=q_n1,
+            argument_n05=q_n05,
+            type="Gonzalez",
+            increment_tolerance=self.increment_tolerance,
+        )
+
+        DV_int = operators.discrete_gradient(
+            system_n=system_n,
+            system_n1=system_n1,
+            system_n05=system_n05,
+            func_name="internal_potential",
+            jacobian_name="internal_potential_gradient",
+            argument_n=q_n,
+            argument_n1=q_n1,
+            argument_n05=q_n05,
+            type="Gonzalez",
+            increment_tolerance=self.increment_tolerance,
+        )
+
+        DV_ext = operators.discrete_gradient(
+            system_n=system_n,
+            system_n1=system_n1,
+            system_n05=system_n05,
+            func_name="external_potential",
+            jacobian_name="external_potential_gradient",
+            argument_n=q_n,
+            argument_n1=q_n1,
+            argument_n05=q_n05,
+            type="Gonzalez",
+            increment_tolerance=self.increment_tolerance,
+        )
+
+        # residuum contributions
+        residuum_p = (
+            p_n1 - p_n + step_size * (DV_int + DV_ext) + step_size * G_DG.T @ lambd_n05
         )
         residuum = np.concatenate(
             [

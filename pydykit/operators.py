@@ -63,3 +63,51 @@ def left_multiplation_matrix(quat):
 def quaternion_velocity(quaternion_position: np.array, angular_velocity: np.array):
     G_q = convective_transformation_matrix(quat=quaternion_position)
     return 0.5 * G_q.T @ angular_velocity
+
+
+def discrete_gradient(
+    system_n,
+    system_n1,
+    system_n05,
+    func_name: str,
+    jacobian_name: str,
+    argument_n: np.ndarray,
+    argument_n1: np.ndarray,
+    argument_n05: np.ndarray,
+    type: str = "Gonzalez",
+    increment_tolerance: float = 1e-12,
+):
+    func_n = getattr(system_n, func_name)()
+    func_n1 = getattr(system_n1, func_name)()
+
+    if type == "Gonzalez":
+        increment_norm_squared = (argument_n1 - argument_n).T @ (
+            argument_n1 - argument_n
+        )
+        midpoint_jacobian = getattr(system_n05, jacobian_name)()
+        dim_func = midpoint_jacobian.ndim
+        if dim_func == 1:
+            midpoint_jacobian = midpoint_jacobian[np.newaxis, :]
+            func_n = np.array([func_n])
+            func_n1 = np.array([func_n1])
+
+        discrete_gradient_vector = midpoint_jacobian
+
+        if increment_norm_squared > increment_tolerance:
+            for index in range(dim_func):
+                discrete_gradient_vector[index, :] += (
+                    (
+                        func_n1[index]
+                        - func_n[index]
+                        - np.dot(
+                            midpoint_jacobian[index, :],
+                            (argument_n1 - argument_n),
+                        )
+                    )
+                    / increment_norm_squared
+                    * (argument_n1 - argument_n)
+                )
+    else:
+        raise NotImplementedError(type)
+
+    return discrete_gradient_vector.squeeze()

@@ -1,5 +1,10 @@
 from . import abstract_base_classes, results
-from .integrators import MidpointDAE, MidpointMultibody, MidpointPH
+from .integrators import (
+    DiscreteGradientMultibody,
+    MidpointDAE,
+    MidpointMultibody,
+    MidpointPH,
+)
 from .results import Result
 from .simulators import OneStep
 from .systems_dae import ChemicalReactor, Lorenz
@@ -69,6 +74,7 @@ integrator_factory = IntegratorFactory()
 for key, constructor in [
     ("MidpointPH", MidpointPH),
     ("MidpointMultibody", MidpointMultibody),
+    ("DiscreteGradientMultibody", DiscreteGradientMultibody),
     ("MidpointDAE", MidpointDAE),
 ]:
     integrator_factory.register_constructor(key=key, constructor=constructor)
