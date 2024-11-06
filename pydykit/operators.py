@@ -79,34 +79,50 @@ def discrete_gradient(
     func_n = getattr(system_n, func_name)()
     func_n1 = getattr(system_n1, func_name)()
 
-    if type == "Gonzalez":
-        increment_norm_squared = (argument_n1 - argument_n).T @ (
-            argument_n1 - argument_n
+    if type != "Gonzalez":
+        raise NotImplementedError(
+            f"Discrete gradient of type {type} is not implemented."
         )
-        midpoint_jacobian = getattr(system_n05, jacobian_name)()
-        dim_func = midpoint_jacobian.ndim
-        if dim_func == 1:
-            midpoint_jacobian = midpoint_jacobian[np.newaxis, :]
-            func_n = np.array([func_n])
-            func_n1 = np.array([func_n1])
 
+    denominator = (argument_n1 - argument_n).T @ (argument_n1 - argument_n)
+    midpoint_jacobian = getattr(system_n05, jacobian_name)()
+    midpoint_jacobian, func_n, func_n1 = adjust_midpoint_jacobian(
+        midpoint_jacobian, func_n, func_n1
+    )
+
+    if denominator > increment_tolerance:
+        discrete_gradient_vector = Gonzalez_discrete_gradient(
+            func_n, func_n1, midpoint_jacobian, argument_n, argument_n1, denominator
+        )
+    else:
         discrete_gradient_vector = midpoint_jacobian
 
-        if increment_norm_squared > increment_tolerance:
-            for index in range(dim_func):
-                discrete_gradient_vector[index, :] += (
-                    (
-                        func_n1[index]
-                        - func_n[index]
-                        - np.dot(
-                            midpoint_jacobian[index, :],
-                            (argument_n1 - argument_n),
-                        )
-                    )
-                    / increment_norm_squared
-                    * (argument_n1 - argument_n)
-                )
-    else:
-        raise NotImplementedError(type)
-
     return discrete_gradient_vector.squeeze()
+
+
+def Gonzalez_discrete_gradient(
+    func_n, func_n1, midpoint_jacobian, argument_n, argument_n1, denominator
+):
+    """Compute the discrete gradient using the Gonzalez method."""
+    discrete_gradient = midpoint_jacobian.copy()
+    increment = argument_n1 - argument_n
+
+    for index in range(midpoint_jacobian.shape[0]):
+        discrete_gradient[index, :] += (
+            (
+                func_n1[index]
+                - func_n[index]
+                - np.dot(midpoint_jacobian[index, :], increment)
+            )
+            / denominator
+            * increment
+        )
+
+    return discrete_gradient
+
+
+def adjust_midpoint_jacobian(midpoint_jacobian, func_n, func_n1):
+    """Helper function to adjust the midpoint Jacobian and function evaluations for scalar-valued functions."""
+    if midpoint_jacobian.ndim == 1:
+        return midpoint_jacobian[np.newaxis, :], np.array([func_n]), np.array([func_n1])
+    return midpoint_jacobian, func_n, func_n1
