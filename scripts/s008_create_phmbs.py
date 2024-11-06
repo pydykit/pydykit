@@ -35,4 +35,4 @@ for index in range(manager.system.mbs.nbr_particles):
 
 fig.show()
 
-df.to_csv(f"test/reference_results/{name}.csv")
+# df.to_csv(f"test/reference_results/{name}.csv")

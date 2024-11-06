@@ -26,4 +26,4 @@ fig.update_layout(font_family="Serif")
 
 fig.show()
 
-df.to_csv(f"test/reference_results/{name}.csv")
+# df.to_csv(f"test/reference_results/{name}.csv")
