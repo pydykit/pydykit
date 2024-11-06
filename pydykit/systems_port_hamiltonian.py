@@ -130,9 +130,42 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         )
 
     def hamiltonian_gradient(self):
-        return (
-            self.mbs.external_potential_gradient()
-            + self.mbs.internal_potential_gradient()
+        decomposed_state = self.decompose_state()
+        p = decomposed_state["momentum"]
+        lambd = decomposed_state["multiplier"]
+        dim_lambd = len(lambd)
+        # get inverse mass matrix
+        try:
+            inv_mass_matrix = self.mbs.inverse_mass_matrix()
+        except AttributeError:
+            mass_matrix_n05 = self.mbs.mass_matrix()
+            inv_mass_matrix = np.linalg.inv(mass_matrix_n05)
+        return np.concatenate(
+            [
+                self.mbs.external_potential_gradient()
+                + self.mbs.internal_potential_gradient(),
+                inv_mass_matrix @ p,
+                np.zeros(dim_lambd),
+            ],
+            axis=0,
+        )
+
+    def hamiltonian_differential_gradient(self):
+        decomposed_state = self.decompose_state()
+        p = decomposed_state["momentum"]
+        # get inverse mass matrix
+        try:
+            inv_mass_matrix = self.mbs.inverse_mass_matrix()
+        except AttributeError:
+            mass_matrix_n05 = self.mbs.mass_matrix()
+            inv_mass_matrix = np.linalg.inv(mass_matrix_n05)
+        return np.concatenate(
+            [
+                self.mbs.external_potential_gradient()
+                + self.mbs.internal_potential_gradient(),
+                inv_mass_matrix @ p,
+            ],
+            axis=0,
         )
 
     def structure_matrix(self):
@@ -162,8 +195,18 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
         return descriptor_matrix
 
+    def nonsingular_descriptor_matrix(self):
+        identity_mat = np.eye(self.mbs.nbr_dof)
+        mass_matrix = self.mbs.mass_matrix()
+
+        return block_diag(identity_mat, mass_matrix)
+
     def hamiltonian(self):
-        pass
+        return (
+            self.mbs.external_potential()
+            + self.mbs.internal_potential()
+            + self.mbs.kinetic_energy()
+        )
 
     def port_matrix(self):
         pass
@@ -173,3 +216,14 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
     def dissipation_matrix(self):
         pass
+
+    def get_algebraic_costate(self):
+        decomposed_state = self.decompose_state()
+        lambd = decomposed_state["multiplier"]
+        return lambd
+
+    def get_differential_state(self):
+        decomposed_state = self.decompose_state()
+        q = decomposed_state["position"]
+        p = decomposed_state["momentum"]
+        return np.concatenate([q, p], axis=0)

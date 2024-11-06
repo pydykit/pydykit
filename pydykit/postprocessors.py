@@ -1,26 +1,16 @@
-import inspect
-
 import numpy as np
 import pandas as pd
 
-import pydykit
-
-from . import abstract_base_classes, utils
+from . import utils
 
 
 class Postprocessor:
 
-    def __init__(self, manager, path_config_file=None, content_config_file=None):
-
-        utils.update_object_from_config_file(
-            self, path_config_file, content_config_file
-        )
-
-        for quantity in self.configuration["quantity_names"]:
-            quantity_instance = globals()[quantity]()
-            setattr(self, quantity, quantity_instance)
+    def __init__(self, manager, results_df, quantities):
 
         self.manager = manager
+        self.results_df = results_df
+        self.quantities = quantities
         self.color_palette = [
             "#0072B2",
             "#009E73",
@@ -30,110 +20,48 @@ class Postprocessor:
             "#E69F00",
             "#F0E442",
         ]
+        self.plotting_backend = "plotly"
         # color scheme (color-blind friendly)
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
 
-    def postprocess(self, df):
+    def postprocess(self):
         system = self.manager.system
-        self.nbr_time_point = len(df)
+        self.nbr_time_point = len(self.results_df)
 
-        for quantity in self.configuration["quantity_names"]:
-            quantity_instance = getattr(self, quantity)
-            quantity_instance.create_dataframe(nbr_time_point=self.nbr_time_point)
+        for quantity in self.quantities:
+            # Determine function dimensions and initialize data
+            system_function = getattr(system, quantity)
+            dim_function = system_function().ndim
+            data = self.create_zeros_array(
+                dimension_x=self.nbr_time_point, dimension_y=dim_function
+            )
 
-        for step_index in range(self.nbr_time_point):
-            state = pydykit.states.State.from_df(df, step_index)
-            q, p, lambd = system.decompose_state(state)
+            # Evaluate and collect data for each time point
+            for step_index in range(self.nbr_time_point):
+                system = self.update_state(system, step_index)
+                data[step_index] = getattr(system, quantity)()
 
-            for quantity in self.configuration["quantity_names"]:
-                function_list = globals()[quantity]().functions
-                quantity_instance = getattr(self, quantity)
-                for function in function_list:
-                    system_function = getattr(system, function)
-                    input_dict = self.determine_args_dict(system_function, q, p, lambd)
-                    # if quantity_instance.
-                    quantity_instance.df.at[step_index, function] = system_function(
-                        **input_dict
-                    )
+            # Append the new data to the results DataFrame
+            self.results_df[quantity] = data
 
-        # merg dataframe
-        for quantity in self.configuration["quantity_names"]:
-            quantity_instance = getattr(self, quantity)
-            df = pd.concat([df, quantity_instance.df], axis=1)
-
-        return df
-
-    def visualize(self, df):
-        pd.options.plotting.backend = "plotly"
-
-        for quantity in self.configuration["quantity_names"]:
-            fig = self.create_line_plot(quantity, df)
-            fig.show()
-
-    def create_line_plot(self, quantity, df):
-        quantity_instance = getattr(self, quantity)
-        x_value_identifier = "time"
-        y_value_identifiers = quantity_instance.functions
-        fig = df.plot(
-            x=x_value_identifier,
-            y=y_value_identifiers,
-            labels=dict(index=x_value_identifier, value=quantity),
-            color_discrete_sequence=self.color_palette,
-        )
-        return fig
-
-    @staticmethod
-    def determine_args_dict(function, q, p, lambd):
-        args_list = inspect.getfullargspec(function)[0]
-        args_list.remove("self")
-        if args_list == ["q", "p"]:
-            z = [q, p]
-        elif args_list == ["q"]:
-            z = [q]
-        elif args_list == ["p"]:
-            z = [p]
+    def create_zeros_array(self, dimension_x, dimension_y):
+        if dimension_y == 0:
+            return np.zeros(dimension_x)
         else:
-            raise Exception("Not implemented")
+            return np.zeros((dimension_x, dimension_y))
 
-        return dict(zip(args_list, z))
+    def update_state(self, system, index):
+        system.state = utils.row_array_from_df(df=self.results_df, index=index)
+        return system
 
+    def visualize(self):
+        pd.options.plotting.backend = self.plotting_backend
 
-class Quantity(abstract_base_classes.Quantity):
-
-    def create_dataframe(self, nbr_time_point):
-        self.df = pd.DataFrame(
-            data=np.zeros((nbr_time_point, sum(self.dimension))),
-            columns=self.functions,
-        )
-
-
-class Energy(Quantity):
-    def __init__(self):
-        super().__init__()
-        self.dimension = [1, 1, 1]
-        self.functions = [
-            "kinetic_energy",
-            "potential_energy",
-            "total_energy",
-        ]
-
-
-class Constraint(Quantity):
-    def __init__(self):
-        super().__init__()
-        self.dimension = [1]
-        self.functions = ["constraint"]
-
-
-class Constraint_Velocity(Quantity):
-    def __init__(self):
-        super().__init__()
-        self.dimension = [1]
-        self.functions = ["constraint_velocity"]
-
-
-class Angular_Momentum(Quantity):
-    def __init__(self):
-        super().__init__()
-        self.dimension = [3]
-        self.functions = ["angular_momentum"]
+        for quantity in self.quantities:
+            fig = self.results_df.plot(
+                x="time",
+                y=quantity,
+                labels={"index": "time", "value": quantity},
+                color_discrete_sequence=self.color_palette,
+            )
+            fig.show()

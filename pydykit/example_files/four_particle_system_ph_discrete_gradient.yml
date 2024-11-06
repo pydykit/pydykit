@@ -1,4 +1,4 @@
-name: four_particle_system
+name: four_particle_system_ph_discrete_gradient
 configuration:
   system:
     class_name: ParticleSystem
@@ -19,7 +19,7 @@ configuration:
         mass: 2.3
       - index: 3
         initial_position: [1.0, 1.0, 0.0]
-        initial_momentum: [0.0, 0.0, 2]
+        initial_momentum: [0.0, 0.0, 1.1764705882352939]
         mass: 1.7
       supports: {}
       springs:
@@ -54,12 +54,12 @@ configuration:
       newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:
-    class_name: MidpointMultibody
-    kwargs: {}
-
+    class_name: DiscreteGradientPHDAE
+    kwargs:
+      increment_tolerance: 1.e-12
   time_stepper:
     class_name: FixedIncrement
     kwargs:
-      step_size: 0.01
+      step_size: 0.01 # 0.1
       start: 0.0
       end: 0.09
