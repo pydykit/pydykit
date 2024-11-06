@@ -29,37 +29,39 @@ class Postprocessor:
         self.nbr_time_point = len(self.results_df)
 
         for quantity in self.quantities:
+            # Determine function dimensions and initialize data
             system_function = getattr(system, quantity)
             dim_function = system_function().ndim
-            # create empty df
-            if dim_function == 0:
-                data = np.zeros(self.nbr_time_point)
-            else:
-                data = np.zeros(self.nbr_time_point, dim_function)
+            data = self.create_zeros_array(
+                dimension_x=self.nbr_time_point, dimension_y=dim_function
+            )
 
+            # Evaluate and collect data for each time point
             for step_index in range(self.nbr_time_point):
-                # update state and system
-                system.state = utils.row_array_from_df(
-                    df=self.results_df, index=step_index
-                )
-                system_function = getattr(system, quantity)
-                # evaluate function
-                data[step_index] = system_function()
+                system = self.update_state(system, step_index)
+                data[step_index] = getattr(system, quantity)()
 
-            # write row of daraframe
-            new_df = pd.DataFrame({quantity: data})
-            self.results_df = pd.concat([self.results_df, new_df], axis=1)
+            # Append the new data to the results DataFrame
+            self.results_df[quantity] = data
+
+    def create_zeros_array(self, dimension_x, dimension_y):
+        if dimension_y == 0:
+            return np.zeros(dimension_x)
+        else:
+            return np.zeros((dimension_x, dimension_y))
+
+    def update_state(self, system, index):
+        system.state = utils.row_array_from_df(df=self.results_df, index=index)
+        return system
 
     def visualize(self):
         pd.options.plotting.backend = self.plotting_backend
 
         for quantity in self.quantities:
-            x_value_identifier = "time"
-            y_value_identifiers = quantity
             fig = self.results_df.plot(
-                x=x_value_identifier,
-                y=y_value_identifiers,
-                labels=dict(index=x_value_identifier, value=quantity),
+                x="time",
+                y=quantity,
+                labels={"index": "time", "value": quantity},
                 color_discrete_sequence=self.color_palette,
             )
             fig.show()
