@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 import pydykit
 import pydykit.systems_port_hamiltonian
 
-name = "four_particle_system_port_hamiltonian"
+name = "four_particle_system_ph_discrete_gradient"
 
 manager = pydykit.managers.Manager()
 
@@ -34,3 +34,5 @@ for index in range(manager.system.mbs.nbr_particles):
 
 
 fig.show()
+
+df.to_csv(f"test/reference_results/{name}.csv")

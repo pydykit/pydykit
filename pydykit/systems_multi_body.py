@@ -48,9 +48,9 @@ class MultiBodySystem(
         )
 
     def kinetic_energy(self):
-        q = self.state.decompose_state()["position"]
-        p = self.state.decompose_state()["momentum"]
-        return 0.5 * p.T @ self.inverse_mass_matrix(q=q) @ p
+        q = self.decompose_state()["position"]
+        p = self.decompose_state()["momentum"]
+        return 0.5 * p.T @ self.inverse_mass_matrix() @ p
 
     def potential_energy(self):
         return self.external_potential() + self.internal_potential()

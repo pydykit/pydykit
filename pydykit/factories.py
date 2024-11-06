@@ -1,6 +1,7 @@
 from . import abstract_base_classes, results
 from .integrators import (
     DiscreteGradientMultibody,
+    DiscreteGradientPHDAE,
     MidpointDAE,
     MidpointMultibody,
     MidpointPH,
@@ -73,6 +74,7 @@ for key, constructor in [
 integrator_factory = IntegratorFactory()
 for key, constructor in [
     ("MidpointPH", MidpointPH),
+    ("DiscreteGradientPHDAE", DiscreteGradientPHDAE),
     ("MidpointMultibody", MidpointMultibody),
     ("DiscreteGradientMultibody", DiscreteGradientMultibody),
     ("MidpointDAE", MidpointDAE),

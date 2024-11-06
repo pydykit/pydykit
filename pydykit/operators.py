@@ -73,7 +73,6 @@ def discrete_gradient(
     jacobian_name: str,
     argument_n: np.ndarray,
     argument_n1: np.ndarray,
-    argument_n05: np.ndarray,
     type: str = "Gonzalez",
     increment_tolerance: float = 1e-12,
 ):
