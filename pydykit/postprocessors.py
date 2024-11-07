@@ -38,7 +38,7 @@ class Postprocessor:
 
             # Evaluate and collect data for each time point
             for step_index in range(self.nbr_time_point):
-                system = self.update_state(system, step_index)
+                system = self.update_system(system, step_index)
                 data[step_index] = getattr(system, quantity)()
 
             # Append the new data to the results DataFrame
@@ -50,8 +50,9 @@ class Postprocessor:
         else:
             return np.zeros((dimension_x, dimension_y))
 
-    def update_state(self, system, index):
-        system.state = utils.row_array_from_df(df=self.results_df, index=index)
+    def update_system(self, system, index):
+        updated_state = utils.row_array_from_df(df=self.results_df, index=index)
+        system = system.copy(state=updated_state)
         return system
 
     def visualize(self):
