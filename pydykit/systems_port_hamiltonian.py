@@ -131,20 +131,16 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
     def hamiltonian_gradient(self):
         decomposed_state = self.decompose_state()
-        p = decomposed_state["momentum"]
+        v = decomposed_state["momentum"]
         lambd = decomposed_state["multiplier"]
         dim_lambd = len(lambd)
-        # get inverse mass matrix
-        try:
-            inv_mass_matrix = self.mbs.inverse_mass_matrix()
-        except AttributeError:
-            mass_matrix_n05 = self.mbs.mass_matrix()
-            inv_mass_matrix = np.linalg.inv(mass_matrix_n05)
+        mass_matrix = self.mbs.mass_matrix()
+
         return np.concatenate(
             [
                 self.mbs.external_potential_gradient()
                 + self.mbs.internal_potential_gradient(),
-                inv_mass_matrix @ p,
+                mass_matrix @ v,
                 np.zeros(dim_lambd),
             ],
             axis=0,
@@ -152,18 +148,14 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
     def hamiltonian_differential_gradient(self):
         decomposed_state = self.decompose_state()
-        p = decomposed_state["momentum"]
-        # get inverse mass matrix
-        try:
-            inv_mass_matrix = self.mbs.inverse_mass_matrix()
-        except AttributeError:
-            mass_matrix_n05 = self.mbs.mass_matrix()
-            inv_mass_matrix = np.linalg.inv(mass_matrix_n05)
+        v = decomposed_state["momentum"]
+        mass_matrix = self.mbs.mass_matrix()
+
         return np.concatenate(
             [
                 self.mbs.external_potential_gradient()
                 + self.mbs.internal_potential_gradient(),
-                inv_mass_matrix @ p,
+                mass_matrix @ v,
             ],
             axis=0,
         )
@@ -171,7 +163,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
     def structure_matrix(self):
         decomposed_state = self.decompose_state()
         q = decomposed_state["position"]
-        p = decomposed_state["momentum"]
+        v = decomposed_state["momentum"]
         lambd = decomposed_state["multiplier"]
         G = self.mbs.constraint_gradient()
 
@@ -182,7 +174,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
                     np.eye(len(q)),
                     np.zeros((len(q), len(lambd))),
                 ],
-                [-np.eye(len(p)), np.zeros((len(p), len(p))), -G.T],
+                [-np.eye(len(v)), np.zeros((len(v), len(v))), -G.T],
                 [np.zeros((len(lambd), len(q))), G, np.zeros((len(lambd), len(lambd)))],
             ]
         )
@@ -202,10 +194,12 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         return block_diag(identity_mat, mass_matrix)
 
     def hamiltonian(self):
+        decomposed_state = self.decompose_state()
+        v = decomposed_state["momentum"]
         return (
             self.mbs.external_potential()
             + self.mbs.internal_potential()
-            + self.mbs.kinetic_energy()
+            + 0.5 * np.dot(v, self.mbs.mass_matrix() @ v)
         )
 
     def port_matrix(self):
@@ -225,5 +219,5 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
     def get_differential_state(self):
         decomposed_state = self.decompose_state()
         q = decomposed_state["position"]
-        p = decomposed_state["momentum"]
-        return np.concatenate([q, p], axis=0)
+        v = decomposed_state["momentum"]
+        return np.concatenate([q, v], axis=0)
