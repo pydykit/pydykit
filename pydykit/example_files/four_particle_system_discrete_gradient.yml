@@ -1,4 +1,4 @@
-name: four_particle_system
+name: four_particle_system_discrete_gradient
 configuration:
   system:
     class_name: ParticleSystem
@@ -54,9 +54,9 @@ configuration:
       newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:
-    class_name: MidpointMultibody
-    kwargs: {}
-
+    class_name: DiscreteGradientMultibody
+    kwargs:
+      increment_tolerance: 1.e-12
   time_stepper:
     class_name: FixedIncrement
     kwargs:

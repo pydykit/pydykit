@@ -3,6 +3,7 @@ import pytest
 
 import pydykit
 import pydykit.examples
+import pydykit.systems_port_hamiltonian as phs
 
 from . import utils
 from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
@@ -10,14 +11,7 @@ from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
 example_manager = pydykit.examples.Manager()
 
 example_worklist = [
-    "pendulum_3d_cartesian",
-    "pendulum_2d",
-    "particle_system_02",
-    "particle_system_03",
-    "four_particle_system",
-    "four_particle_system_discrete_gradient",
-    "lorenz",
-    "reactor",
+    "four_particle_system_ph_discrete_gradient",
 ]
 
 
@@ -42,6 +36,11 @@ class TestExamples:
             **content_config_file["configuration"],
         )
         manager._configure(configuration=configuration)
+
+        # intermediate steps if conversion to PH system is necessary
+        porthamiltonian_system = phs.PortHamiltonianMBS(manager=manager)
+        # creates an instance of PHS with attribute MBS
+        manager.system = porthamiltonian_system
 
         result = manager.manage()
         old = expected_result_df

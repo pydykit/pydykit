@@ -1,12 +1,9 @@
-import os
-
 import plotly.graph_objects as go
-import tikzplotly
 
 import pydykit
 
 manager = pydykit.managers.Manager()
-name = "four_particle_system"
+name = "four_particle_system_discrete_gradient"
 path_config_file = f"./pydykit/example_files/{name}.yml"
 manager.configure_from_path(path=path_config_file)
 result = manager.manage()
@@ -25,3 +22,5 @@ for index in range(manager.system.nbr_particles):
 fig.update_layout(font_family="Serif")
 
 fig.show()
+
+# df.to_csv(f"test/reference_results/{name}.csv")

@@ -1,3 +1,0 @@
-name: pendulum_3d_cartesian
-configuration:
-  quantity_names: [Energy, Constraint, Constraint_Velocity]
