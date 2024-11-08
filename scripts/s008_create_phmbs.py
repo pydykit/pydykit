@@ -38,4 +38,4 @@ postprocessor = postprocessors.Postprocessor(
     manager, results_df=df, quantities=["hamiltonian"]
 )
 postprocessor.postprocess()
-df.to_csv(f"test/reference_results/{name}.csv", index=False)
+df.to_csv(f"test/reference_results/{name}.csv")
