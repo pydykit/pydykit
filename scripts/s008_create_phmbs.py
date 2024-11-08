@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 
 import pydykit
+import pydykit.postprocessors as postprocessors
 import pydykit.systems_port_hamiltonian as phs
 
 name = "four_particle_system_ph_discrete_gradient"
@@ -33,4 +34,8 @@ for index in range(manager.system.mbs.nbr_particles):
 
 fig.show()
 
-# df.to_csv(f"test/reference_results/{name}.csv")
+postprocessor = postprocessors.Postprocessor(
+    manager, results_df=df, quantities=["hamiltonian"]
+)
+postprocessor.postprocess()
+df.to_csv(f"test/reference_results/{name}.csv", index=False)
