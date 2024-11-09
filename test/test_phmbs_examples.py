@@ -3,6 +3,7 @@ import pytest
 
 import pydykit
 import pydykit.examples
+import pydykit.postprocessors as postprocessors
 import pydykit.systems_port_hamiltonian as phs
 
 from . import utils
@@ -43,8 +44,14 @@ class TestExamples:
         manager.system = porthamiltonian_system
 
         result = manager.manage()
-        old = expected_result_df
         new = result.to_df()
+
+        postprocessor = postprocessors.Postprocessor(
+            manager, results_df=new, quantities=["hamiltonian"]
+        )
+        postprocessor.postprocess()
+
+        old = expected_result_df
 
         utils.print_compare(old=old, new=new)
 
