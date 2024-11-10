@@ -39,8 +39,29 @@ df.to_csv(f"test/reference_results/{name}.csv", index=False)
 
 df = pd.read_csv(f"test/reference_results/{name}.csv")
 
+
 postprocessor = postprocessors.Postprocessor(
-    manager, results_df=df, quantities=["hamiltonian"]
+    manager,
+    results_df=df,
 )
-postprocessor.postprocess()
-postprocessor.visualize()
+postprocessor.postprocess(quantities=["hamiltonian"])
+
+# Plot like PLK
+fig01 = postprocessor.visualize()
+fig01.show()
+
+
+# Plot parts of the state together with newly calculated quantity
+fig02 = postprocessor.visualize(
+    quantities=["hamiltonian"] + [f"position{index}_particle0" for index in [0, 1, 2]],
+    y_axis_label="position",
+)
+fig02.show()
+
+# Plot additional data into existing graph
+fig03 = postprocessor.visualize(
+    quantities=[f"position{index}_particle1" for index in [0, 1, 2]],
+    y_axis_label="position",
+    figure=fig02,
+)
+fig03.show()
