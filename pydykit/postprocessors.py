@@ -68,7 +68,7 @@ class Postprocessor:
 
         # Sometimes we want to plot existing state, e.g., position or momentum
         if quantities is None:
-            # Be default, plot all explicitly calculated quantities
+            # By default, plot all explicitly calculated quantities
             quantities = self.quantities
 
         pd.options.plotting.backend = self.plotting_backend
