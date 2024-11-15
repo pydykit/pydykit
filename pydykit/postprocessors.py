@@ -66,7 +66,6 @@ class Postprocessor:
         figure: None | go.Figure = None,
     ):
 
-        # Sometimes we want to plot existing state, e.g., position or momentum
         if quantities is None:
             # By default, plot all explicitly calculated quantities
             quantities = self.quantities
@@ -77,23 +76,22 @@ class Postprocessor:
             quantities=quantities,
             y_axis_label=y_axis_label,
         )
-        # I like to show explicitly...
-        # fig.show()
 
-        # Sometimes we want to enrich existing figures
         if figure is None:
+            # Start from new figure
             figure = fig
         else:
+            # Enrich existing figure
             figure.add_traces(list(fig.select_traces()))
 
-        # Passing figures is convenient
         return figure
 
     def plot_single_figure(self, quantities, y_axis_label):
-        # TODO: IF we switch to using plotly.graphobjects (go), we will be better of... instead of adding figures, we would then add traces.
+        # TODO: IF we switch to using plotly.graphobjects (go), we will be better of.
+        #       Instead of adding figures, we would then add traces.
         return self.results_df.plot(
             x="time",
-            y=quantities,  # I did not like the loop approach
+            y=quantities,
             labels={
                 "index": "time",
                 "value": y_axis_label,
