@@ -1,16 +1,17 @@
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 
 from . import utils
 
 
 class Postprocessor:
 
-    def __init__(self, manager, results_df, quantities):
+    def __init__(self, manager, results_df: pd.DataFrame):
 
         self.manager = manager
         self.results_df = results_df
-        self.quantities = quantities
+        self.quantities = []
         self.color_palette = [
             "#0072B2",
             "#009E73",
@@ -24,7 +25,10 @@ class Postprocessor:
         # color scheme (color-blind friendly)
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
 
-    def postprocess(self):
+    def postprocess(self, quantities):
+
+        self.quantities += quantities
+
         system = self.manager.system
         self.nbr_time_point = len(self.results_df)
 
@@ -55,14 +59,42 @@ class Postprocessor:
         system = system.copy(state=updated_state)
         return system
 
-    def visualize(self):
+    def visualize(
+        self,
+        quantities=None,
+        y_axis_label="value",
+        figure: None | go.Figure = None,
+    ):
+
+        if quantities is None:
+            # By default, plot all explicitly calculated quantities
+            quantities = self.quantities
+
         pd.options.plotting.backend = self.plotting_backend
 
-        for quantity in self.quantities:
-            fig = self.results_df.plot(
-                x="time",
-                y=quantity,
-                labels={"index": "time", "value": quantity},
-                color_discrete_sequence=self.color_palette,
-            )
-            fig.show()
+        fig = self.plot_single_figure(
+            quantities=quantities,
+            y_axis_label=y_axis_label,
+        )
+
+        if figure is None:
+            # Start from new figure
+            figure = fig
+        else:
+            # Enrich existing figure
+            figure.add_traces(list(fig.select_traces()))
+
+        return figure
+
+    def plot_single_figure(self, quantities, y_axis_label):
+        # TODO: IF we switch to using plotly.graphobjects (go), we will be better of.
+        #       Instead of adding figures, we would then add traces.
+        return self.results_df.plot(
+            x="time",
+            y=quantities,
+            labels={
+                "index": "time",
+                "value": y_axis_label,
+            },
+            color_discrete_sequence=self.color_palette,
+        )

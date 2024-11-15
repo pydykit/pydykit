@@ -46,10 +46,8 @@ class TestExamples:
         result = manager.manage()
         new = result.to_df()
 
-        postprocessor = postprocessors.Postprocessor(
-            manager, results_df=new, quantities=["hamiltonian"]
-        )
-        postprocessor.postprocess()
+        postprocessor = postprocessors.Postprocessor(manager, results_df=new)
+        postprocessor.postprocess(quantities=["hamiltonian"])
 
         old = expected_result_df
 
