@@ -51,7 +51,6 @@ class Factory:
 
 class SystemFactory(Factory):
     def get(self, key, **kwargs) -> abstract_base_classes.System:
-
         return self.create(key, **kwargs)
 
 
