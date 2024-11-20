@@ -16,7 +16,8 @@ porthamiltonian_system = phs.PortHamiltonianMBS(manager=manager)
 # creates an instance of PHS with attribute MBS
 manager.system = porthamiltonian_system
 
-result = manager.manage()
+result = pydykit.results.Result(manager=manager)
+result = manager.manage(result=result)
 
 df = result.to_df()
 

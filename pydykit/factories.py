@@ -1,4 +1,4 @@
-from . import abstract_base_classes, results
+from . import abstract_base_classes
 from .integrators import (
     DiscreteGradientMultibody,
     DiscreteGradientPHDAE,
@@ -6,7 +6,6 @@ from .integrators import (
     MidpointMultibody,
     MidpointPH,
 )
-from .results import Result
 from .simulators import OneStep
 from .systems_dae import ChemicalReactor, Lorenz
 from .systems_multi_body import ParticleSystem, RigidBodyRotatingQuaternions
@@ -48,11 +47,6 @@ class TimeStepperFactory(Factory):
         return self.create(key, **kwargs)
 
 
-class ResultFactory(Factory):
-    def get(self, key, **kwargs) -> results.Result:
-        return self.create(key, **kwargs)
-
-
 system_factory = SystemFactory()
 for key, constructor in [
     ("ParticleSystem", ParticleSystem),
@@ -87,12 +81,6 @@ for key, constructor in [
     ("FixedIncrementHittingEnd", FixedIncrementHittingEnd),
 ]:
     time_stepper_factory.register_constructor(key=key, constructor=constructor)
-
-result_factory = ResultFactory()
-for key, constructor in [
-    ("Result", Result),
-]:
-    result_factory.register_constructor(key=key, constructor=constructor)
 
 factories = dict(
     system=system_factory,
