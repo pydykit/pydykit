@@ -229,3 +229,6 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
     def constraint(self):
         return self.mbs.constraint()
+
+    def constraint_velocity(self):
+        return self.mbs.constraint_velocity()
