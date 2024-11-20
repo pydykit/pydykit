@@ -36,23 +36,19 @@ class Postprocessor:
             # Determine function dimensions and initialize data
             system_function = getattr(system, quantity)
             dim_function = system_function().ndim
-            data = self.create_zeros_array(
-                dimension_x=self.nbr_time_point, dimension_y=dim_function
-            )
+            data = np.zeros([self.nbr_time_point, dim_function + 1])
 
             # Evaluate and collect data for each time point
             for step_index in range(self.nbr_time_point):
                 system = self.update_system(system, step_index)
                 data[step_index] = getattr(system, quantity)()
 
-            # Append the new data to the results DataFrame
-            self.results_df[quantity] = data
-
-    def create_zeros_array(self, dimension_x, dimension_y):
-        if dimension_y == 0:
-            return np.zeros(dimension_x)
-        else:
-            return np.zeros((dimension_x, dimension_y))
+            if dim_function == 0:
+                self.results_df[quantity] = data
+            else:
+                column = [f"{quantity}_{i}" for i in range(dim_function + 1)]
+                # Append the new data to the results DataFrame
+                self.results_df[column] = data
 
     def update_system(self, system, index):
         updated_state = utils.row_array_from_df(df=self.results_df, index=index)
@@ -89,9 +85,11 @@ class Postprocessor:
     def plot_single_figure(self, quantities, y_axis_label):
         # TODO: IF we switch to using plotly.graphobjects (go), we will be better of.
         #       Instead of adding figures, we would then add traces.
+        columns_to_plot = [col for col in self.results_df.columns if quantities in col]
+
         return self.results_df.plot(
             x="time",
-            y=quantities,
+            y=columns_to_plot,
             labels={
                 "index": "time",
                 "value": y_axis_label,
