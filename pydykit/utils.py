@@ -129,10 +129,10 @@ def get_system_copies_with_desired_states(
 
 def select(
     position_vectors,
-    constraint,
+    element,
     endpoint,
 ):
-    return position_vectors[constraint[endpoint]["type"]][constraint[endpoint]["index"]]
+    return position_vectors[element[endpoint]["type"]][element[endpoint]["index"]]
 
 
 def quadratic_length_constraint(vector, length):

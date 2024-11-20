@@ -353,12 +353,12 @@ class ParticleSystem(MultiBodySystem):
                 length=constraint["length"],
                 start=utils.select(
                     position_vectors=position_vectors,
-                    constraint=constraint,
+                    element=constraint,
                     endpoint="start",
                 ),
                 end=utils.select(
                     position_vectors=position_vectors,
-                    constraint=constraint,
+                    element=constraint,
                     endpoint="end",
                 ),
             )
@@ -397,12 +397,12 @@ class ParticleSystem(MultiBodySystem):
             self._constraint_gradient(
                 start_vector=utils.select(
                     position_vectors=position_vectors,
-                    constraint=constraint,
+                    element=constraint,
                     endpoint="start",
                 ),
                 end_vector=utils.select(
                     position_vectors=position_vectors,
-                    constraint=constraint,
+                    element=constraint,
                     endpoint="end",
                 ),
                 start_index=(
