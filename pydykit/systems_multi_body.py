@@ -174,10 +174,8 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return q.T[np.newaxis, :]
 
     def dissipation_matrix(self):
-        q = self.decompose_state()["position"]
-        v = self.decompose_state()["velocity"]
 
-        diss_mat = np.zeros(q.shape, v.shape)
+        diss_mat = np.zeros([self.nbr_dof, self.nbr_dof])
         return diss_mat
 
 
@@ -475,7 +473,7 @@ class ParticleSystem(MultiBodySystem):
             for damper in self.dampers
         ]
 
-        diss_mat = sum(contributions)
+        diss_mat += sum(contributions)
 
         return diss_mat
 

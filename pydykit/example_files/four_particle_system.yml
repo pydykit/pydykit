@@ -31,6 +31,7 @@ configuration:
         particle_end: 3
         stiffness: 500
         equilibrium_length: 1
+      dampers: {}
       constraints:
       - start:
           type: particle

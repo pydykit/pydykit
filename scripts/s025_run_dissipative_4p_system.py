@@ -11,28 +11,15 @@ result = pydykit.results.Result(manager=manager)
 result = manager.manage(result=result)
 
 df = result.to_df()
-fig = go.Figure()
-for index in range(manager.system.nbr_particles):
-    pydykit.plotting.plot_3d_trajectory(
-        figure=fig,
-        x_components=df[f"position0_particle{index}"],
-        y_components=df[f"position1_particle{index}"],
-        z_components=df[f"position2_particle{index}"],
-        time=df["time"],
-    )
 
-fig.update_layout(font_family="Serif")
+# postprocessor = postprocessors.Postprocessor(
+#     manager,
+#     results_df=df,
+# )
+# postprocessor.postprocess(quantities=["total_energy"])
 
-fig.show()
-
-postprocessor = postprocessors.Postprocessor(
-    manager,
-    results_df=df,
-)
-postprocessor.postprocess(quantities=["total_energy"])
-
-# Plot
-fig01 = postprocessor.visualize()
-fig01.show()
+# # Plot
+# fig01 = postprocessor.visualize()
+# fig01.show()
 
 # df.to_csv(f"test/reference_results/{name}.csv")
