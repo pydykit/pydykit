@@ -150,6 +150,9 @@ class MidpointMultibody(IntegratorCommon):
         DV_ext_n05 = system_n05.external_potential_gradient()
         DTq_n05 = system_n05.kinetic_energy_gradient_from_momentum()
 
+        # dissipation matrix
+        D_n05 = system_n05.dissipation_matrix()
+
         # state contributions
         p_n = system_n.decompose_state()["momentum"]
         p_n1 = system_n1.decompose_state()["momentum"]
@@ -165,6 +168,7 @@ class MidpointMultibody(IntegratorCommon):
             + step_size * (DV_int_n05 + DV_ext_n05)
             + step_size * DTq_n05
             + step_size * G_n05.T @ lambd_n05
+            + step_size * D_n05 @ inv_mass_matrix_n05 @ p_n05
         )
         residuum = np.concatenate(
             [
@@ -217,6 +221,9 @@ class DiscreteGradientMultibody(IntegratorCommon):
         # constraint
         g_n1 = system_n1.constraint()
 
+        # dissipation matrix
+        D_n05 = system_n05.dissipation_matrix()
+
         # state contributions
         p_n = system_n.decompose_state()["momentum"]
         p_n1 = system_n1.decompose_state()["momentum"]
@@ -265,7 +272,11 @@ class DiscreteGradientMultibody(IntegratorCommon):
 
         # residuum contributions
         residuum_p = (
-            p_n1 - p_n + step_size * (DV_int + DV_ext) + step_size * G_DG.T @ lambd_n05
+            p_n1
+            - p_n
+            + step_size * (DV_int + DV_ext)
+            + step_size * G_DG.T @ lambd_n05
+            + step_size * D_n05 @ inv_mass_matrix_n05 @ p_n05
         )
         residuum = np.concatenate(
             [
