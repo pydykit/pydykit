@@ -226,3 +226,6 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         q = decomposed_state["position"]
         v = decomposed_state["momentum"]
         return np.concatenate([q, v], axis=0)
+
+    def constraint(self):
+        return self.mbs.constraint()
