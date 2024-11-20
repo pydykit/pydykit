@@ -12,6 +12,29 @@ from .systems_multi_body import ParticleSystem, RigidBodyRotatingQuaternions
 from .systems_port_hamiltonian import Pendulum2D
 from .time_steppers import FixedIncrement, FixedIncrementHittingEnd
 
+registered_systems = {
+    "ParticleSystem": ParticleSystem,
+    "RigidBodyRotatingQuaternions": RigidBodyRotatingQuaternions,
+    "Pendulum2D": Pendulum2D,
+    "Lorenz": Lorenz,
+    "ChemicalReactor": ChemicalReactor,
+}
+
+registered_simulators = {"OneStep": OneStep}
+
+registered_integrators = {
+    "MidpointPH": MidpointPH,
+    "DiscreteGradientPHDAE": DiscreteGradientPHDAE,
+    "MidpointMultibody": MidpointMultibody,
+    "DiscreteGradientMultibody": DiscreteGradientMultibody,
+    "MidpointDAE": MidpointDAE,
+}
+
+registered_timesteppers = {
+    "FixedIncrement": FixedIncrement,
+    "FixedIncrementHittingEnd": FixedIncrementHittingEnd,
+}
+
 
 class Factory:
 
@@ -48,38 +71,21 @@ class TimeStepperFactory(Factory):
 
 
 system_factory = SystemFactory()
-for key, constructor in [
-    ("ParticleSystem", ParticleSystem),
-    ("RigidBodyRotatingQuaternions", RigidBodyRotatingQuaternions),
-    ("Pendulum2D", Pendulum2D),
-    ("Lorenz", Lorenz),
-    ("ChemicalReactor", ChemicalReactor),
-]:
+for key, constructor in registered_systems.items():
     system_factory.register_constructor(key=key, constructor=constructor)
 
 
 simulator_factory = SimulatorFactory()
-for key, constructor in [
-    ("OneStep", OneStep),
-]:
+for key, constructor in registered_simulators.items():
     simulator_factory.register_constructor(key=key, constructor=constructor)
 
 
 integrator_factory = IntegratorFactory()
-for key, constructor in [
-    ("MidpointPH", MidpointPH),
-    ("DiscreteGradientPHDAE", DiscreteGradientPHDAE),
-    ("MidpointMultibody", MidpointMultibody),
-    ("DiscreteGradientMultibody", DiscreteGradientMultibody),
-    ("MidpointDAE", MidpointDAE),
-]:
+for key, constructor in registered_integrators.items():
     integrator_factory.register_constructor(key=key, constructor=constructor)
 
 time_stepper_factory = TimeStepperFactory()
-for key, constructor in [
-    ("FixedIncrement", FixedIncrement),
-    ("FixedIncrementHittingEnd", FixedIncrementHittingEnd),
-]:
+for key, constructor in registered_timesteppers.items():
     time_stepper_factory.register_constructor(key=key, constructor=constructor)
 
 factories = dict(
