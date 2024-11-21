@@ -9,10 +9,12 @@ from . import utils
 
 class Postprocessor:
 
-    def __init__(self, manager, results_df: pd.DataFrame):
+    def __init__(self, manager, state_results_df: pd.DataFrame):
 
         self.manager = manager
-        self.results_df = results_df
+        self.state_results_df = state_results_df
+        self.post_results_df = pd.DataFrame()
+        self.results_df = pd.DataFrame()
         self.quantities = []
         self.color_palette = [
             "#0072B2",
@@ -32,7 +34,7 @@ class Postprocessor:
         self.quantities += quantities
 
         system = self.manager.system
-        self.nbr_time_point = len(self.results_df)
+        self.nbr_time_point = len(self.state_results_df)
 
         for quantity in self.quantities:
             # Determine function dimensions and initialize data
@@ -46,14 +48,20 @@ class Postprocessor:
                 data[step_index] = getattr(system, quantity)()
 
             if dim_function == 0:
-                self.results_df[quantity] = data
+                self.post_results_df[quantity] = data.squeeze()
             else:
                 column = [f"{quantity}_{i}" for i in range(dim_function + 1)]
                 # Append the new data to the results DataFrame
-                self.results_df[column] = data
+                self.post_results_df[column] = data
+
+        self.results_df = pd.concat(
+            [self.state_results_df, self.post_results_df], axis=1
+        )
+
+        0
 
     def update_system(self, system, index):
-        updated_state = utils.row_array_from_df(df=self.results_df, index=index)
+        updated_state = utils.row_array_from_df(df=self.state_results_df, index=index)
         system = system.copy(state=updated_state)
         return system
 

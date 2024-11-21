@@ -48,10 +48,11 @@ class TestExamples:
         result = manager.manage(result=result)
         new = result.to_df()
 
-        postprocessor = postprocessors.Postprocessor(manager, results_df=new)
+        postprocessor = postprocessors.Postprocessor(manager, state_results_df=new)
         postprocessor.postprocess(quantities=["hamiltonian"])
 
         old = expected_result_df
+        new = postprocessor.results_df
 
         utils.print_compare(old=old, new=new)
 
