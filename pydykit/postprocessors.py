@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -68,8 +70,14 @@ class Postprocessor:
 
         pd.options.plotting.backend = self.plotting_backend
 
+        columns_to_plot = [
+            col
+            for col in self.results_df.columns
+            if re.search(rf"^{quantities}(_\d+)?$", col)
+        ]
+
         fig = self.plot_single_figure(
-            quantities=quantities,
+            quantities=columns_to_plot,
             y_axis_label=y_axis_label,
         )
 
@@ -85,11 +93,10 @@ class Postprocessor:
     def plot_single_figure(self, quantities, y_axis_label):
         # TODO: IF we switch to using plotly.graphobjects (go), we will be better of.
         #       Instead of adding figures, we would then add traces.
-        columns_to_plot = [col for col in self.results_df.columns if quantities in col]
 
         return self.results_df.plot(
             x="time",
-            y=columns_to_plot,
+            y=quantities,
             labels={
                 "index": "time",
                 "value": y_axis_label,
