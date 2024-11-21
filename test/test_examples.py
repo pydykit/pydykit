@@ -43,7 +43,8 @@ class TestExamples:
         )
         manager._configure(configuration=configuration)
 
-        result = manager.manage()
+        result = pydykit.results.Result(manager=manager)
+        result = manager.manage(result=result)
         old = expected_result_df
         new = result.to_df()
 

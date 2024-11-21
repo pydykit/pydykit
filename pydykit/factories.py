@@ -1,4 +1,4 @@
-from . import abstract_base_classes, results
+from . import abstract_base_classes
 from .integrators import (
     DiscreteGradientMultibody,
     DiscreteGradientPHDAE,
@@ -6,12 +6,34 @@ from .integrators import (
     MidpointMultibody,
     MidpointPH,
 )
-from .results import Result
 from .simulators import OneStep
 from .systems_dae import ChemicalReactor, Lorenz
 from .systems_multi_body import ParticleSystem, RigidBodyRotatingQuaternions
 from .systems_port_hamiltonian import Pendulum2D
 from .time_steppers import FixedIncrement, FixedIncrementHittingEnd
+
+registered_systems = {
+    "ParticleSystem": ParticleSystem,
+    "RigidBodyRotatingQuaternions": RigidBodyRotatingQuaternions,
+    "Pendulum2D": Pendulum2D,
+    "Lorenz": Lorenz,
+    "ChemicalReactor": ChemicalReactor,
+}
+
+registered_simulators = {"OneStep": OneStep}
+
+registered_integrators = {
+    "MidpointPH": MidpointPH,
+    "DiscreteGradientPHDAE": DiscreteGradientPHDAE,
+    "MidpointMultibody": MidpointMultibody,
+    "DiscreteGradientMultibody": DiscreteGradientMultibody,
+    "MidpointDAE": MidpointDAE,
+}
+
+registered_timesteppers = {
+    "FixedIncrement": FixedIncrement,
+    "FixedIncrementHittingEnd": FixedIncrementHittingEnd,
+}
 
 
 class Factory:
@@ -29,7 +51,6 @@ class Factory:
 
 class SystemFactory(Factory):
     def get(self, key, **kwargs) -> abstract_base_classes.System:
-        # TODO: Try to make the type hint of this method more specific, i.e.. return Factory().constructors[key]
         return self.create(key, **kwargs)
 
 
@@ -48,51 +69,23 @@ class TimeStepperFactory(Factory):
         return self.create(key, **kwargs)
 
 
-class ResultFactory(Factory):
-    def get(self, key, **kwargs) -> results.Result:
-        return self.create(key, **kwargs)
-
-
 system_factory = SystemFactory()
-for key, constructor in [
-    ("ParticleSystem", ParticleSystem),
-    ("RigidBodyRotatingQuaternions", RigidBodyRotatingQuaternions),
-    ("Pendulum2D", Pendulum2D),
-    ("Lorenz", Lorenz),
-    ("ChemicalReactor", ChemicalReactor),
-]:
+for key, constructor in registered_systems.items():
     system_factory.register_constructor(key=key, constructor=constructor)
 
 
 simulator_factory = SimulatorFactory()
-for key, constructor in [
-    ("OneStep", OneStep),
-]:
+for key, constructor in registered_simulators.items():
     simulator_factory.register_constructor(key=key, constructor=constructor)
 
 
 integrator_factory = IntegratorFactory()
-for key, constructor in [
-    ("MidpointPH", MidpointPH),
-    ("DiscreteGradientPHDAE", DiscreteGradientPHDAE),
-    ("MidpointMultibody", MidpointMultibody),
-    ("DiscreteGradientMultibody", DiscreteGradientMultibody),
-    ("MidpointDAE", MidpointDAE),
-]:
+for key, constructor in registered_integrators.items():
     integrator_factory.register_constructor(key=key, constructor=constructor)
 
 time_stepper_factory = TimeStepperFactory()
-for key, constructor in [
-    ("FixedIncrement", FixedIncrement),
-    ("FixedIncrementHittingEnd", FixedIncrementHittingEnd),
-]:
+for key, constructor in registered_timesteppers.items():
     time_stepper_factory.register_constructor(key=key, constructor=constructor)
-
-result_factory = ResultFactory()
-for key, constructor in [
-    ("Result", Result),
-]:
-    result_factory.register_constructor(key=key, constructor=constructor)
 
 factories = dict(
     system=system_factory,

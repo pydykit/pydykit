@@ -28,11 +28,10 @@ class OneStep(Simulator):
             max_iterations=max_iterations,
         )
 
-    def run(self):
+    def run(self, result):
         time_stepper = self.manager.time_stepper
         manager = self.manager
         manager.validate_integrator_system_combination()
-        result = manager.result
 
         # Initialze the time stepper
         steps = time_stepper.make_steps()

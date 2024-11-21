@@ -1,6 +1,6 @@
 from . import abstract_base_classes, results, utils
 from .configuration import Configuration
-from .factories import factories, result_factory
+from .factories import factories
 
 
 class Manager(abstract_base_classes.Manager):
@@ -26,10 +26,7 @@ class Manager(abstract_base_classes.Manager):
         for key in factories.keys():
             setattr(self, key, self.get_instance(key=key))
 
-        self.result = result_factory.get(
-            key="Result",
-            manager=self,
-        )
+        # self.result = results.Result(manager=self)
 
     def get_instance(self, key):
         obj = getattr(self.configuration, key)
@@ -37,8 +34,8 @@ class Manager(abstract_base_classes.Manager):
 
         return factory.get(key=obj.class_name, manager=self, **obj.kwargs)
 
-    def manage(self):
-        return self.simulator.run()
+    def manage(self, result):
+        return self.simulator.run(result=result)
 
     def validate_integrator_system_combination(self):
 

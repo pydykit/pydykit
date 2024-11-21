@@ -43,7 +43,8 @@ class TestExamples:
         # creates an instance of PHS with attribute MBS
         manager.system = porthamiltonian_system
 
-        result = manager.manage()
+        result = pydykit.results.Result(manager=manager)
+        result = manager.manage(result=result)
         new = result.to_df()
 
         postprocessor = postprocessors.Postprocessor(manager, results_df=new)
