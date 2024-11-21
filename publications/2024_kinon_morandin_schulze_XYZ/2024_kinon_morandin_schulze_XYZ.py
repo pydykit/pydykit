@@ -19,7 +19,7 @@ result = pydykit.results.Result(manager=manager)
 result = manager.manage(result=result)
 
 df = result.to_df()
-postprocessor = postprocessors.Postprocessor(manager, results_df=df)
+postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
 postprocessor.postprocess(
     quantities=["hamiltonian", "constraint", "constraint_velocity"]
 )
