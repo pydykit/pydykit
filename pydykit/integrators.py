@@ -102,7 +102,7 @@ class DiscreteGradientPHDAE(IntegratorCommon):
         )
 
         differential_costate = np.linalg.solve(E_11_n05.T, DGH)
-        algebraic_costate = system_n05.get_algebraic_costate()
+        algebraic_costate = system_n1.get_algebraic_costate()
         costate = np.concatenate([differential_costate, algebraic_costate], axis=0)
 
         residuum = (
