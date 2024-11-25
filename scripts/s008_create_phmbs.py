@@ -4,7 +4,7 @@ import pydykit
 import pydykit.postprocessors as postprocessors
 import pydykit.systems_port_hamiltonian as phs
 
-name = "four_particle_system_ph_discrete_gradient"
+name = "four_particle_system_ph_discrete_gradient_dissipative"
 
 manager = pydykit.managers.Manager()
 
@@ -36,7 +36,8 @@ for index in range(manager.system.mbs.nbr_particles):
 fig.show()
 
 postprocessor = postprocessors.Postprocessor(
-    manager, results_df=df, quantities=["hamiltonian"]
+    manager,
+    state_results_df=df,
 )
-postprocessor.postprocess()
-df.to_csv(f"test/reference_results/{name}.csv")
+postprocessor.postprocess(quantities=["hamiltonian"])
+postprocessor.results_df.to_csv(f"test/reference_results/{name}.csv")
