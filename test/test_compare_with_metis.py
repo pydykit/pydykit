@@ -21,6 +21,10 @@ example_worklist = [
         name="four_particle_system",
         result_indices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     ),
+    dict(
+        name="four_particle_system_dissipative",
+        result_indices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    ),
 ]
 
 
