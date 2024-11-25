@@ -16,6 +16,7 @@ class Postprocessor:
         self.post_results_df = pd.DataFrame()
         self.results_df = pd.DataFrame()
         self.quantities = []
+        self.evaluation_points = []
         self.color_palette = [
             "#0072B2",
             "#009E73",
@@ -29,14 +30,15 @@ class Postprocessor:
         # color scheme (color-blind friendly)
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
 
-    def postprocess(self, quantities):
+    def postprocess(self, quantities, evaluation_points):
 
         self.quantities += quantities
+        self.evaluation_points += evaluation_points
 
         system = self.manager.system
         self.nbr_time_point = len(self.state_results_df)
 
-        for quantity in self.quantities:
+        for index, quantity in enumerate(self.quantities):
             # Determine function dimensions and initialize data
             system_function = getattr(system, quantity)
             dim_function = system_function().ndim
@@ -44,13 +46,46 @@ class Postprocessor:
 
             # Evaluate and collect data for each time point
             for step_index in range(self.nbr_time_point):
-                system = self.update_system(system, step_index)
-                data[step_index] = getattr(system, quantity)()
+                system_n = self.update_system(system, step_index)
+                if not step_index + 1 == self.nbr_time_point:
+                    system_n1 = self.update_system(system, step_index + 1)
+
+                if self.evaluation_points[index] == "n":
+                    data[step_index] = getattr(system_n, quantity)()
+                elif (
+                    self.evaluation_points[index] == "n1-n"
+                    and not step_index + 1 == self.nbr_time_point
+                ):
+                    data[step_index] = (
+                        getattr(system_n1, quantity)() - getattr(system_n, quantity)()
+                    )
+                elif (
+                    self.evaluation_points[index] == "n1-n"
+                    and step_index + 1 == self.nbr_time_point
+                ):
+                    pass
+                else:
+                    raise utils.PydykitException(
+                        f"Evaluation point choice {evaluation_points[index]} not implemented."
+                    )
 
             if dim_function == 0:
-                self.post_results_df[quantity] = data.squeeze()
+                column = (
+                    quantity
+                    if self.evaluation_points[index] == "n"
+                    else f"{quantity}_difference"
+                )
+
+                self.post_results_df[column] = data.squeeze()
             else:
-                column = [f"{quantity}_{i}" for i in range(dim_function + 1)]
+                column = [
+                    (
+                        f"{quantity}_{i}"
+                        if self.evaluation_points[index] == "n"
+                        else f"{quantity}_{i}_difference"
+                    )
+                    for i in range(dim_function + 1)
+                ]
                 # Append the new data to the results DataFrame
                 self.post_results_df[column] = data
 
