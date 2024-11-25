@@ -30,15 +30,23 @@ postprocessor.postprocess(
     evaluation_points=["n05"],
     weighted_by_timestepsize=True,
 )
+postprocessor.add_sum_of(
+    quantities=["hamiltonian_difference", "dissipated_power"], name="sum"
+)
 
 # Hamiltonian
 fig01 = postprocessor.visualize(quantities=["hamiltonian"])
 fig01.show()
 
+postprocessor.results_df["sum"] = abs(postprocessor.results_df["sum"])
+
 fig02 = postprocessor.visualize(
-    quantities=["hamiltonian_difference", "dissipated_power"]
+    quantities=["hamiltonian_difference", "dissipated_power", "sum"],
 )
 fig02.show()
+
+fig03 = postprocessor.visualize(quantities=["sum"], y_axis_scale="log")
+fig03.show()
 
 fig03 = postprocessor.visualize(quantities=["constraint"], y_axis_label="constraints")
 fig03.show()
@@ -48,4 +56,4 @@ fig04 = postprocessor.visualize(
 )
 fig04.show()
 
-df.to_csv(f"./publications/{project}/{name}.csv", index=False)
+postprocessor.results_df.to_csv(f"./publications/{project}/{name}.csv", index=False)
