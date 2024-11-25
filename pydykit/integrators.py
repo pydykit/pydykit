@@ -101,6 +101,9 @@ class DiscreteGradientPHDAE(IntegratorCommon):
             type="Gonzalez",
             increment_tolerance=self.increment_tolerance,
             consider_decomposition=self.consider_decomposition,
+            nbr_func_parts=system_n.nbr_hamiltonian_parts,
+            func_parts_n=system_n.differential_state_composition,
+            func_parts_n1=system_n1.differential_state_composition,
         )
 
         differential_costate = np.linalg.solve(E_11_n05.T, DGH)
