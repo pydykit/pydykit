@@ -231,6 +231,9 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
 
         return ph_dissipation_matrix
 
+    def dissipated_power(self):
+        return np.dot(self.costates(), self.dissipation_matrix() @ self.costates())
+
     def get_algebraic_costate(self):
         decomposed_state = self.decompose_state()
         lambd = decomposed_state["multiplier"]

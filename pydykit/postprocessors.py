@@ -30,7 +30,9 @@ class Postprocessor:
         # color scheme (color-blind friendly)
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
 
-    def postprocess(self, quantities, evaluation_points):
+    def postprocess(
+        self, quantities, evaluation_points, weighted_by_timestepsize=False
+    ):
 
         self.quantities += quantities
         self.evaluation_points += evaluation_points
@@ -38,7 +40,7 @@ class Postprocessor:
         system = self.manager.system
         self.nbr_time_point = len(self.state_results_df)
 
-        for index, quantity in enumerate(self.quantities):
+        for index, quantity in enumerate(quantities):
             # Determine function dimensions and initialize data
             system_function = getattr(system, quantity)
             dim_function = system_function().ndim
@@ -50,24 +52,45 @@ class Postprocessor:
                 if not step_index + 1 == self.nbr_time_point:
                     system_n1 = self.update_system(system, step_index + 1)
 
-                if self.evaluation_points[index] == "n":
+                if evaluation_points[index] == "n":
                     data[step_index] = getattr(system_n, quantity)()
                 elif (
-                    self.evaluation_points[index] == "n1-n"
+                    evaluation_points[index] == "n05"
+                    and not step_index + 1 == self.nbr_time_point
+                ):
+                    state_n = system_n.state
+                    state_n1 = system_n1.state
+                    state_n05 = 0.5 * (state_n + state_n1)
+                    system_n, system_n05 = utils.get_system_copies_with_desired_states(
+                        system=self.manager.system,
+                        states=[
+                            state_n,
+                            state_n05,
+                        ],
+                    )
+                    data[step_index] = getattr(system_n05, quantity)()
+                elif (
+                    evaluation_points[index] == "n1-n"
                     and not step_index + 1 == self.nbr_time_point
                 ):
                     data[step_index] = (
                         getattr(system_n1, quantity)() - getattr(system_n, quantity)()
                     )
                 elif (
-                    self.evaluation_points[index] == "n1-n"
+                    evaluation_points[index] == "n1-n"
+                    and step_index + 1 == self.nbr_time_point
+                ) or (
+                    evaluation_points[index] == "n05"
                     and step_index + 1 == self.nbr_time_point
                 ):
-                    pass
+                    data[step_index] = np.nan
                 else:
                     raise utils.PydykitException(
                         f"Evaluation point choice {evaluation_points[index]} not implemented."
                     )
+
+            if weighted_by_timestepsize:
+                data = data * self.manager.time_stepper.current_step.increment
 
             if dim_function == 0:
                 column = (
@@ -113,11 +136,13 @@ class Postprocessor:
 
         pd.options.plotting.backend = self.plotting_backend
 
-        columns_to_plot = [
-            col
-            for col in self.results_df.columns
-            if re.search(rf"^{quantities}(_\d+)?$", col)
-        ]
+        columns_to_plot = []
+        for quantity in quantities:
+            columns_to_plot += [
+                col
+                for col in self.results_df.columns
+                if re.search(rf"^{quantity}(_\d+)?$", col)
+            ]
 
         fig = self.plot_single_figure(
             quantities=columns_to_plot,

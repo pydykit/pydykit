@@ -37,21 +37,34 @@ fig.show()
 
 postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
 postprocessor.postprocess(
-    quantities=["hamiltonian", "hamiltonian", "constraint", "constraint_velocity"],
+    quantities=[
+        "hamiltonian",
+        "hamiltonian",
+        "constraint",
+        "constraint_velocity",
+    ],
     evaluation_points=["n", "n1-n", "n", "n"],
 )
 
+postprocessor.postprocess(
+    quantities=["dissipated_power"],
+    evaluation_points=["n05"],
+    weighted_by_timestepsize=True,
+)
+
 # Hamiltonian
-fig01 = postprocessor.visualize(quantities="hamiltonian")
+fig01 = postprocessor.visualize(quantities=["hamiltonian"])
 fig01.show()
 
-fig02 = postprocessor.visualize(quantities="hamiltonian_difference")
+fig02 = postprocessor.visualize(
+    quantities=["hamiltonian_difference", "dissipated_power"]
+)
 fig02.show()
 
-fig03 = postprocessor.visualize(quantities="constraint", y_axis_label="constraints")
+fig03 = postprocessor.visualize(quantities=["constraint"], y_axis_label="constraints")
 fig03.show()
 
 fig04 = postprocessor.visualize(
-    quantities="constraint_velocity", y_axis_label="velocity constraints"
+    quantities=["constraint_velocity"], y_axis_label="velocity constraints"
 )
 fig04.show()
