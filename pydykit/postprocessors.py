@@ -116,8 +116,6 @@ class Postprocessor:
             [self.state_results_df, self.post_results_df], axis=1
         )
 
-        0
-
     def update_system(self, system, index):
         updated_state = utils.row_array_from_df(df=self.state_results_df, index=index)
         system = system.copy(state=updated_state)
@@ -127,6 +125,7 @@ class Postprocessor:
         self,
         quantities=None,
         y_axis_label="value",
+        y_axis_scale="linear",
         figure: None | go.Figure = None,
     ):
 
@@ -147,6 +146,7 @@ class Postprocessor:
         fig = self.plot_single_figure(
             quantities=columns_to_plot,
             y_axis_label=y_axis_label,
+            y_axis_scale=y_axis_scale,
         )
 
         if figure is None:
@@ -158,11 +158,11 @@ class Postprocessor:
 
         return figure
 
-    def plot_single_figure(self, quantities, y_axis_label):
+    def plot_single_figure(self, quantities, y_axis_label, y_axis_scale):
         # TODO: IF we switch to using plotly.graphobjects (go), we will be better of.
         #       Instead of adding figures, we would then add traces.
 
-        return self.results_df.plot(
+        fig = self.results_df.plot(
             x="time",
             y=quantities,
             labels={
@@ -171,3 +171,10 @@ class Postprocessor:
             },
             color_discrete_sequence=self.color_palette,
         )
+        fig.update_layout(yaxis_type=y_axis_scale)
+        return fig
+
+    def add_sum_of(self, quantities, name):
+        self.results_df[name] = self.post_results_df[name] = self.post_results_df[
+            quantities
+        ].sum(axis=1, skipna=False)
