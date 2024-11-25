@@ -174,10 +174,8 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return q.T[np.newaxis, :]
 
     def dissipation_matrix(self):
-        q = self.decompose_state()["position"]
-        v = self.decompose_state()["velocity"]
 
-        diss_mat = np.zeros(q.shape, v.shape)
+        diss_mat = np.zeros([self.nbr_dof, self.nbr_dof])
         return diss_mat
 
 
@@ -189,6 +187,7 @@ class ParticleSystem(MultiBodySystem):
         nbr_spatial_dimensions: int,
         particles: list[dict,],
         springs: list[dict,],
+        dampers: list[dict,],
         constraints: list[dict,],
         supports: list[dict,],
         gravity: list[float],
@@ -200,6 +199,7 @@ class ParticleSystem(MultiBodySystem):
             key="index",
         )
         self.springs = springs
+        self.dampers = dampers
         self.constraints = constraints
         self.supports = utils.sort_list_of_dicts_based_on_special_value(
             my_list=supports, key="index"
@@ -353,12 +353,12 @@ class ParticleSystem(MultiBodySystem):
                 length=constraint["length"],
                 start=utils.select(
                     position_vectors=position_vectors,
-                    constraint=constraint,
+                    element=constraint,
                     endpoint="start",
                 ),
                 end=utils.select(
                     position_vectors=position_vectors,
-                    constraint=constraint,
+                    element=constraint,
                     endpoint="end",
                 ),
             )
@@ -397,12 +397,12 @@ class ParticleSystem(MultiBodySystem):
             self._constraint_gradient(
                 start_vector=utils.select(
                     position_vectors=position_vectors,
-                    constraint=constraint,
+                    element=constraint,
                     endpoint="start",
                 ),
                 end_vector=utils.select(
                     position_vectors=position_vectors,
-                    constraint=constraint,
+                    element=constraint,
                     endpoint="end",
                 ),
                 start_index=(
@@ -432,5 +432,98 @@ class ParticleSystem(MultiBodySystem):
         return [np.array(support["position"]) for support in self.supports]
 
     def dissipation_matrix(self):
-        diss_mat = np.zeros(self.nbr_dof, self.nbr_dof)
+        diss_mat = np.zeros([self.nbr_dof, self.nbr_dof])
+
+        q = self.decompose_state()["position"]
+        position_vectors = dict(
+            particle=self.decompose_into_particles(q),
+            support=self.get_positions_supports(),
+        )
+
+        contributions = [
+            self.dynamic_viscosity(
+                element=damper,
+                relative_displacement=np.linalg.norm(
+                    utils.select(
+                        position_vectors=position_vectors,
+                        element=damper,
+                        endpoint="end",
+                    )
+                    - utils.select(
+                        position_vectors=position_vectors,
+                        element=damper,
+                        endpoint="start",
+                    )
+                ),
+            )
+            * self._dissipation_matrix(
+                nbr_dimensions=self.nbr_spatial_dimensions,
+                start_index=(
+                    damper["start"]["index"]
+                    if damper["start"]["type"] == "particle"
+                    else None
+                ),
+                end_index=(
+                    damper["end"]["index"]
+                    if damper["end"]["type"] == "particle"
+                    else None
+                ),
+                nbr_particles=self.nbr_particles,
+            )
+            for damper in self.dampers
+        ]
+
+        diss_mat += sum(contributions)
+
         return diss_mat
+
+    @staticmethod
+    def _dissipation_matrix(
+        nbr_dimensions,
+        start_index,
+        end_index,
+        nbr_particles,
+    ):
+
+        structure_start = []
+        structure_end = []
+        structure = []
+        for index in range(nbr_particles):
+            if index == start_index:
+                structure_end.append(-np.eye(nbr_dimensions))
+                structure_start.append(np.eye(nbr_dimensions))
+            elif index == end_index:
+                structure_end.append(np.eye(nbr_dimensions))
+                structure_start.append(-np.eye(nbr_dimensions))
+            else:
+                structure_end.append(np.zeros([nbr_dimensions, nbr_dimensions]))
+                structure_start.append(np.zeros([nbr_dimensions, nbr_dimensions]))
+
+        structure_start = np.hstack(structure_start)
+        structure_end = np.hstack(structure_end)
+
+        for index in range(nbr_particles):
+            if index == start_index:
+                structure.append(structure_start)
+            elif index == end_index:
+                structure.append(structure_end)
+            else:
+                structure.append(
+                    np.zeros([nbr_dimensions, nbr_particles * nbr_dimensions])
+                )
+
+        return np.vstack(structure)
+
+    @staticmethod
+    def dynamic_viscosity(element, relative_displacement):
+
+        viscosity = element["ground_viscosity"]
+
+        if element["state_dependent"]:
+            viscosity += (
+                element["ground_viscosity"]
+                * element["alpha"]
+                * relative_displacement**2
+            )
+
+        return viscosity

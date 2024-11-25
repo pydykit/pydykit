@@ -13,6 +13,7 @@ example_manager = pydykit.examples.Manager()
 
 example_worklist = [
     "four_particle_system_ph_discrete_gradient",
+    "four_particle_system_ph_discrete_gradient_dissipative",
 ]
 
 

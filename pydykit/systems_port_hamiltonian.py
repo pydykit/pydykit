@@ -11,7 +11,7 @@ class PortHamiltonianSystem(
 ):
     """
     These systems follow the pattern:
-    E(x) \dot{x} = (J(x)-R(x))z(x) + B(x)u
+    E(x) dot{x} = (J(x)-R(x))z(x) + B(x)u
      E(x)^T z(x) = \nabla H(x)
                y = B(x)^T z(x)
     where x: state
@@ -90,7 +90,7 @@ class Pendulum2D(PortHamiltonianSystem):
         pass
 
     def dissipation_matrix(self):
-        pass
+        return np.zeros([2, 2])
 
 
 class PortHamiltonianMBS(PortHamiltonianSystem):
@@ -209,7 +209,12 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         pass
 
     def dissipation_matrix(self):
-        pass
+        zeros_matrix_1 = np.zeros([self.mbs.nbr_dof, self.mbs.nbr_dof])
+        diss_mat = self.mbs.dissipation_matrix()
+        zeros_matrix_2 = np.zeros((self.mbs.nbr_constraints, self.mbs.nbr_constraints))
+        ph_dissipation_matrix = block_diag(zeros_matrix_1, diss_mat, zeros_matrix_2)
+
+        return ph_dissipation_matrix
 
     def get_algebraic_costate(self):
         decomposed_state = self.decompose_state()

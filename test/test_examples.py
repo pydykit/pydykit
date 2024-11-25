@@ -16,6 +16,7 @@ example_worklist = [
     "particle_system_03",
     "four_particle_system",
     "four_particle_system_discrete_gradient",
+    "four_particle_system_dissipative",
     "lorenz",
     "reactor",
 ]
