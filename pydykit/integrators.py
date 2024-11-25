@@ -58,9 +58,10 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
     parametrization = ["state"]
 
-    def __init__(self, manager, increment_tolerance):
+    def __init__(self, manager, increment_tolerance, consider_decomposition):
         super().__init__(manager)
         self.increment_tolerance = increment_tolerance
+        self.consider_decomposition = consider_decomposition
 
     def get_residuum(self, next_state):
 
@@ -99,6 +100,7 @@ class DiscreteGradientPHDAE(IntegratorCommon):
             argument_n1=differential_state_n1,
             type="Gonzalez",
             increment_tolerance=self.increment_tolerance,
+            consider_decomposition=self.consider_decomposition,
         )
 
         differential_costate = np.linalg.solve(E_11_n05.T, DGH)
