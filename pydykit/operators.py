@@ -120,9 +120,9 @@ def discrete_gradient(
         )
 
         argument_n = system_n.decompose_state()[
-            system_n1.differential_state_composition[index]
+            system_n.differential_state_composition[index]
         ]
-        argument_n1 = system_n.decompose_state()[
+        argument_n1 = system_n1.decompose_state()[
             system_n1.differential_state_composition[index]
         ]
 
