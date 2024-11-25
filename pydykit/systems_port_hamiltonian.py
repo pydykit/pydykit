@@ -31,6 +31,7 @@ class PortHamiltonianSystem(
         self.manager = manager
         self.initialize_state(state)
         self.parametrization = ["state"]
+        self.composed_hamiltonian = False
 
     def output(self):
         return self.port_matrix.T @ self.input_vector()
@@ -99,6 +100,9 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         self.mbs = manager.system
         super().__init__(manager, state=manager.system.initial_state)
         self.parametrization = ["state"]
+        self.composed_hamiltonian = True
+        self.nbr_hamiltonian_parts = 2
+        self.differential_state_composition = ["position", "momentum"]
 
     def copy(self, state):
         system = super().copy(state=state)
@@ -147,18 +151,27 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         )
 
     def hamiltonian_differential_gradient(self):
+        return np.concatenate(
+            [
+                self.hamiltonian_differential_gradient_1(),
+                self.hamiltonian_differential_gradient_2(),
+            ],
+            axis=0,
+        )
+
+    def hamiltonian_differential_gradient_1(self):
+
+        return (
+            self.mbs.external_potential_gradient()
+            + self.mbs.internal_potential_gradient()
+        )
+
+    def hamiltonian_differential_gradient_2(self):
         decomposed_state = self.decompose_state()
         v = decomposed_state["momentum"]
         mass_matrix = self.mbs.mass_matrix()
 
-        return np.concatenate(
-            [
-                self.mbs.external_potential_gradient()
-                + self.mbs.internal_potential_gradient(),
-                mass_matrix @ v,
-            ],
-            axis=0,
-        )
+        return mass_matrix @ v
 
     def structure_matrix(self):
         decomposed_state = self.decompose_state()
@@ -194,13 +207,15 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         return block_diag(identity_mat, mass_matrix)
 
     def hamiltonian(self):
+        return self.hamiltonian_1() + self.hamiltonian_2()
+
+    def hamiltonian_1(self):
+        return self.mbs.external_potential() + self.mbs.internal_potential()
+
+    def hamiltonian_2(self):
         decomposed_state = self.decompose_state()
         v = decomposed_state["momentum"]
-        return (
-            self.mbs.external_potential()
-            + self.mbs.internal_potential()
-            + 0.5 * np.dot(v, self.mbs.mass_matrix() @ v)
-        )
+        return 0.5 * np.dot(v, self.mbs.mass_matrix() @ v)
 
     def port_matrix(self):
         pass
