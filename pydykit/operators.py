@@ -124,7 +124,7 @@ def Gonzalez_discrete_gradient(
                     - np.dot(midpoint_jacobian[index, :], increment)
                 )
                 / denominator
-                * increment
+                * increment.T
             )
 
         return discrete_gradient
