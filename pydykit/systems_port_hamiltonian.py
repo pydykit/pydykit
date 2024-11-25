@@ -246,4 +246,6 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         return self.mbs.constraint()
 
     def constraint_velocity(self):
-        return self.mbs.constraint_velocity()
+        decomposed_state = self.decompose_state()
+        v = decomposed_state["momentum"]
+        return self.mbs.constraint_gradient() @ v
