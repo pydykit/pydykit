@@ -35,9 +35,19 @@ for index in range(manager.system.mbs.nbr_particles):
 
 fig.show()
 
-postprocessor = postprocessors.Postprocessor(
-    manager,
-    state_results_df=df,
+postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
+postprocessor.postprocess(
+    quantities=["hamiltonian", "constraint", "constraint_velocity"]
 )
-postprocessor.postprocess(quantities=["hamiltonian"])
-postprocessor.results_df.to_csv(f"test/reference_results/{name}.csv")
+
+# Hamiltonian
+fig01 = postprocessor.visualize(quantities="hamiltonian")
+fig01.show()
+
+fig02 = postprocessor.visualize(quantities="constraint", y_axis_label="constraints")
+fig02.show()
+
+fig03 = postprocessor.visualize(
+    quantities="constraint_velocity", y_axis_label="velocity constraints"
+)
+fig03.show()
