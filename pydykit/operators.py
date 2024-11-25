@@ -75,6 +75,7 @@ def discrete_gradient(
     argument_n1: np.ndarray,
     type: str = "Gonzalez",
     increment_tolerance: float = 1e-12,
+    consider_decomposition: bool = False,
 ):
 
     if type != "Gonzalez":
@@ -82,23 +83,61 @@ def discrete_gradient(
             f"Discrete gradient of type {type} is not implemented."
         )
 
-    func_n = getattr(system_n, func_name)()
-    func_n1 = getattr(system_n1, func_name)()
-    midpoint_jacobian = getattr(system_n05, jacobian_name)()
-    midpoint_jacobian, func_n, func_n1 = adjust_midpoint_jacobian(
-        midpoint_jacobian, func_n, func_n1
-    )
+    if not consider_decomposition:
+        func_n = getattr(system_n, func_name)()
+        func_n1 = getattr(system_n1, func_name)()
+        midpoint_jacobian = getattr(system_n05, jacobian_name)()
+        midpoint_jacobian, func_n, func_n1 = adjust_midpoint_jacobian(
+            midpoint_jacobian, func_n, func_n1
+        )
 
-    discrete_gradient_vector = Gonzalez_discrete_gradient(
-        func_n,
-        func_n1,
-        midpoint_jacobian,
-        argument_n,
-        argument_n1,
-        increment_tolerance,
-    )
+        discrete_gradient_vector = Gonzalez_discrete_gradient(
+            func_n,
+            func_n1,
+            midpoint_jacobian,
+            argument_n,
+            argument_n1,
+            increment_tolerance,
+        )
 
-    return discrete_gradient_vector.squeeze()
+        return discrete_gradient_vector.squeeze()
+
+    nbr_hamiltonian_parts = system_n.nbr_hamiltonian_parts
+
+    DG = []
+
+    for index in range(nbr_hamiltonian_parts):
+
+        # include argument decomposition by index
+        # 0 --> 0:12
+        # 1 --> 12:24 e.g.
+
+        func_n = getattr(system_n, func_name + f"_{index+1}")()
+        func_n1 = getattr(system_n1, func_name + f"_{index+1}")()
+        midpoint_jacobian = getattr(system_n05, jacobian_name + f"_{index+1}")()
+        midpoint_jacobian, func_n, func_n1 = adjust_midpoint_jacobian(
+            midpoint_jacobian, func_n, func_n1
+        )
+
+        argument_n = system_n.decompose_state()[
+            system_n1.differential_state_composition[index]
+        ]
+        argument_n1 = system_n.decompose_state()[
+            system_n1.differential_state_composition[index]
+        ]
+
+        discrete_gradient_vector = Gonzalez_discrete_gradient(
+            func_n,
+            func_n1,
+            midpoint_jacobian,
+            argument_n,
+            argument_n1,
+            increment_tolerance,
+        )
+
+        DG.append(discrete_gradient_vector.squeeze())
+
+    return np.concatenate(DG, axis=0)
 
 
 def Gonzalez_discrete_gradient(
