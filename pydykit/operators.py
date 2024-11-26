@@ -95,7 +95,7 @@ def discrete_gradient(
             argument_n,
             argument_n1,
             increment_tolerance,
-        ).squeeze()
+        )
 
     elif type == "Gonzalez_decomposed":
 
@@ -143,7 +143,7 @@ def Gonzalez_discrete_gradient(
     denominator_tolerance,
 ):
     """Compute the discrete gradient using the Gonzalez approach."""
-    discrete_gradient = midpoint_jacobian.copy()
+    discrete_gradient = midpoint_jacobian
     increment = argument_n1 - argument_n
     denominator = increment.T @ increment
 
@@ -160,10 +160,12 @@ def Gonzalez_discrete_gradient(
                 * increment.T
             )
 
-        return discrete_gradient
+        result = discrete_gradient
 
     else:
-        return midpoint_jacobian
+        result = midpoint_jacobian
+
+    return result.squeeze()
 
 
 def adjust_midpoint_jacobian(midpoint_jacobian, func_n, func_n1):
