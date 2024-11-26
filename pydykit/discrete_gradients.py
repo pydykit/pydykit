@@ -112,9 +112,7 @@ def discrete_gradient(
         argument_n=argument_n,
         argument_n1=argument_n1,
         increment_tolerance=increment_tolerance,
-        nbr_func_parts=nbr_func_parts,
-        func_parts_n=func_parts_n,
-        func_parts_n1=func_parts_n1,
+        **kwargs,
     )
 
 
