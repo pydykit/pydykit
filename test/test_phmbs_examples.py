@@ -18,6 +18,7 @@ example_worklist = [
 
 
 class TestExamples:
+    @pytest.mark.push
     @pytest.mark.parametrize(
         ("content_config_file", "expected_result_df"),
         (

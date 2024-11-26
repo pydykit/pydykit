@@ -1,6 +1,8 @@
-name: Pytest
+name: Pytest weekly
 
-on: [push]
+on:
+  schedule:
+  - cron: 59 22 * * 5     # Schedule triggers every Friday at 22:59 UTC
 
 jobs:
   test:
@@ -30,4 +32,4 @@ jobs:
     - name: Pytest
       working-directory: .
       run: |
-        pytest -vv --runslow
+        pytest -vv --runslow -m "weekly"
