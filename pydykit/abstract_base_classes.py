@@ -215,10 +215,3 @@ class Manager(abc.ABC):
     integrator: Integrator = NotImplemented
     system: System = NotImplemented
     result: results.Result = NotImplemented
-
-
-class Quantity(abc.ABC):
-
-    @abc.abstractmethod
-    def create_dataframe(self, nbr_time_point):
-        pass
