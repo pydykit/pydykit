@@ -56,4 +56,4 @@ fig04 = postprocessor.visualize(
 )
 # fig04.show()
 
-# postprocessor.results_df.to_csv(f"./publications/{project}/{project}.csv", index=False)
+postprocessor.results_df.to_csv(f"./publications/{project}/{name}.csv", index=False)
