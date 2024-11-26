@@ -75,18 +75,12 @@ def discrete_gradient(
     argument_n1: np.ndarray,
     type: str = "Gonzalez",
     increment_tolerance: float = 1e-12,
-    consider_decomposition: bool = False,
     nbr_func_parts=None,
     func_parts_n=None,
     func_parts_n1=None,
 ):
 
-    if type != "Gonzalez":
-        raise NotImplementedError(
-            f"Discrete gradient of type {type} is not implemented."
-        )
-
-    if not consider_decomposition:
+    if type == "Gonzalez":
         func_n = getattr(system_n, func_name)()
         func_n1 = getattr(system_n1, func_name)()
         midpoint_jacobian = getattr(system_n05, jacobian_name)()
@@ -101,36 +95,43 @@ def discrete_gradient(
             argument_n,
             argument_n1,
             increment_tolerance,
+        ).squeeze()
+
+    elif type == "Gonzalez_decomposed":
+
+        discrete_gradient = []
+
+        for index in range(nbr_func_parts):
+
+            func_n = getattr(system_n, func_name + f"_{index+1}")()
+            func_n1 = getattr(system_n1, func_name + f"_{index+1}")()
+            midpoint_jacobian = getattr(system_n05, jacobian_name + f"_{index+1}")()
+            midpoint_jacobian, func_n, func_n1 = adjust_midpoint_jacobian(
+                midpoint_jacobian, func_n, func_n1
+            )
+
+            argument_n = system_n.decompose_state()[func_parts_n[index]]
+            argument_n1 = system_n1.decompose_state()[func_parts_n1[index]]
+
+            discrete_gradient_contribution = Gonzalez_discrete_gradient(
+                func_n,
+                func_n1,
+                midpoint_jacobian,
+                argument_n,
+                argument_n1,
+                increment_tolerance,
+            )
+
+            discrete_gradient.append(discrete_gradient_contribution.squeeze())
+
+        discrete_gradient_vector = np.concatenate(discrete_gradient, axis=0)
+
+    else:
+        raise NotImplementedError(
+            f"Discrete gradient of type {type} is not implemented."
         )
 
-        return discrete_gradient_vector.squeeze()
-
-    discrete_gradient = []
-
-    for index in range(nbr_func_parts):
-
-        func_n = getattr(system_n, func_name + f"_{index+1}")()
-        func_n1 = getattr(system_n1, func_name + f"_{index+1}")()
-        midpoint_jacobian = getattr(system_n05, jacobian_name + f"_{index+1}")()
-        midpoint_jacobian, func_n, func_n1 = adjust_midpoint_jacobian(
-            midpoint_jacobian, func_n, func_n1
-        )
-
-        argument_n = system_n.decompose_state()[func_parts_n[index]]
-        argument_n1 = system_n1.decompose_state()[func_parts_n1[index]]
-
-        discrete_gradient_contribution = Gonzalez_discrete_gradient(
-            func_n,
-            func_n1,
-            midpoint_jacobian,
-            argument_n,
-            argument_n1,
-            increment_tolerance,
-        )
-
-        discrete_gradient.append(discrete_gradient_contribution.squeeze())
-
-    return np.concatenate(discrete_gradient, axis=0)
+    return discrete_gradient_vector
 
 
 def Gonzalez_discrete_gradient(
