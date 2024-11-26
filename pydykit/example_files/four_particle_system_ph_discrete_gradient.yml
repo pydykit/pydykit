@@ -58,7 +58,7 @@ configuration:
     class_name: DiscreteGradientPHDAE
     kwargs:
       increment_tolerance: 1.e-12
-      consider_decomposition: true
+      discrete_gradient_type: Gonzalez_decomposed
   time_stepper:
     class_name: FixedIncrement
     kwargs:

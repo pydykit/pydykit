@@ -1,6 +1,6 @@
 import numpy as np
 
-from . import abstract_base_classes, operators, utils
+from . import abstract_base_classes, discrete_gradients, utils
 
 
 class IntegratorCommon(abstract_base_classes.Integrator):
@@ -58,10 +58,10 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
     parametrization = ["state"]
 
-    def __init__(self, manager, increment_tolerance, consider_decomposition):
+    def __init__(self, manager, increment_tolerance, discrete_gradient_type):
         super().__init__(manager)
         self.increment_tolerance = increment_tolerance
-        self.consider_decomposition = consider_decomposition
+        self.discrete_gradient_type = discrete_gradient_type
 
     def get_residuum(self, next_state):
 
@@ -90,7 +90,7 @@ class DiscreteGradientPHDAE(IntegratorCommon):
         j_matrix_n05 = system_n05.structure_matrix()
         r_matrix_n05 = system_n05.dissipation_matrix()
 
-        DGH = operators.discrete_gradient(
+        DGH = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -98,9 +98,8 @@ class DiscreteGradientPHDAE(IntegratorCommon):
             jacobian_name="hamiltonian_differential_gradient",
             argument_n=differential_state_n,
             argument_n1=differential_state_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
-            consider_decomposition=self.consider_decomposition,
             nbr_func_parts=system_n.nbr_hamiltonian_parts,
             func_parts_n=system_n.differential_state_composition,
             func_parts_n1=system_n1.differential_state_composition,
@@ -195,9 +194,10 @@ class DiscreteGradientMultibody(IntegratorCommon):
 
     parametrization = ["position", "momentum", "multiplier"]
 
-    def __init__(self, manager, increment_tolerance):
+    def __init__(self, manager, increment_tolerance, discrete_gradient_type):
         super().__init__(manager)
         self.increment_tolerance = increment_tolerance
+        self.discrete_gradient_type = discrete_gradient_type
 
     def get_residuum(self, next_state):
 
@@ -243,7 +243,7 @@ class DiscreteGradientMultibody(IntegratorCommon):
         lambd_n05 = system_n05.decompose_state()["multiplier"]
 
         # discrete gradients
-        G_DG = operators.discrete_gradient(
+        G_DG = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -251,11 +251,11 @@ class DiscreteGradientMultibody(IntegratorCommon):
             jacobian_name="constraint_gradient",
             argument_n=q_n,
             argument_n1=q_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
         )
 
-        DV_int = operators.discrete_gradient(
+        DV_int = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -263,11 +263,11 @@ class DiscreteGradientMultibody(IntegratorCommon):
             jacobian_name="internal_potential_gradient",
             argument_n=q_n,
             argument_n1=q_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
         )
 
-        DV_ext = operators.discrete_gradient(
+        DV_ext = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -275,7 +275,7 @@ class DiscreteGradientMultibody(IntegratorCommon):
             jacobian_name="external_potential_gradient",
             argument_n=q_n,
             argument_n1=q_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
         )
 
