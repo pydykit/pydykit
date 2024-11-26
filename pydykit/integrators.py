@@ -58,10 +58,10 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
     parametrization = ["state"]
 
-    def __init__(self, manager, increment_tolerance, consider_decomposition):
+    def __init__(self, manager, increment_tolerance, discrete_gradient_type):
         super().__init__(manager)
         self.increment_tolerance = increment_tolerance
-        self.consider_decomposition = consider_decomposition
+        self.discrete_gradient_type = discrete_gradient_type
 
     def get_residuum(self, next_state):
 
@@ -98,7 +98,7 @@ class DiscreteGradientPHDAE(IntegratorCommon):
             jacobian_name="hamiltonian_differential_gradient",
             argument_n=differential_state_n,
             argument_n1=differential_state_n1,
-            type="Gonzalez_decomposed",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
             nbr_func_parts=system_n.nbr_hamiltonian_parts,
             func_parts_n=system_n.differential_state_composition,
@@ -194,9 +194,10 @@ class DiscreteGradientMultibody(IntegratorCommon):
 
     parametrization = ["position", "momentum", "multiplier"]
 
-    def __init__(self, manager, increment_tolerance):
+    def __init__(self, manager, increment_tolerance, discrete_gradient_type):
         super().__init__(manager)
         self.increment_tolerance = increment_tolerance
+        self.discrete_gradient_type = discrete_gradient_type
 
     def get_residuum(self, next_state):
 
@@ -250,7 +251,7 @@ class DiscreteGradientMultibody(IntegratorCommon):
             jacobian_name="constraint_gradient",
             argument_n=q_n,
             argument_n1=q_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
         )
 
@@ -262,7 +263,7 @@ class DiscreteGradientMultibody(IntegratorCommon):
             jacobian_name="internal_potential_gradient",
             argument_n=q_n,
             argument_n1=q_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
         )
 
@@ -274,7 +275,7 @@ class DiscreteGradientMultibody(IntegratorCommon):
             jacobian_name="external_potential_gradient",
             argument_n=q_n,
             argument_n1=q_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
         )
 
