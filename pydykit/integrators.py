@@ -1,6 +1,6 @@
 import numpy as np
 
-from . import abstract_base_classes, operators, utils
+from . import abstract_base_classes, discrete_gradients, utils
 
 
 class IntegratorCommon(abstract_base_classes.Integrator):
@@ -90,7 +90,7 @@ class DiscreteGradientPHDAE(IntegratorCommon):
         j_matrix_n05 = system_n05.structure_matrix()
         r_matrix_n05 = system_n05.dissipation_matrix()
 
-        DGH = operators.discrete_gradient(
+        DGH = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -242,7 +242,7 @@ class DiscreteGradientMultibody(IntegratorCommon):
         lambd_n05 = system_n05.decompose_state()["multiplier"]
 
         # discrete gradients
-        G_DG = operators.discrete_gradient(
+        G_DG = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -254,7 +254,7 @@ class DiscreteGradientMultibody(IntegratorCommon):
             increment_tolerance=self.increment_tolerance,
         )
 
-        DV_int = operators.discrete_gradient(
+        DV_int = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -266,7 +266,7 @@ class DiscreteGradientMultibody(IntegratorCommon):
             increment_tolerance=self.increment_tolerance,
         )
 
-        DV_ext = operators.discrete_gradient(
+        DV_ext = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
