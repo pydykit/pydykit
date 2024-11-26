@@ -99,9 +99,7 @@ def discrete_gradient(
     argument_n1: np.ndarray,
     type: str = "Gonzalez",
     increment_tolerance: float = 1e-12,
-    nbr_func_parts=None,
-    func_parts_n=None,
-    func_parts_n1=None,
+    **kwargs,
 ):
     gradient_computer = DiscreteGradientFactory.create(type)
 
