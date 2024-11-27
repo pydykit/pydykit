@@ -12,8 +12,7 @@ class Postprocessor:
     def __init__(self, manager, state_results_df: pd.DataFrame):
 
         self.manager = manager
-        self.state_results_df = state_results_df
-        self.results_df = pd.DataFrame()
+        self.results_df = state_results_df
         self.quantities = []
         self.evaluation_points = []
         self.color_palette = [
@@ -29,6 +28,10 @@ class Postprocessor:
         # color scheme (color-blind friendly)
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
 
+    @property
+    def state_results_df(self):
+        return self.results_df[self.manager.system.state_columns]
+
     def postprocess(
         self, quantities, evaluation_points, weighted_by_timestepsize=False
     ):
@@ -37,7 +40,7 @@ class Postprocessor:
         self.evaluation_points += evaluation_points
 
         system = self.manager.system
-        self.nbr_time_point = len(self.state_results_df)
+        self.nbr_time_point = self.manager.time_stepper.nbr_time_points
 
         for index, quantity in enumerate(quantities):
             # Determine function dimensions and initialize data
@@ -110,8 +113,6 @@ class Postprocessor:
                 ]
                 # Append the new data to the results DataFrame
                 self.results_df[column] = data
-
-        self.results_df = pd.concat([self.state_results_df, self.results_df], axis=1)
 
     def update_system(self, system, index):
         updated_state = utils.row_array_from_df(df=self.state_results_df, index=index)
