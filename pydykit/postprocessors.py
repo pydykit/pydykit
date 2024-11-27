@@ -2,6 +2,7 @@ import re
 
 import numpy as np
 import pandas as pd
+import plotly.express as px
 import plotly.graph_objects as go
 
 from . import utils
@@ -160,7 +161,8 @@ class Postprocessor:
         # TODO: IF we switch to using plotly.graphobjects (go), we will be better of.
         #       Instead of adding figures, we would then add traces.
 
-        fig = self.results_df.plot(
+        fig = px.line(
+            self.results_df,
             x="time",
             y=quantities,
             labels={
