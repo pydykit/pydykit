@@ -97,7 +97,7 @@ class Postprocessor:
             if dim_function == 0:
                 column = (
                     quantity
-                    if self.evaluation_points[index] == "n"
+                    if not self.evaluation_points[index] == "n1-n"
                     else f"{quantity}_difference"
                 )
 
@@ -106,7 +106,7 @@ class Postprocessor:
                 column = [
                     (
                         f"{quantity}_{i}"
-                        if self.evaluation_points[index] == "n"
+                        if not self.evaluation_points[index] == "n1-n"
                         else f"{quantity}_{i}_difference"
                     )
                     for i in range(dim_function + 1)
