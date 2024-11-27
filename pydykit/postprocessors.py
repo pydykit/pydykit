@@ -16,6 +16,7 @@ class Postprocessor:
         self.results_df = state_results_df
         self.quantities = []
         self.evaluation_points = []
+        self.plotting_backend = "plotly"
         self.color_palette = [
             "#0072B2",
             "#009E73",
@@ -25,7 +26,6 @@ class Postprocessor:
             "#E69F00",
             "#F0E442",
         ]
-        self.plotting_backend = "plotly"
         # color scheme (color-blind friendly)
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
 
