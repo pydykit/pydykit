@@ -28,11 +28,7 @@ class Postprocessor:
         ]
         # color scheme (color-blind friendly)
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
-        self._evaluation_strategies = {
-            "n": self._evaluate_at_n,
-            "n05": self._evaluate_at_n05,
-            "n1-n": self._evaluate_difference_n1_n,
-        }
+        self.evaluation_strategy_factory = EvaluationStrategyFactory(self)
 
     @property
     def state_results_df(self):
@@ -53,8 +49,9 @@ class Postprocessor:
         self.nbr_time_point = self.manager.time_stepper.nbr_time_points
 
         invalid_points = set(evaluation_points) - set(
-            self._evaluation_strategies.keys()
+            self.evaluation_strategy_factory.available_evaluation_points()
         )
+
         if invalid_points:
             raise utils.PydykitException(
                 f"Invalid evaluation points: {', '.join(invalid_points)}"
@@ -72,7 +69,7 @@ class Postprocessor:
 
             # Evaluate and collect data for each time point
             for step_index in range(self.nbr_time_point):
-                strategy = self._evaluation_strategies[eval_point]
+                strategy = self.evaluation_strategy_factory.get_strategy(eval_point)
                 data[step_index] = strategy(system, quantity, step_index)
 
             if weighted_by_timestepsize:
@@ -184,3 +181,19 @@ class Postprocessor:
         self.results_df[sum_name] = self.results_df[quantities].sum(
             axis=1, skipna=False
         )
+
+
+class EvaluationStrategyFactory:
+    def __init__(self, postprocessor):
+        self.postprocessor = postprocessor
+        self.strategies = {
+            "n": self.postprocessor._evaluate_at_n,
+            "n05": self.postprocessor._evaluate_at_n05,
+            "n1-n": self.postprocessor._evaluate_difference_n1_n,
+        }
+
+    def get_strategy(self, eval_point):
+        return self.strategies[eval_point]
+
+    def available_evaluation_points(self):
+        return self.strategies.keys()
