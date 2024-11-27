@@ -28,10 +28,19 @@ class Postprocessor:
         ]
         # color scheme (color-blind friendly)
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
+        self._evaluation_strategies = {
+            "n": self._evaluate_at_n,
+            "n05": self._evaluate_at_n05,
+            "n1-n": self._evaluate_difference_n1_n,
+        }
 
     @property
     def state_results_df(self):
         return self.results_df[self.manager.system.state_columns]
+
+    @property
+    def available_evaluation_points(self):
+        return list(self._evaluation_strategies.keys())
 
     def postprocess(
         self, quantities, evaluation_points, weighted_by_timestepsize=False
@@ -44,17 +53,12 @@ class Postprocessor:
         self.nbr_time_point = self.manager.time_stepper.nbr_time_points
 
         # Define the strategies for evaluation points
-        evaluation_strategies = {
-            "n": self._evaluate_at_n,
-            "n05": self._evaluate_at_n05,
-            "n1-n": self._evaluate_difference_n1_n,
-        }
 
         for index, quantity in enumerate(quantities):
 
             # Get the appropriate evaluation strategy
             eval_point = evaluation_points[index]
-            if eval_point not in evaluation_strategies:
+            if eval_point not in self._evaluation_strategies:
                 raise utils.PydykitException(
                     f"Evaluation point choice {eval_point} not implemented."
                 )
@@ -66,7 +70,7 @@ class Postprocessor:
 
             # Evaluate and collect data for each time point
             for step_index in range(self.nbr_time_point):
-                strategy = evaluation_strategies[eval_point]
+                strategy = self._evaluation_strategies[eval_point]
                 data[step_index] = strategy(system, quantity, step_index)
 
             if weighted_by_timestepsize:
