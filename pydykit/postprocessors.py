@@ -52,16 +52,18 @@ class Postprocessor:
         system = self.manager.system
         self.nbr_time_point = self.manager.time_stepper.nbr_time_points
 
-        # Define the strategies for evaluation points
+        invalid_points = set(evaluation_points) - set(
+            self._evaluation_strategies.keys()
+        )
+        if invalid_points:
+            raise utils.PydykitException(
+                f"Invalid evaluation points: {', '.join(invalid_points)}"
+            )
 
         for index, quantity in enumerate(quantities):
 
             # Get the appropriate evaluation strategy
             eval_point = evaluation_points[index]
-            if eval_point not in self._evaluation_strategies:
-                raise utils.PydykitException(
-                    f"Evaluation point choice {eval_point} not implemented."
-                )
 
             # Determine function dimensions and initialize data
             system_function = getattr(system, quantity)
