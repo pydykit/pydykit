@@ -172,5 +172,7 @@ class Postprocessor:
         fig.update_layout(yaxis_type=y_axis_scale)
         return fig
 
-    def add_sum_of(self, quantities, name):
-        self.results_df[name] = self.results_df[quantities].sum(axis=1, skipna=False)
+    def add_sum_of(self, quantities, sum_name):
+        self.results_df[sum_name] = self.results_df[quantities].sum(
+            axis=1, skipna=False
+        )
