@@ -8,7 +8,7 @@ name = "four_particle_system_blowup_DG"
 
 manager_4 = pydykit.managers.Manager()
 
-path_config_file_4 = f"./publications/{project}/{name}.yml"
+path_config_file_4 = f"./test/publications/{project}/{name}.yml"
 
 manager_4.configure_from_path(path=path_config_file_4)
 

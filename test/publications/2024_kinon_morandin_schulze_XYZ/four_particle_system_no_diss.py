@@ -8,7 +8,7 @@ name = "four_particle_system_no_diss"
 
 manager_3 = pydykit.managers.Manager()
 
-path_config_file_3 = f"./publications/{project}/{name}.yml"
+path_config_file_3 = f"./test/publications/{project}/{name}.yml"
 
 manager_3.configure_from_path(path=path_config_file_3)
 
