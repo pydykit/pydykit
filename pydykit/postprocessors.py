@@ -43,7 +43,22 @@ class Postprocessor:
         system = self.manager.system
         self.nbr_time_point = self.manager.time_stepper.nbr_time_points
 
+        # Define the strategies for evaluation points
+        evaluation_strategies = {
+            "n": self._evaluate_at_n,
+            "n05": self._evaluate_at_n05,
+            "n1-n": self._evaluate_difference_n1_n,
+        }
+
         for index, quantity in enumerate(quantities):
+
+            # Get the appropriate evaluation strategy
+            eval_point = evaluation_points[index]
+            if eval_point not in evaluation_strategies:
+                raise utils.PydykitException(
+                    f"Evaluation point choice {eval_point} not implemented."
+                )
+
             # Determine function dimensions and initialize data
             system_function = getattr(system, quantity)
             dim_function = system_function().ndim
@@ -51,74 +66,59 @@ class Postprocessor:
 
             # Evaluate and collect data for each time point
             for step_index in range(self.nbr_time_point):
-                system_n = self.update_system(system, step_index)
-                if not step_index + 1 == self.nbr_time_point:
-                    system_n1 = self.update_system(system, step_index + 1)
-
-                if evaluation_points[index] == "n":
-                    data[step_index] = getattr(system_n, quantity)()
-                elif (
-                    evaluation_points[index] == "n05"
-                    and not step_index + 1 == self.nbr_time_point
-                ):
-                    state_n = system_n.state
-                    state_n1 = system_n1.state
-                    state_n05 = 0.5 * (state_n + state_n1)
-                    system_n, system_n05 = utils.get_system_copies_with_desired_states(
-                        system=self.manager.system,
-                        states=[
-                            state_n,
-                            state_n05,
-                        ],
-                    )
-                    data[step_index] = getattr(system_n05, quantity)()
-                elif (
-                    evaluation_points[index] == "n1-n"
-                    and not step_index + 1 == self.nbr_time_point
-                ):
-                    data[step_index] = (
-                        getattr(system_n1, quantity)() - getattr(system_n, quantity)()
-                    )
-                elif (
-                    evaluation_points[index] == "n1-n"
-                    and step_index + 1 == self.nbr_time_point
-                ) or (
-                    evaluation_points[index] == "n05"
-                    and step_index + 1 == self.nbr_time_point
-                ):
-                    data[step_index] = np.nan
-                else:
-                    raise utils.PydykitException(
-                        f"Evaluation point choice {evaluation_points[index]} not implemented."
-                    )
+                strategy = evaluation_strategies[eval_point]
+                data[step_index] = strategy(system, quantity, step_index)
 
             if weighted_by_timestepsize:
                 data = data * self.manager.time_stepper.current_step.increment
 
-            if dim_function == 0:
-                column = (
-                    quantity
-                    if not self.evaluation_points[index] == "n1-n"
-                    else f"{quantity}_difference"
-                )
+            # Handle DataFrame column naming and assignment
+            self._assign_to_dataframe(data, quantity, dim_function, eval_point)
 
-                self.results_df[column] = data.squeeze()
-            else:
-                column = [
-                    (
-                        f"{quantity}_{i}"
-                        if not self.evaluation_points[index] == "n1-n"
-                        else f"{quantity}_{i}_difference"
-                    )
-                    for i in range(dim_function + 1)
-                ]
-                # Append the new data to the results DataFrame
-                self.results_df[column] = data
+    def _evaluate_at_n(self, system, quantity, step_index):
+        system_n = self.update_system(system, step_index)
+        return getattr(system_n, quantity)()
+
+    def _evaluate_at_n05(self, system, quantity, step_index):
+        if step_index + 1 == self.nbr_time_point:
+            return np.nan
+
+        system_n = self.update_system(system, step_index)
+        system_n1 = self.update_system(system, step_index + 1)
+        state_n05 = 0.5 * (system_n.state + system_n1.state)
+
+        system_n, system_n05 = utils.get_system_copies_with_desired_states(
+            system=self.manager.system,
+            states=[system_n.state, state_n05],
+        )
+        return getattr(system_n05, quantity)()
+
+    def _evaluate_difference_n1_n(self, system, quantity, step_index):
+        if step_index + 1 == self.nbr_time_point:
+            return np.nan
+
+        system_n = self.update_system(system, step_index)
+        system_n1 = self.update_system(system, step_index + 1)
+        return getattr(system_n1, quantity)() - getattr(system_n, quantity)()
+
+    def _assign_to_dataframe(self, data, quantity, dim_function, eval_point):
+        if dim_function == 0:
+            column = quantity if eval_point != "n1-n" else f"{quantity}_difference"
+            self.results_df[column] = data.squeeze()
+        else:
+            column = [
+                (
+                    f"{quantity}_{i}"
+                    if eval_point != "n1-n"
+                    else f"{quantity}_{i}_difference"
+                )
+                for i in range(dim_function + 1)
+            ]
+            self.results_df[column] = data
 
     def update_system(self, system, index):
         updated_state = utils.row_array_from_df(df=self.state_results_df, index=index)
-        system = system.copy(state=updated_state)
-        return system
+        return system.copy(state=updated_state)
 
     def visualize(
         self,
