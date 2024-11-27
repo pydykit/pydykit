@@ -13,7 +13,6 @@ class Postprocessor:
 
         self.manager = manager
         self.state_results_df = state_results_df
-        self.post_results_df = pd.DataFrame()
         self.results_df = pd.DataFrame()
         self.quantities = []
         self.evaluation_points = []
@@ -99,7 +98,7 @@ class Postprocessor:
                     else f"{quantity}_difference"
                 )
 
-                self.post_results_df[column] = data.squeeze()
+                self.results_df[column] = data.squeeze()
             else:
                 column = [
                     (
@@ -110,11 +109,9 @@ class Postprocessor:
                     for i in range(dim_function + 1)
                 ]
                 # Append the new data to the results DataFrame
-                self.post_results_df[column] = data
+                self.results_df[column] = data
 
-        self.results_df = pd.concat(
-            [self.state_results_df, self.post_results_df], axis=1
-        )
+        self.results_df = pd.concat([self.state_results_df, self.results_df], axis=1)
 
     def update_system(self, system, index):
         updated_state = utils.row_array_from_df(df=self.state_results_df, index=index)
@@ -175,6 +172,4 @@ class Postprocessor:
         return fig
 
     def add_sum_of(self, quantities, name):
-        self.results_df[name] = self.post_results_df[name] = self.post_results_df[
-            quantities
-        ].sum(axis=1, skipna=False)
+        self.results_df[name] = self.results_df[quantities].sum(axis=1, skipna=False)
