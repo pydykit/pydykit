@@ -13,7 +13,7 @@ class Postprocessor:
         self,
         manager,
         state_results_df: pd.DataFrame,
-        postprocessed_data_from_integrator: list,
+        postprocessed_data_from_integrator: list = None,
     ):
 
         self.manager = manager
