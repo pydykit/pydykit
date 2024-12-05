@@ -71,16 +71,24 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
         time_step_size = self.manager.time_stepper.current_step.increment
 
-        # create midpoint state and all corresponding discrete-time systems
-        state_n05 = 0.5 * (state_n + state_n1)
-        system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
-            system=self.manager.system,
-            states=[
-                state_n,
-                state_n1,
-                state_n05,
-            ],
+        state_n, _, state_n1, system_n, system_n1, system_n05 = (
+            self.get_all_states_and_systems(next_state=next_state)
         )
+
+        costate = self.get_discrete_costate(
+            system_n=system_n, system_n1=system_n1, system_n05=system_n05
+        )
+
+        e_matrix_n05 = system_n05.descriptor_matrix()
+        j_matrix_n05 = system_n05.structure_matrix()
+        r_matrix_n05 = system_n05.dissipation_matrix()
+
+        residuum = (
+            e_matrix_n05 @ (state_n1 - state_n)
+            - time_step_size * (j_matrix_n05 - r_matrix_n05) @ costate
+        )
+
+        return residuum
 
         differential_state_n = system_n.get_differential_state()
         differential_state_n1 = system_n1.get_differential_state()
@@ -109,12 +117,23 @@ class DiscreteGradientPHDAE(IntegratorCommon):
         algebraic_costate = system_n1.get_algebraic_costate()
         costate = np.concatenate([differential_costate, algebraic_costate], axis=0)
 
-        residuum = (
-            e_n05 @ (state_n1 - state_n)
-            - time_step_size * (j_matrix_n05 - r_matrix_n05) @ costate
+    def get_all_states_and_systems(self, next_state):
+
+        state_n = self.manager.system.state
+        state_n1 = next_state
+
+        # create midpoint state and all corresponding discrete-time systems
+        state_n05 = 0.5 * (state_n + state_n1)
+        system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
+            system=self.manager.system,
+            states=[
+                state_n,
+                state_n1,
+                state_n05,
+            ],
         )
 
-        return residuum
+        return state_n, state_n05, state_n1, system_n, system_n1, system_n05
 
 
 class MidpointMultibody(IntegratorCommon):
