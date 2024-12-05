@@ -9,10 +9,16 @@ from . import utils
 
 class Postprocessor:
 
-    def __init__(self, manager, state_results_df: pd.DataFrame):
+    def __init__(
+        self,
+        manager,
+        state_results_df: pd.DataFrame,
+        postprocessed_data_from_integrator: list,
+    ):
 
         self.manager = manager
         self.state_results_df = state_results_df
+        self.postprocessed_data_from_integrator = postprocessed_data_from_integrator
         self.post_results_df = pd.DataFrame()
         self.results_df = pd.DataFrame()
         self.quantities = []
@@ -42,52 +48,70 @@ class Postprocessor:
 
         for index, quantity in enumerate(quantities):
             # Determine function dimensions and initialize data
-            system_function = getattr(system, quantity)
-            dim_function = system_function().ndim
-            data = np.zeros([self.nbr_time_point, dim_function + 1])
 
-            # Evaluate and collect data for each time point
-            for step_index in range(self.nbr_time_point):
-                system_n = self.update_system(system, step_index)
-                if not step_index + 1 == self.nbr_time_point:
-                    system_n1 = self.update_system(system, step_index + 1)
+            if hasattr(system, quantity):
+                system_function = getattr(system, quantity)
+                dim_function = system_function().ndim
+                data = np.zeros([self.nbr_time_point, dim_function + 1])
 
-                if evaluation_points[index] == "n":
-                    data[step_index] = getattr(system_n, quantity)()
-                elif (
-                    evaluation_points[index] == "n05"
-                    and not step_index + 1 == self.nbr_time_point
-                ):
-                    state_n = system_n.state
-                    state_n1 = system_n1.state
-                    state_n05 = 0.5 * (state_n + state_n1)
-                    system_n, system_n05 = utils.get_system_copies_with_desired_states(
-                        system=self.manager.system,
-                        states=[
-                            state_n,
-                            state_n05,
-                        ],
-                    )
-                    data[step_index] = getattr(system_n05, quantity)()
-                elif (
-                    evaluation_points[index] == "n1-n"
-                    and not step_index + 1 == self.nbr_time_point
-                ):
-                    data[step_index] = (
-                        getattr(system_n1, quantity)() - getattr(system_n, quantity)()
-                    )
-                elif (
-                    evaluation_points[index] == "n1-n"
-                    and step_index + 1 == self.nbr_time_point
-                ) or (
-                    evaluation_points[index] == "n05"
-                    and step_index + 1 == self.nbr_time_point
-                ):
-                    data[step_index] = np.nan
-                else:
-                    raise utils.PydykitException(
-                        f"Evaluation point choice {evaluation_points[index]} not implemented."
-                    )
+                # Evaluate and collect data for each time point
+                for step_index in range(self.nbr_time_point):
+                    system_n = self.update_system(system, step_index)
+                    if not step_index + 1 == self.nbr_time_point:
+                        system_n1 = self.update_system(system, step_index + 1)
+
+                    if evaluation_points[index] == "n":
+                        data[step_index] = getattr(system_n, quantity)()
+                    elif (
+                        evaluation_points[index] == "n05"
+                        and not step_index + 1 == self.nbr_time_point
+                    ):
+                        state_n = system_n.state
+                        state_n1 = system_n1.state
+                        state_n05 = 0.5 * (state_n + state_n1)
+                        system_n, system_n05 = (
+                            utils.get_system_copies_with_desired_states(
+                                system=self.manager.system,
+                                states=[
+                                    state_n,
+                                    state_n05,
+                                ],
+                            )
+                        )
+                        data[step_index] = getattr(system_n05, quantity)()
+                    elif (
+                        evaluation_points[index] == "n1-n"
+                        and not step_index + 1 == self.nbr_time_point
+                    ):
+                        data[step_index] = (
+                            getattr(system_n1, quantity)()
+                            - getattr(system_n, quantity)()
+                        )
+                    elif (
+                        evaluation_points[index] == "n1-n"
+                        and step_index + 1 == self.nbr_time_point
+                    ) or (
+                        evaluation_points[index] == "n05"
+                        and step_index + 1 == self.nbr_time_point
+                    ):
+                        data[step_index] = np.nan
+                    else:
+                        raise utils.PydykitException(
+                            f"Evaluation point choice {evaluation_points[index]} not implemented."
+                        )
+
+            elif quantity in self.postprocessed_data_from_integrator[0]:
+                dim_function = self.postprocessed_data_from_integrator[0][quantity].ndim
+                data = np.zeros([self.nbr_time_point, dim_function + 1])
+                for step_index in range(self.nbr_time_point):
+                    if not step_index + 1 == self.nbr_time_point:
+                        data[step_index] = self.postprocessed_data_from_integrator[
+                            step_index
+                        ][quantity]
+            else:
+                raise utils.PydykitException(
+                    f"{quantity} is not suitable for postprocessing since its not a method of {system} and not contained in {self.postprocessed_data_from_integrator}"
+                )
 
             if weighted_by_timestepsize:
                 data = data * self.manager.time_stepper.current_step.increment
