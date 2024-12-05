@@ -14,6 +14,12 @@ class Iterative(abstract_base_classes.Solver):
         self.newton_epsilon = newton_epsilon
         self.max_iterations = max_iterations
 
+    @staticmethod
+    def log_postprocessing(integrator, next_state, result):
+        result.postprocessed_from_integrator.append(
+            integrator.postprocess(next_state=next_state)
+        )
+
 
 class NewtonPlainPython(Iterative):
 

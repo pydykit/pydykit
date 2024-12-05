@@ -65,10 +65,6 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
     def get_residuum(self, next_state):
 
-        # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
-        state_n = self.manager.system.state
-        state_n1 = next_state
-
         time_step_size = self.manager.time_stepper.current_step.increment
 
         state_n, _, state_n1, system_n, system_n1, system_n05 = (
@@ -90,13 +86,12 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
         return residuum
 
+    def get_discrete_costate(self, system_n, system_n1, system_n05):
+
         differential_state_n = system_n.get_differential_state()
         differential_state_n1 = system_n1.get_differential_state()
 
-        e_n05 = system_n05.descriptor_matrix()
         E_11_n05 = system_n05.nonsingular_descriptor_matrix()
-        j_matrix_n05 = system_n05.structure_matrix()
-        r_matrix_n05 = system_n05.dissipation_matrix()
 
         DGH = discrete_gradients.discrete_gradient(
             system_n=system_n,
@@ -116,6 +111,29 @@ class DiscreteGradientPHDAE(IntegratorCommon):
         differential_costate = np.linalg.solve(E_11_n05.T, DGH)
         algebraic_costate = system_n1.get_algebraic_costate()
         costate = np.concatenate([differential_costate, algebraic_costate], axis=0)
+
+        return costate
+
+    def postprocess(self, next_state):
+
+        time_step_size = self.manager.time_stepper.current_step.increment
+        _, _, _, system_n, system_n1, system_n05 = self.get_all_states_and_systems(
+            next_state=next_state
+        )
+
+        r_matrix_n05 = system_n05.dissipation_matrix()
+
+        data = {}
+
+        costate = self.get_discrete_costate(
+            system_n=system_n, system_n1=system_n1, system_n05=system_n05
+        )
+
+        data["dissipated_work"] = time_step_size * np.dot(
+            costate, r_matrix_n05 @ costate
+        )
+
+        return data
 
     def get_all_states_and_systems(self, next_state):
 
