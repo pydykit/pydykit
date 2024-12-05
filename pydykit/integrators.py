@@ -15,6 +15,9 @@ class IntegratorCommon(abstract_base_classes.Integrator):
             state=state.copy(),
         )
 
+    def postprocess(self, next_state):
+        pass
+
 
 class MidpointPH(IntegratorCommon):
 
