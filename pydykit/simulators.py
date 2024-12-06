@@ -44,23 +44,27 @@ class OneStep(Simulator):
         # Do remaining steps, until stepper stops
         for step in steps:
 
-            # Calc next state
-            next_state = self.solver.solve(
-                func=manager.integrator.get_residuum,
-                jacobian=manager.integrator.get_tangent,
-                initial=manager.system.state,
-            )
+            if not self.solver.has_failed:
+                # Calc next state
+                next_state = self.solver.solve(
+                    func=manager.integrator.get_residuum,
+                    jacobian=manager.integrator.get_tangent,
+                    initial=manager.system.state,
+                )
 
-            # logging of postprocessed quantities depending on integrator
-            self.solver.log_postprocessing(
-                integrator=manager.integrator, next_state=next_state, result=result
-            )
+                # logging of postprocessed quantities depending on integrator
+                self.solver.log_postprocessing(
+                    integrator=manager.integrator, next_state=next_state, result=result
+                )
 
-            # Store results
-            result.times[step.index] = step.time
-            result.results[step.index, :] = manager.system.state = next_state
+                # Store results
+                result.times[step.index] = step.time
+                result.results[step.index, :] = manager.system.state = next_state
 
-            # Print
-            utils.print_current_step(step)
+                # Print
+                utils.print_current_step(step)
+
+            else:
+                return result
 
         return result
