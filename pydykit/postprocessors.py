@@ -95,8 +95,8 @@ class Postprocessor:
         if step_index + 1 == self.nbr_time_point:
             return np.nan
 
-        system_n = self.update_system(system, step_index)
-        system_n1 = self.update_system(system, step_index + 1)
+        system_n = self.update_system(system=system, index=step_index)
+        system_n1 = self.update_system(system=system, index=step_index + 1)
         state_n05 = 0.5 * (system_n.state + system_n1.state)
 
         system_n, system_n05 = utils.get_system_copies_with_desired_states(
@@ -109,8 +109,8 @@ class Postprocessor:
         if step_index + 1 == self.nbr_time_point:
             return np.nan
 
-        system_n = self.update_system(system, step_index)
-        system_n1 = self.update_system(system, step_index + 1)
+        system_n = self.update_system(system=system, index=step_index)
+        system_n1 = self.update_system(system=system, index=step_index + 1)
         return getattr(system_n1, quantity)() - getattr(system_n, quantity)()
 
     def _assign_to_dataframe(self, data, quantity, dim_function, eval_point):
