@@ -113,7 +113,6 @@ def get_keys(my_list: dict):
 
 def row_array_from_df(df, index):
     row = df.iloc[index]
-    row = row.drop("time")
     return row.to_numpy()
 
 

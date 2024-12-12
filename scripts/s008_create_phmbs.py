@@ -53,7 +53,7 @@ postprocessor.postprocess(
 )
 
 postprocessor.add_sum_of(
-    quantities=["hamiltonian_difference", "dissipated_power"], name="sum"
+    quantities=["hamiltonian_difference", "dissipated_power"], sum_name="sum"
 )
 
 # Hamiltonian
