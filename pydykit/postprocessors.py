@@ -69,17 +69,26 @@ class Postprocessor:
 
             # Evaluate and collect data for each time point
             for step_index in range(self.nbr_time_point):
-                strategy = self.evaluation_strategy_factory.get_strategy(eval_point)
-                data[step_index] = strategy(system, quantity, step_index)
+                strategy = self.evaluation_strategy_factory.get_strategy(
+                    eval_point=eval_point
+                )
+                data[step_index] = strategy(
+                    system=system, quantity=quantity, step_index=step_index
+                )
 
             if weighted_by_timestepsize:
                 data = data * self.manager.time_stepper.current_step.increment
 
             # Handle DataFrame column naming and assignment
-            self._assign_to_dataframe(data, quantity, dim_function, eval_point)
+            self._assign_to_dataframe(
+                data=data,
+                quantity=quantity,
+                dim_function=dim_function,
+                eval_point=eval_point,
+            )
 
     def _evaluate_at_n(self, system, quantity, step_index):
-        system_n = self.update_system(system, step_index)
+        system_n = self.update_system(system=system, step_index=step_index)
         return getattr(system_n, quantity)()
 
     def _evaluate_at_n05(self, system, quantity, step_index):
