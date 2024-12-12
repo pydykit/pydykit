@@ -88,7 +88,7 @@ class Postprocessor:
             )
 
     def _evaluate_at_n(self, system, quantity, step_index):
-        system_n = self.update_system(system=system, step_index=step_index)
+        system_n = self.update_system(system=system, index=step_index)
         return getattr(system_n, quantity)()
 
     def _evaluate_at_n05(self, system, quantity, step_index):
