@@ -10,9 +10,15 @@ from . import utils
 
 class Postprocessor:
 
-    def __init__(self, manager, state_results_df: pd.DataFrame):
+    def __init__(
+        self,
+        manager,
+        state_results_df: pd.DataFrame,
+        postprocessed_data_from_integrator: list = None,
+    ):
 
         self.manager = manager
+        self.postprocessed_data_from_integrator = postprocessed_data_from_integrator
         self.results_df = state_results_df
         self.quantities = []
         self.evaluation_points = []

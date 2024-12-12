@@ -15,6 +15,9 @@ class IntegratorCommon(abstract_base_classes.Integrator):
             state=state.copy(),
         )
 
+    def postprocess(self, next_state):
+        pass
+
 
 class MidpointPH(IntegratorCommon):
 
@@ -65,30 +68,33 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
     def get_residuum(self, next_state):
 
-        # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
-        state_n = self.manager.system.state
-        state_n1 = next_state
-
         time_step_size = self.manager.time_stepper.current_step.increment
 
-        # create midpoint state and all corresponding discrete-time systems
-        state_n05 = 0.5 * (state_n + state_n1)
-        system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
-            system=self.manager.system,
-            states=[
-                state_n,
-                state_n1,
-                state_n05,
-            ],
+        state_n, _, state_n1, system_n, system_n1, system_n05 = (
+            self.get_all_states_and_systems(next_state=next_state)
         )
+
+        costate = self.get_discrete_costate(
+            system_n=system_n, system_n1=system_n1, system_n05=system_n05
+        )
+
+        e_matrix_n05 = system_n05.descriptor_matrix()
+        j_matrix_n05 = system_n05.structure_matrix()
+        r_matrix_n05 = system_n05.dissipation_matrix()
+
+        residuum = (
+            e_matrix_n05 @ (state_n1 - state_n)
+            - time_step_size * (j_matrix_n05 - r_matrix_n05) @ costate
+        )
+
+        return residuum
+
+    def get_discrete_costate(self, system_n, system_n1, system_n05):
 
         differential_state_n = system_n.get_differential_state()
         differential_state_n1 = system_n1.get_differential_state()
 
-        e_n05 = system_n05.descriptor_matrix()
         E_11_n05 = system_n05.nonsingular_descriptor_matrix()
-        j_matrix_n05 = system_n05.structure_matrix()
-        r_matrix_n05 = system_n05.dissipation_matrix()
 
         DGH = discrete_gradients.discrete_gradient(
             system_n=system_n,
@@ -109,12 +115,46 @@ class DiscreteGradientPHDAE(IntegratorCommon):
         algebraic_costate = system_n1.get_algebraic_costate()
         costate = np.concatenate([differential_costate, algebraic_costate], axis=0)
 
-        residuum = (
-            e_n05 @ (state_n1 - state_n)
-            - time_step_size * (j_matrix_n05 - r_matrix_n05) @ costate
+        return costate
+
+    def postprocess(self, next_state):
+
+        time_step_size = self.manager.time_stepper.current_step.increment
+        _, _, _, system_n, system_n1, system_n05 = self.get_all_states_and_systems(
+            next_state=next_state
         )
 
-        return residuum
+        r_matrix_n05 = system_n05.dissipation_matrix()
+
+        data = {}
+
+        costate = self.get_discrete_costate(
+            system_n=system_n, system_n1=system_n1, system_n05=system_n05
+        )
+
+        data["dissipated_work"] = time_step_size * np.dot(
+            costate, r_matrix_n05 @ costate
+        )
+
+        return data
+
+    def get_all_states_and_systems(self, next_state):
+
+        state_n = self.manager.system.state
+        state_n1 = next_state
+
+        # create midpoint state and all corresponding discrete-time systems
+        state_n05 = 0.5 * (state_n + state_n1)
+        system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
+            system=self.manager.system,
+            states=[
+                state_n,
+                state_n1,
+                state_n05,
+            ],
+        )
+
+        return state_n, state_n05, state_n1, system_n, system_n1, system_n05
 
 
 class MidpointMultibody(IntegratorCommon):

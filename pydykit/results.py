@@ -9,6 +9,7 @@ class Result:
             (self.manager.time_stepper.nbr_time_points, self.manager.system.dim_state)
         )
         self.times = np.zeros((self.manager.time_stepper.nbr_time_points))
+        self.postprocessed_from_integrator = []
 
         self.results[0, :] = self.manager.system.state
 

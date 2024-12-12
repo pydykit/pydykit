@@ -19,19 +19,25 @@ result = pydykit.results.Result(manager=manager)
 result = manager.manage(result=result)
 
 df = result.to_df()
-postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
+postprocessor = postprocessors.Postprocessor(
+    manager,
+    state_results_df=df,
+    postprocessed_data_from_integrator=result.postprocessed_from_integrator,
+)
 postprocessor.postprocess(
-    quantities=["hamiltonian", "hamiltonian", "constraint", "constraint_velocity"],
+    quantities=[
+        "hamiltonian",
+        "hamiltonian",
+        "constraint",
+        "constraint_velocity",
+    ],
     evaluation_points=["n", "n1-n", "n", "n"],
 )
 
-postprocessor.postprocess(
-    quantities=["dissipated_power"],
-    evaluation_points=["n05"],
-    weighted_by_timestepsize=True,
-)
+postprocessor.postprocess(quantities=["dissipated_work"], evaluation_points=["n05"])
+
 postprocessor.add_sum_of(
-    quantities=["hamiltonian_difference", "dissipated_power"], name="sum"
+    quantities=["hamiltonian_difference", "dissipated_work"], name="sum"
 )
 
 # Hamiltonian
@@ -41,19 +47,21 @@ fig01 = postprocessor.visualize(quantities=["hamiltonian"])
 postprocessor.results_df["sum"] = abs(postprocessor.results_df["sum"])
 
 fig02 = postprocessor.visualize(
-    quantities=["hamiltonian_difference", "dissipated_power", "sum"],
+    quantities=["hamiltonian_difference", "dissipated_work", "sum"],
 )
 # fig02.show()
 
 fig03 = postprocessor.visualize(quantities=["sum"], y_axis_scale="log")
 # fig03.show()
 
-fig03 = postprocessor.visualize(quantities=["constraint"], y_axis_label="constraints")
-# fig03.show()
-
-fig04 = postprocessor.visualize(
-    quantities=["constraint_velocity"], y_axis_label="velocity constraints"
-)
+fig04 = postprocessor.visualize(quantities=["constraint"], y_axis_label="constraints")
 # fig04.show()
 
-postprocessor.results_df.to_csv(f"./publications/{project}/{name}.csv", index=False)
+fig05 = postprocessor.visualize(
+    quantities=["constraint_velocity"], y_axis_label="velocity constraints"
+)
+# fig05.show()
+
+# postprocessor.results_df.to_csv(
+#     f"./test/publications/{project}/{name}.csv", index=False
+# )
