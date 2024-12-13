@@ -29,7 +29,6 @@ which are discrete versions of the corresponding dynamics equations - either ord
    python scripts/s*.py
    ```
 
-
 ## Running tests against installed code
 
 See [test/README.md](./test/README.md)
