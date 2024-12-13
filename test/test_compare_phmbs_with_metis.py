@@ -22,7 +22,6 @@ example_worklist = [
 
 
 class TestCompareWithMetis:
-    @pytest.mark.push
     @pytest.mark.parametrize(
         ("content_config_file", "name", "result_indices"),
         (

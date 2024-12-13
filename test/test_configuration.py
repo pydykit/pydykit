@@ -5,18 +5,15 @@ from pydykit.configuration import Integrator, System
 
 
 class TestConfiguration:
-    @pytest.mark.push
     def test_invalid_class_name(self):
         with pytest.raises(ValidationError) as excinfo:
             System(class_name="my_class", kwargs={})
         assert "supported options for" in str(excinfo.value)
 
-    @pytest.mark.push
     def test_empty_dict_kwargs(self):
         conf = System(class_name="Lorenz", kwargs={})
         assert conf.kwargs == {}
 
-    @pytest.mark.push
     def test_invalid_kwargs(self):
         with pytest.raises(ValidationError) as excinfo:
             System(
@@ -27,7 +24,6 @@ class TestConfiguration:
 
 
 class TestIntegratorConfig:
-    @pytest.mark.push
     def test_valid_keys(self):
         for key in [
             "MidpointMultibody",
