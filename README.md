@@ -29,9 +29,6 @@ which are discrete versions of the corresponding dynamics equations - either ord
    python scripts/s*.py
    ```
 
-## Reproducibilty of published results
-
-`pydykit` can and has been used to tackle scientific questions. The scripts, input-files and results of previous simulations run by this package can be found in the folders contained in [./test/publications](./test/publications) using the naming convention `YEAR_author1_author2_*_journalabbreviation`.
 
 ## Running tests against installed code
 
