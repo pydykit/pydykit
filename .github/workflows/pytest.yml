@@ -30,4 +30,4 @@ jobs:
     - name: Pytest
       working-directory: .
       run: |
-        pytest -vv --runslow -m "push"
+        pytest -vv --runslow
