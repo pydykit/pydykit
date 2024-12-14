@@ -43,9 +43,7 @@ class Postprocessor:
     def available_evaluation_points(self):
         return list(self._evaluation_strategies.keys())
 
-    def postprocess(
-        self, quantities, evaluation_points, weighted_by_timestepsize=False
-    ):
+    def postprocess(self, quantities, evaluation_points):
 
         self.quantities += quantities
         self.evaluation_points += evaluation_points
@@ -94,9 +92,6 @@ class Postprocessor:
                 raise utils.PydykitException(
                     f"{quantity} is not suitable for postprocessing since its not a method of {system} and not contained in {self.postprocessed_data_from_integrator}"
                 )
-
-            if weighted_by_timestepsize:
-                data = data * self.manager.time_stepper.current_step.increment
 
             # Handle DataFrame column naming and assignment
             self._assign_to_dataframe(
