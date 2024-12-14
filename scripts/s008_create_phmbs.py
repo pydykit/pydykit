@@ -23,19 +23,18 @@ df = result.to_df()
 
 fig = go.Figure()
 
+postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
+
 for index in range(manager.system.mbs.nbr_particles):
-    pydykit.plotting.plot_3d_trajectory(
+    postprocessor.plot_3d_trajectory(
         figure=fig,
         x_components=df[f"position0_particle{index}"],
         y_components=df[f"position1_particle{index}"],
         z_components=df[f"position2_particle{index}"],
         time=df["time"],
     )
-
-
 fig.show()
 
-postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
 postprocessor.postprocess(
     quantities=[
         "hamiltonian",

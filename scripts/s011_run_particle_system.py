@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 
 import pydykit
+import pydykit.postprocessors as postprocessors
 
 # name = "particle_system_02"
 name = "particle_system_03"
@@ -18,9 +19,12 @@ result = manager.manage(result=result)
 df = result.to_df()
 fig = go.Figure()
 
+postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
+
+
 for index in range(manager.system.nbr_particles):
 
-    pydykit.plotting.plot_3d_trajectory(
+    postprocessor.plot_3d_trajectory(
         figure=fig,
         x_components=df[f"position0_particle{index}"],
         y_components=df[f"position1_particle{index}"],
@@ -29,7 +33,7 @@ for index in range(manager.system.nbr_particles):
     )
 
     index_time = 0
-    pydykit.plotting.add_3d_annotation(
+    postprocessor.add_3d_annotation(
         figure=fig,
         x=df[f"position0_particle{index}"][index_time],
         y=df[f"position1_particle{index}"][index_time],
@@ -40,7 +44,7 @@ for index in range(manager.system.nbr_particles):
 
 fig.update_layout(font_family="Serif")
 
-pydykit.plotting.fix_scene_bounds_to_extrema(figure=fig, df=df)
+postprocessor.fix_scene_bounds_to_extrema(figure=fig, df=df)
 
 fig.show()
 

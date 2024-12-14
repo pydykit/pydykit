@@ -21,11 +21,12 @@ result = pydykit.results.Result(manager=manager)
 result = manager.manage(result=result)
 
 df = result.to_df()
+postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
 
 fig = go.Figure()
 
 for index in range(manager.system.mbs.nbr_particles):
-    pydykit.plotting.plot_3d_trajectory(
+    postprocessor.plot_3d_trajectory(
         figure=fig,
         x_components=df[f"position0_particle{index}"],
         y_components=df[f"position1_particle{index}"],
@@ -43,18 +44,17 @@ df = pd.read_csv(f"test/reference_results/{name}.csv")
 
 postprocessor = postprocessors.Postprocessor(
     manager,
-    results_df=df,
+    state_results_df=df,
 )
-postprocessor.postprocess(quantities=["hamiltonian"])
-
-# Plot like PLK
-fig01 = postprocessor.visualize()
-fig01.show()
+postprocessor.postprocess(
+    quantities=["hamiltonian"], evaluation_points=["current_time"]
+)
 
 
 # Plot parts of the state together with newly calculated quantity
 fig02 = postprocessor.visualize(
-    quantities=["hamiltonian"] + [f"position{index}_particle0" for index in [0, 1, 2]],
+    quantities=["hamiltonian_current_time"]
+    + [f"position{index}_particle0" for index in [0, 1, 2]],
     y_axis_label="position",
 )
 fig02.show()
