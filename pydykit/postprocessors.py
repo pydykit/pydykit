@@ -2,7 +2,6 @@ import re
 
 import numpy as np
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 
 from . import utils
@@ -190,19 +189,28 @@ class Postprocessor:
         return figure
 
     def plot_single_figure(self, quantities, y_axis_label, y_axis_scale):
-        # TODO: IF we switch to using plotly.graphobjects (go), we will be better of.
-        #       Instead of adding figures, we would then add traces.
 
-        fig = px.line(
-            self.results_df,
-            x="time",
-            y=quantities,
-            labels={
-                "index": "time",
-                "value": y_axis_label,
-            },
-            color_discrete_sequence=self.color_palette,
+        fig = go.Figure()
+
+        # Loop through each quantity to create a separate trace
+        for quantity in quantities:
+            fig.add_trace(
+                go.Scatter(
+                    x=self.results_df["time"],
+                    y=self.results_df[quantity],
+                    mode="lines",
+                    name=quantity,  # Label for the legend
+                )
+            )
+
+        # Update layout to include labels and colors
+        fig.update_layout(
+            xaxis_title="time",
+            yaxis_title=y_axis_label,
+            colorway=self.color_palette,
         )
+
+        # Adapt scaling
         fig.update_layout(yaxis_type=y_axis_scale)
         return fig
 
