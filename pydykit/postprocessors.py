@@ -106,45 +106,43 @@ class Postprocessor:
                 eval_point=eval_point,
             )
 
-    def _evaluate_at_n(self, system, quantity, step_index):
-        system_n = self.update_system(system=system, index=step_index)
-        return getattr(system_n, quantity)()
+    def _evaluate_current_time(self, system, quantity, step_index):
+        system_current_time = self.update_system(system=system, index=step_index)
+        return getattr(system_current_time, quantity)()
 
-    def _evaluate_at_n05(self, system, quantity, step_index):
+    def _evaluate_interval_midpoint(self, system, quantity, step_index):
         if step_index + 1 == self.nbr_time_point:
             return np.nan
 
-        system_n = self.update_system(system=system, index=step_index)
-        system_n1 = self.update_system(system=system, index=step_index + 1)
-        state_n05 = 0.5 * (system_n.state + system_n1.state)
+        system_current_time = self.update_system(system=system, index=step_index)
+        system_next_time = self.update_system(system=system, index=step_index + 1)
+        state_midpoint = 0.5 * (system_current_time.state + system_next_time.state)
 
-        system_n, system_n05 = utils.get_system_copies_with_desired_states(
-            system=self.manager.system,
-            states=[system_n.state, state_n05],
+        system_current_time, system_midpoint = (
+            utils.get_system_copies_with_desired_states(
+                system=self.manager.system,
+                states=[system_current_time.state, state_midpoint],
+            )
         )
-        return getattr(system_n05, quantity)()
+        return getattr(system_midpoint, quantity)()
 
-    def _evaluate_difference_n1_n(self, system, quantity, step_index):
+    def _evaluate_interval_increment(self, system, quantity, step_index):
         if step_index + 1 == self.nbr_time_point:
             return np.nan
 
-        system_n = self.update_system(system=system, index=step_index)
-        system_n1 = self.update_system(system=system, index=step_index + 1)
-        return getattr(system_n1, quantity)() - getattr(system_n, quantity)()
+        system_current_time = self.update_system(system=system, index=step_index)
+        system_next_time = self.update_system(system=system, index=step_index + 1)
+        return (
+            getattr(system_next_time, quantity)()
+            - getattr(system_current_time, quantity)()
+        )
 
     def _assign_to_dataframe(self, data, quantity, dim_function, eval_point):
         if dim_function == 0:
-            column = quantity if eval_point != "n1-n" else f"{quantity}_difference"
+            column = f"{quantity}_{eval_point}"
             self.results_df[column] = data.squeeze()
         else:
-            column = [
-                (
-                    f"{quantity}_{i}"
-                    if eval_point != "n1-n"
-                    else f"{quantity}_{i}_difference"
-                )
-                for i in range(dim_function + 1)
-            ]
+            column = [(f"{quantity}_{eval_point}_{i}") for i in range(dim_function + 1)]
             self.results_df[column] = data
 
     def update_system(self, system, index):
@@ -224,9 +222,9 @@ class EvaluationStrategyFactory:
     def __init__(self, postprocessor):
         self.postprocessor = postprocessor
         self.strategies = {
-            "n": self.postprocessor._evaluate_at_n,
-            "n05": self.postprocessor._evaluate_at_n05,
-            "n1-n": self.postprocessor._evaluate_difference_n1_n,
+            "current_time": self.postprocessor._evaluate_current_time,
+            "interval_midpoint": self.postprocessor._evaluate_interval_midpoint,
+            "interval_increment": self.postprocessor._evaluate_interval_increment,
         }
 
     def get_strategy(self, eval_point):
