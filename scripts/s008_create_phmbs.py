@@ -23,8 +23,14 @@ df = result.to_df()
 
 fig = go.Figure()
 
-postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
+# Postprocessor object is initialized with manager and a state results dataframa, i.e. no previous simulation is required
+postprocessor = postprocessors.Postprocessor(
+    manager,
+    state_results_df=df,
+    postprocessed_data_from_integrator=result.postprocessed_from_integrator,
+)
 
+# the 3d plotting routine is now also a static method of this postprocessing object
 for index in range(manager.system.mbs.nbr_particles):
     postprocessor.plot_3d_trajectory(
         figure=fig,
@@ -35,6 +41,7 @@ for index in range(manager.system.mbs.nbr_particles):
     )
 fig.show()
 
+# Here, we compute different quantities, which are methods of the "system" in some specified ways
 postprocessor.postprocess(
     quantities=[
         "hamiltonian",
@@ -43,34 +50,39 @@ postprocessor.postprocess(
         "constraint_velocity",
     ],
     evaluation_points=[
-        "current_time",
-        "interval_increment",
+        "current_time",  # this gives a simple computation of hamiltonian at each discrete point in time
+        "interval_increment",  # this evaluation strategy computes increments between the current and next point in time
         "current_time",
         "current_time",
     ],
 )
 
+# in contrast to above, "dissipated_work" is a quantity that depends on the integrator, therefore it has been logged during the simulation
 postprocessor.postprocess(
-    quantities=["dissipated_power"],
-    evaluation_points=["interval_midpoint"],
-    weighted_by_timestepsize=True,
+    quantities=["dissipated_work"],
+    evaluation_points=[
+        "interval_midpoint"
+    ],  # it has been evaluated and interval midpoints
 )
 
+# functionality to compute sum of different columns
 postprocessor.add_sum_of(
-    quantities=["hamiltonian_interval_increment", "dissipated_power_interval_midpoint"],
+    quantities=["hamiltonian_interval_increment", "dissipated_work_interval_midpoint"],
     sum_name="sum",
 )
 
-# Hamiltonian
+# Visualization, column names are concatenated from "quantities" and "evaluation_points"
 fig01 = postprocessor.visualize(quantities=["hamiltonian_current_time"])
 fig01.show()
 
+# you can work directly on the columns to manipulate them
 postprocessor.results_df["sum"] = abs(postprocessor.results_df["sum"])
 
+# you can plot multiple columns at once
 fig02 = postprocessor.visualize(
     quantities=[
         "hamiltonian_interval_increment",
-        "dissipated_power_interval_midpoint",
+        "dissipated_work_interval_midpoint",
         "sum",
     ],
 )
