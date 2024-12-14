@@ -68,18 +68,32 @@ class Postprocessor:
             # Get the appropriate evaluation strategy
             eval_point = evaluation_points[index]
 
-            # Determine function dimensions and initialize data
-            system_function = getattr(system, quantity)
-            dim_function = system_function().ndim
-            data = np.zeros([self.nbr_time_point, dim_function + 1])
+            if hasattr(system, quantity):
 
-            # Evaluate and collect data for each time point
-            for step_index in range(self.nbr_time_point):
-                strategy = self.evaluation_strategy_factory.get_strategy(
-                    eval_point=eval_point
-                )
-                data[step_index] = strategy(
-                    system=system, quantity=quantity, step_index=step_index
+                # Determine function dimensions and initialize data
+                system_function = getattr(system, quantity)
+                dim_function = system_function().ndim
+                data = np.zeros([self.nbr_time_point, dim_function + 1])
+
+                # Evaluate and collect data for each time point
+                for step_index in range(self.nbr_time_point):
+                    strategy = self.evaluation_strategy_factory.get_strategy(
+                        eval_point=eval_point
+                    )
+                    data[step_index] = strategy(
+                        system=system, quantity=quantity, step_index=step_index
+                    )
+            elif quantity in self.postprocessed_data_from_integrator[0]:
+                dim_function = self.postprocessed_data_from_integrator[0][quantity].ndim
+                data = np.zeros([self.nbr_time_point, dim_function + 1])
+                for step_index in range(self.nbr_time_point):
+                    if not step_index + 1 == self.nbr_time_point:
+                        data[step_index] = self.postprocessed_data_from_integrator[
+                            step_index
+                        ][quantity]
+            else:
+                raise utils.PydykitException(
+                    f"{quantity} is not suitable for postprocessing since its not a method of {system} and not contained in {self.postprocessed_data_from_integrator}"
                 )
 
             if weighted_by_timestepsize:
