@@ -50,7 +50,7 @@ class TestExamples:
 
         postprocessor = postprocessors.Postprocessor(manager, state_results_df=new)
         postprocessor.postprocess(
-            quantities=["hamiltonian"], evaluation_points=["current_time"]
+            quantities_and_evaluation_points={"hamiltonian": ["current_time"]}
         )
 
         old = expected_result_df
