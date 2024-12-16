@@ -56,6 +56,22 @@ class MidpointPH(IntegratorCommon):
 
         return residuum
 
+    def dissipated_work(self, current_state, next_state, current_step):
+
+        time_step_size = current_step.increment
+        state_midpoint = 0.5 * (current_state + next_state)
+
+        system_n, system_n05, system_n1 = utils.get_system_copies_with_desired_states(
+            system=self.manager.system,
+            states=[current_state, state_midpoint, next_state],
+        )
+
+        r_matrix_n05 = system_n05.dissipation_matrix()
+
+        costates = system_n05.costates()
+
+        return time_step_size * np.dot(costates, r_matrix_n05 @ costates)
+
 
 class DiscreteGradientPHDAE(IntegratorCommon):
 
