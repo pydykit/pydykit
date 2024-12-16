@@ -16,7 +16,7 @@ class Iterative(abstract_base_classes.Solver):
         self.has_failed = False
 
     @staticmethod
-    def log_postprocessing(integrator, next_state, result):
+    def postprocess(integrator, next_state, result):
         result.postprocessed_from_integrator.append(
             integrator.postprocess(next_state=next_state)
         )

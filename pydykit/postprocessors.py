@@ -53,6 +53,7 @@ class Postprocessor:
                             step_index=step_index,
                         )
                 elif quantity in self.postprocessed_data_from_integrator[0]:
+                    # TODO: dimension naming
                     dim_function = self.postprocessed_data_from_integrator[0][
                         quantity
                     ].ndim

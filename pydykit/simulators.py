@@ -53,7 +53,7 @@ class OneStep(Simulator):
                 )
 
                 # logging of postprocessed quantities depending on integrator
-                self.solver.log_postprocessing(
+                self.solver.postprocess(
                     integrator=manager.integrator, next_state=next_state, result=result
                 )
 

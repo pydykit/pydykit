@@ -117,6 +117,7 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
         return costate
 
+    # TODO:call from postprocessor
     def postprocess(self, next_state):
 
         time_step_size = self.manager.time_stepper.current_step.increment
@@ -138,6 +139,7 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
         return data
 
+    # TODO: move somewhere else, only 1 function for getting states and/or systems
     def get_all_states_and_systems(self, next_state):
 
         state_n = self.manager.system.state
