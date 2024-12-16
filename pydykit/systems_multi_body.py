@@ -348,22 +348,24 @@ class ParticleSystem(MultiBodySystem):
             support=self.get_positions_supports(),
         )
 
-        return [
-            self._constraint(
-                length=constraint["length"],
-                start=utils.select(
-                    position_vectors=position_vectors,
-                    element=constraint,
-                    endpoint="start",
-                ),
-                end=utils.select(
-                    position_vectors=position_vectors,
-                    element=constraint,
-                    endpoint="end",
-                ),
-            )
-            for constraint in self.constraints
-        ]
+        return np.array(
+            [
+                self._constraint(
+                    length=constraint["length"],
+                    start=utils.select(
+                        position_vectors=position_vectors,
+                        element=constraint,
+                        endpoint="start",
+                    ),
+                    end=utils.select(
+                        position_vectors=position_vectors,
+                        element=constraint,
+                        endpoint="end",
+                    ),
+                )
+                for constraint in self.constraints
+            ]
+        )
 
     @staticmethod
     def _constraint_gradient(

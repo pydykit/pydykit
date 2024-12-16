@@ -13,6 +13,7 @@ class Iterative(abstract_base_classes.Solver):
     ):
         self.newton_epsilon = newton_epsilon
         self.max_iterations = max_iterations
+        self.has_failed = False
 
 
 class NewtonPlainPython(Iterative):
@@ -38,7 +39,8 @@ class NewtonPlainPython(Iterative):
         if residual_norm < self.newton_epsilon:
             pass
         else:
-            raise utils.PydykitException("Newton convergence not succesful")
+            print("Newton convergence not succesful!")
+            self.has_failed = True
 
         return initial
 

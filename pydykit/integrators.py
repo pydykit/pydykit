@@ -1,6 +1,6 @@
 import numpy as np
 
-from . import abstract_base_classes, operators, utils
+from . import abstract_base_classes, discrete_gradients, utils
 
 
 class IntegratorCommon(abstract_base_classes.Integrator):
@@ -14,6 +14,9 @@ class IntegratorCommon(abstract_base_classes.Integrator):
             func=self.get_residuum,
             state=state.copy(),
         )
+
+    def postprocess(self, next_state):
+        pass
 
 
 class MidpointPH(IntegratorCommon):
@@ -53,43 +56,65 @@ class MidpointPH(IntegratorCommon):
 
         return residuum
 
+    def dissipated_work(self, current_state, next_state, current_step):
+
+        time_step_size = current_step.increment
+        state_midpoint = 0.5 * (current_state + next_state)
+
+        system_n, system_n05, system_n1 = utils.get_system_copies_with_desired_states(
+            system=self.manager.system,
+            states=[current_state, state_midpoint, next_state],
+        )
+
+        r_matrix_n05 = system_n05.dissipation_matrix()
+
+        costates = system_n05.costates()
+
+        return time_step_size * np.dot(costates, r_matrix_n05 @ costates)
+
 
 class DiscreteGradientPHDAE(IntegratorCommon):
 
     parametrization = ["state"]
 
-    def __init__(self, manager, increment_tolerance):
+    def __init__(self, manager, increment_tolerance, discrete_gradient_type):
         super().__init__(manager)
         self.increment_tolerance = increment_tolerance
+        self.discrete_gradient_type = discrete_gradient_type
 
     def get_residuum(self, next_state):
 
-        # state_n1 is the argument which changes in calling function solver, state_n is the current state of the system
-        state_n = self.manager.system.state
-        state_n1 = next_state
-
         time_step_size = self.manager.time_stepper.current_step.increment
+        current_state = self.manager.system.state
+        state_midpoint = 0.5 * (current_state + next_state)
 
-        # create midpoint state and all corresponding discrete-time systems
-        state_n05 = 0.5 * (state_n + state_n1)
-        system_n, system_n1, system_n05 = utils.get_system_copies_with_desired_states(
+        system_n, system_n05, system_n1 = utils.get_system_copies_with_desired_states(
             system=self.manager.system,
-            states=[
-                state_n,
-                state_n1,
-                state_n05,
-            ],
+            states=[current_state, state_midpoint, next_state],
         )
+        costate = self.get_discrete_costate(
+            system_n=system_n, system_n1=system_n1, system_n05=system_n05
+        )
+
+        e_matrix_n05 = system_n05.descriptor_matrix()
+        j_matrix_n05 = system_n05.structure_matrix()
+        r_matrix_n05 = system_n05.dissipation_matrix()
+
+        residuum = (
+            e_matrix_n05 @ (next_state - current_state)
+            - time_step_size * (j_matrix_n05 - r_matrix_n05) @ costate
+        )
+
+        return residuum
+
+    def get_discrete_costate(self, system_n, system_n1, system_n05):
 
         differential_state_n = system_n.get_differential_state()
         differential_state_n1 = system_n1.get_differential_state()
 
-        e_n05 = system_n05.descriptor_matrix()
         E_11_n05 = system_n05.nonsingular_descriptor_matrix()
-        j_matrix_n05 = system_n05.structure_matrix()
-        r_matrix_n05 = system_n05.dissipation_matrix()
 
-        DGH = operators.discrete_gradient(
+        DGH = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -97,20 +122,36 @@ class DiscreteGradientPHDAE(IntegratorCommon):
             jacobian_name="hamiltonian_differential_gradient",
             argument_n=differential_state_n,
             argument_n1=differential_state_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
+            nbr_func_parts=system_n.nbr_hamiltonian_parts,
+            func_parts_n=system_n.differential_state_composition,
+            func_parts_n1=system_n1.differential_state_composition,
         )
 
         differential_costate = np.linalg.solve(E_11_n05.T, DGH)
-        algebraic_costate = system_n05.get_algebraic_costate()
+        algebraic_costate = system_n1.get_algebraic_costate()
         costate = np.concatenate([differential_costate, algebraic_costate], axis=0)
 
-        residuum = (
-            e_n05 @ (state_n1 - state_n)
-            - time_step_size * (j_matrix_n05 - r_matrix_n05) @ costate
+        return costate
+
+    def dissipated_work(self, current_state, next_state, current_step):
+
+        time_step_size = current_step.increment
+        state_midpoint = 0.5 * (current_state + next_state)
+
+        system_n, system_n05, system_n1 = utils.get_system_copies_with_desired_states(
+            system=self.manager.system,
+            states=[current_state, state_midpoint, next_state],
         )
 
-        return residuum
+        r_matrix_n05 = system_n05.dissipation_matrix()
+
+        costate = self.get_discrete_costate(
+            system_n=system_n, system_n1=system_n1, system_n05=system_n05
+        )
+
+        return time_step_size * np.dot(costate, r_matrix_n05 @ costate)
 
 
 class MidpointMultibody(IntegratorCommon):
@@ -190,9 +231,10 @@ class DiscreteGradientMultibody(IntegratorCommon):
 
     parametrization = ["position", "momentum", "multiplier"]
 
-    def __init__(self, manager, increment_tolerance):
+    def __init__(self, manager, increment_tolerance, discrete_gradient_type):
         super().__init__(manager)
         self.increment_tolerance = increment_tolerance
+        self.discrete_gradient_type = discrete_gradient_type
 
     def get_residuum(self, next_state):
 
@@ -238,7 +280,7 @@ class DiscreteGradientMultibody(IntegratorCommon):
         lambd_n05 = system_n05.decompose_state()["multiplier"]
 
         # discrete gradients
-        G_DG = operators.discrete_gradient(
+        G_DG = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -246,11 +288,11 @@ class DiscreteGradientMultibody(IntegratorCommon):
             jacobian_name="constraint_gradient",
             argument_n=q_n,
             argument_n1=q_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
         )
 
-        DV_int = operators.discrete_gradient(
+        DV_int = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -258,11 +300,11 @@ class DiscreteGradientMultibody(IntegratorCommon):
             jacobian_name="internal_potential_gradient",
             argument_n=q_n,
             argument_n1=q_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
         )
 
-        DV_ext = operators.discrete_gradient(
+        DV_ext = discrete_gradients.discrete_gradient(
             system_n=system_n,
             system_n1=system_n1,
             system_n05=system_n05,
@@ -270,7 +312,7 @@ class DiscreteGradientMultibody(IntegratorCommon):
             jacobian_name="external_potential_gradient",
             argument_n=q_n,
             argument_n1=q_n1,
-            type="Gonzalez",
+            type=self.discrete_gradient_type,
             increment_tolerance=self.increment_tolerance,
         )
 

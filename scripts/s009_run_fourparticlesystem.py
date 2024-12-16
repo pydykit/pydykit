@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 
 import pydykit
+import pydykit.postprocessors as postprocessors
 
 manager = pydykit.managers.Manager()
 name = "four_particle_system_discrete_gradient"
@@ -10,9 +11,11 @@ result = pydykit.results.Result(manager=manager)
 result = manager.manage(result=result)
 
 df = result.to_df()
+postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
+
 fig = go.Figure()
 for index in range(manager.system.nbr_particles):
-    pydykit.plotting.plot_3d_trajectory(
+    postprocessor.plot_3d_trajectory(
         figure=fig,
         x_components=df[f"position0_particle{index}"],
         y_components=df[f"position1_particle{index}"],

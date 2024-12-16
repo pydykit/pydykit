@@ -1,7 +1,5 @@
 import pandas as pd
 
-from .constants import A_TOL, R_TOL
-
 
 def load_result_of_metis_simulation(path):
     import scipy.io

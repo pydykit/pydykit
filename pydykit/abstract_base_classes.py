@@ -1,6 +1,7 @@
 import abc
 from typing import Callable, Iterator
 
+import numpy as np
 import numpy.typing as npt
 
 from . import results
@@ -217,8 +218,20 @@ class Manager(abc.ABC):
     result: results.Result = NotImplemented
 
 
-class Quantity(abc.ABC):
+class DiscreteGradient(abc.ABC):
+    """Abstract base class for discrete gradient computation."""
 
     @abc.abstractmethod
-    def create_dataframe(self, nbr_time_point):
+    def compute(
+        self,
+        system_n,
+        system_n1,
+        system_n05,
+        func_name: str,
+        jacobian_name: str,
+        argument_n: np.ndarray,
+        argument_n1: np.ndarray,
+        **kwargs,
+    ) -> np.ndarray:
+        """Compute the discrete gradient."""
         pass

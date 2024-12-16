@@ -3,20 +3,22 @@ import pandas as pd
 import plotly.graph_objects as go
 
 import pydykit
+import pydykit.postprocessors as postprocessors
 
 # name = "particle_system_01"
 name = "particle_system_02"
-manager = pydykit.managers.Manager().configure_from_path(
-    path=f"./pydykit/example_files/{name}.yml"
-)
+manager = pydykit.managers.Manager()
 
-manager.system.initialize()
+manager.configure_from_path(path=f"./pydykit/example_files/{name}.yml")
+
 
 df = pd.read_csv(f"test/reference_results/{name}.csv")
 
-x = df["x1"]
-y = df["y1"]
-z = df["z1"]
+x = df["position_x0"]
+y = df["position_y0"]
+z = df["position_z0"]
+
+postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
 
 
 # Frames
@@ -29,10 +31,10 @@ for k in range(len(x) - 1):
         index = index_python
 
         data.append(
-            pydykit.plotting.get_trace_3d_trajectory(
-                x_components=df[f"x{index}"][: k + 1],
-                y_components=df[f"y{index}"][: k + 1],
-                z_components=df[f"z{index}"][: k + 1],
+            postprocessor.get_trace_3d_trajectory(
+                x_components=df[f"position_x{index}"][: k + 1],
+                y_components=df[f"position_y{index}"][: k + 1],
+                z_components=df[f"position_z{index}"][: k + 1],
                 time=df["time"],
             )
         )
@@ -54,11 +56,11 @@ fig.update(frames=frames)
 for index_python in range(manager.system.nbr_particles):
     index = index_python
     index_time = 0
-    pydykit.plotting.add_3d_annotation(
+    postprocessor.add_3d_annotation(
         figure=fig,
-        x=df[f"x{index}"][index_time],
-        y=df[f"y{index}"][index_time],
-        z=df[f"z{index}"][index_time],
+        x=df[f"position_x{index}"][index_time],
+        y=df[f"position_y{index}"][index_time],
+        z=df[f"position_z{index}"][index_time],
         text=str(index),
     )
 
@@ -115,7 +117,7 @@ fig.update_layout(
 )
 
 
-pydykit.plotting.fix_scene_bounds_to_extrema(figure=fig, df=df)
+postprocessor.fix_scene_bounds_to_extrema(figure=fig, df=df)
 
 fig.update_layout(sliders=sliders)
 fig.show()
