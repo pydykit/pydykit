@@ -33,6 +33,8 @@ class Postprocessor:
         for quantity, evaluation_points in quantities_and_evaluation_points.items():
 
             for evaluation_point in evaluation_points:
+                steps = self.manager.time_stepper.make_steps()
+
                 if hasattr(self.manager.system, quantity):
 
                     # Determine function dimensions and initialize data
@@ -41,19 +43,17 @@ class Postprocessor:
                     data = np.zeros([self.nbr_time_point, dimension + 1])
 
                     # Evaluate and collect data for each time point
-                    for step_index in range(self.nbr_time_point):
+                    for step in steps:
                         strategy = self.evaluation_strategy_factory.get_strategy(
                             eval_point=evaluation_point
                         )
-                        data[step_index] = strategy(
+                        data[step.index] = strategy(
                             system=self.manager.system,
                             quantity=quantity,
-                            step_index=step_index,
+                            step_index=step.index,
                         )
                 elif hasattr(self.manager.integrator, quantity):
                     integrator_function = getattr(self.manager.integrator, quantity)
-
-                    steps = self.manager.time_stepper.make_steps()
 
                     dimension = integrator_function(
                         current_state=self.manager.system.state,
