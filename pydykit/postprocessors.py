@@ -37,8 +37,8 @@ class Postprocessor:
 
                     # Determine function dimensions and initialize data
                     system_function = getattr(self.manager.system, quantity)
-                    dim_function = system_function().ndim
-                    data = np.zeros([self.nbr_time_point, dim_function + 1])
+                    dimension = system_function().ndim
+                    data = np.zeros([self.nbr_time_point, dimension + 1])
 
                     # Evaluate and collect data for each time point
                     for step_index in range(self.nbr_time_point):
@@ -52,15 +52,15 @@ class Postprocessor:
                         )
                 elif hasattr(self.manager.integrator, quantity):
                     integrator_function = getattr(self.manager.integrator, quantity)
-                    # TODO: dimension naming
+
                     steps = self.manager.time_stepper.make_steps()
 
-                    dim_function = integrator_function(
+                    dimension = integrator_function(
                         current_state=self.manager.system.state,
                         next_state=self.manager.system.state,
                         current_step=self.manager.time_stepper.current_step,
                     ).ndim
-                    data = np.zeros([self.nbr_time_point, dim_function + 1])
+                    data = np.zeros([self.nbr_time_point, dimension + 1])
 
                     for step in steps:
                         if step.index + 1 == self.nbr_time_point:
@@ -90,7 +90,7 @@ class Postprocessor:
                 self._assign_to_dataframe(
                     data=data,
                     quantity=quantity,
-                    dim_function=dim_function,
+                    dimension=dimension,
                     eval_point=evaluation_point,
                 )
 
@@ -125,12 +125,12 @@ class Postprocessor:
             - getattr(system_current_time, quantity)()
         )
 
-    def _assign_to_dataframe(self, data, quantity, dim_function, eval_point):
-        if dim_function == 0:
+    def _assign_to_dataframe(self, data, quantity, dimension, eval_point):
+        if dimension == 0:
             column = f"{quantity}_{eval_point}"
             self.results_df[column] = data.squeeze()
         else:
-            column = [(f"{quantity}_{eval_point}_{i}") for i in range(dim_function + 1)]
+            column = [(f"{quantity}_{eval_point}_{i}") for i in range(dimension + 1)]
             self.results_df[column] = data
 
     def update_system(self, system, index):
