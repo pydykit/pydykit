@@ -52,11 +52,6 @@ class OneStep(Simulator):
                     initial=manager.system.state,
                 )
 
-                # logging of postprocessed quantities depending on integrator
-                self.solver.postprocess(
-                    integrator=manager.integrator, next_state=next_state, result=result
-                )
-
                 # Store results
                 result.times[step.index] = step.time
                 result.results[step.index, :] = manager.system.state = next_state

@@ -21,11 +21,7 @@ result = manager.manage(result=result)
 df = result.to_df()
 
 # Postprocessor object is initialized with manager and a state results dataframa, i.e. no previous simulation is required
-postprocessor = postprocessors.Postprocessor(
-    manager,
-    state_results_df=df,
-    postprocessed_data_from_integrator=result.postprocessed_from_integrator,
-)
+postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
 
 # Plotter object gets result dataframe
 plotter = postprocessors.Plotter(results_df=postprocessor.results_df)

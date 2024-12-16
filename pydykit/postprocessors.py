@@ -13,12 +13,10 @@ class Postprocessor:
         self,
         manager,
         state_results_df: pd.DataFrame,
-        postprocessed_data_from_integrator: list = None,
     ):
 
         self.manager = manager
         self.nbr_time_point = self.manager.time_stepper.nbr_time_points
-        self.postprocessed_data_from_integrator = postprocessed_data_from_integrator
         self.results_df = state_results_df
         self.evaluation_strategy_factory = EvaluationStrategyFactory(self)
 
@@ -52,17 +50,37 @@ class Postprocessor:
                             quantity=quantity,
                             step_index=step_index,
                         )
-                elif quantity in self.postprocessed_data_from_integrator[0]:
+                elif hasattr(self.manager.integrator, quantity):
+                    integrator_function = getattr(self.manager.integrator, quantity)
                     # TODO: dimension naming
-                    dim_function = self.postprocessed_data_from_integrator[0][
-                        quantity
-                    ].ndim
+                    steps = self.manager.time_stepper.make_steps()
+
+                    dim_function = integrator_function(
+                        current_state=self.manager.system.state,
+                        next_state=self.manager.system.state,
+                        current_step=self.manager.time_stepper.current_step,
+                    ).ndim
                     data = np.zeros([self.nbr_time_point, dim_function + 1])
-                    for step_index in range(self.nbr_time_point):
-                        if not step_index + 1 == self.nbr_time_point:
-                            data[step_index] = self.postprocessed_data_from_integrator[
-                                step_index
-                            ][quantity]
+
+                    for step in steps:
+                        if step.index + 1 == self.nbr_time_point:
+                            data[step.index] = np.nan
+
+                        else:
+
+                            current_state = utils.row_array_from_df(
+                                df=self.state_results_df, index=step.index
+                            )
+
+                            next_state = utils.row_array_from_df(
+                                df=self.state_results_df, index=step.index + 1
+                            )
+
+                            data[step.index] = integrator_function(
+                                current_state=current_state,
+                                next_state=next_state,
+                                current_step=step,
+                            )
                 else:
                     raise utils.PydykitException(
                         f"{quantity} is not suitable for postprocessing since its not a method of {self.manager.system} and not contained in {self.postprocessed_data_from_integrator}"
