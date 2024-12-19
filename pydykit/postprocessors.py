@@ -282,11 +282,9 @@ class Plotter:
 
         columns_to_plot = []
         for quantity in quantities:
-            columns_to_plot += [
-                col
-                for col in self.results_df.columns
-                if re.search(rf"^{quantity}(_\d+)?$", col)
-            ]
+            columns_to_plot = utils.add_columns_to_plot(
+                columns_to_plot, self.results_df, quantity
+            )
 
         fig = self.plot_time_evolution(
             quantities=columns_to_plot,
