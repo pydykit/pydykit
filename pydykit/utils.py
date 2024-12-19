@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 import numpy.typing as npt
 import yaml
@@ -136,3 +138,21 @@ def select(
 
 def quadratic_length_constraint(vector, length):
     return 0.5 * (vector.T @ vector - length**2)
+
+
+def add_columns_to_plot(columns_to_plot, results_df, quantity):
+    """
+    Adds columns matching the given quantity pattern to the columns_to_plot list.
+
+    Parameters:
+    columns_to_plot (list): The list to which matching columns will be added.
+    results_df (DataFrame): The DataFrame containing the columns to search.
+    quantity (str): The quantity pattern to match in the column names.
+
+    Returns:
+    list: The updated columns_to_plot list.
+    """
+    columns_to_plot += [
+        col for col in results_df.columns if re.search(rf"^{quantity}(_\d+)?$", col)
+    ]
+    return columns_to_plot
