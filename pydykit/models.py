@@ -14,32 +14,6 @@ from typing_extensions import Annotated, Self
 
 from .factories import factories
 
-
-class Simulator(BaseModel):
-    class_name: str
-    kwargs: dict
-
-
-class Integrator(BaseModel):
-    class_name: str
-    kwargs: dict
-
-
-class TimeStepper(BaseModel):
-    class_name: str
-    kwargs: dict
-
-
-class System(BaseModel):
-    class_name: Literal[
-        "RigidBodyRotatingQuaternions",
-        "Pendulum2D",
-        "Lorenz",
-        "ChemicalReactor",
-    ]
-    kwargs: dict
-
-
 # TODO: Get rid of nesting in config files to avoid having both ParticleSystem and ParticleSystemKwargs.
 #       Switch to something flat, like
 # system:
@@ -145,6 +119,31 @@ class ParticleSystemKwargs(PydykitBaseModel):
 class ParticleSystem(BaseModel):
     class_name: Literal["ParticleSystem"]
     kwargs: ParticleSystemKwargs
+
+
+class Simulator(BaseModel):
+    class_name: str
+    kwargs: dict
+
+
+class Integrator(BaseModel):
+    class_name: str
+    kwargs: dict
+
+
+class TimeStepper(BaseModel):
+    class_name: str
+    kwargs: dict
+
+
+class System(BaseModel):
+    class_name: Literal[
+        "RigidBodyRotatingQuaternions",
+        "Pendulum2D",
+        "Lorenz",
+        "ChemicalReactor",
+    ]
+    kwargs: dict
 
 
 class Configuration(BaseModel):
