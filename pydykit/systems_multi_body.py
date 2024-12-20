@@ -404,15 +404,11 @@ class ParticleSystem(MultiBodySystem):
                     element=constraint,
                     endpoint="end",
                 ),
-                start_index=(
-                    constraint["start"]["index"]
-                    if constraint["start"]["type"] == "particle"
-                    else None
+                start_index=self.get_index_argument_based_on_type(
+                    ending=constraint["start"],
                 ),
-                end_index=(
-                    constraint["end"]["index"]
-                    if constraint["end"]["type"] == "particle"
-                    else None
+                end_index=self.get_index_argument_based_on_type(
+                    ending=constraint["end"],
                 ),
                 nbr_particles=self.nbr_particles,
             )
@@ -458,11 +454,11 @@ class ParticleSystem(MultiBodySystem):
             )
             * self._dissipation_matrix(
                 nbr_dimensions=self.nbr_spatial_dimensions,
-                start_index=self.get_dissipation_matrix_index_argument(
-                    damper_ending=damper["start"]
+                start_index=self.get_index_argument_based_on_type(
+                    ending=damper["start"],
                 ),
-                end_index=self.get_dissipation_matrix_index_argument(
-                    damper_ending=damper["end"]
+                end_index=self.get_index_argument_based_on_type(
+                    ending=damper["end"],
                 ),
                 nbr_particles=self.nbr_particles,
             )
@@ -474,16 +470,16 @@ class ParticleSystem(MultiBodySystem):
         return diss_mat
 
     @staticmethod
-    def get_dissipation_matrix_index_argument(damper_ending):
+    def get_index_argument_based_on_type(ending):
         """
         See discussion in
         https://github.com/pydykit/pydykit/pull/56#issuecomment-2408621335
         """
 
-        _type = damper_ending["type"]
+        _type = ending["type"]
 
         if _type == "particle":
-            result = damper_ending["index"]
+            result = ending["index"]
         elif _type == "support":
             result = None
         else:
