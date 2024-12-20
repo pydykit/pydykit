@@ -87,12 +87,12 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
         super().__init__(
             manager=manager,
-            state=state,
             nbr_spatial_dimensions=nbr_spatial_dimensions,
             nbr_constraints=nbr_constraints,
             nbr_dof=nbr_dof,
             mass=mass,
             gravity=gravity,
+            state=state,
         )
         self.gravity = np.array(self.gravity)
 
@@ -202,7 +202,8 @@ class ParticleSystem(MultiBodySystem):
         self.dampers = dampers
         self.constraints = constraints
         self.supports = utils.sort_list_of_dicts_based_on_special_value(
-            my_list=supports, key="index"
+            my_list=supports,
+            key="index",
         )
 
         self.nbr_particles = len(self.particles)
