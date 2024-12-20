@@ -193,7 +193,6 @@ class ParticleSystem(MultiBodySystem):
         gravity: list[float],
     ):
 
-        self.nbr_spatial_dimensions = nbr_spatial_dimensions
         self.particles = utils.sort_list_of_dicts_based_on_special_value(
             my_list=particles,
             key="index",
@@ -207,7 +206,7 @@ class ParticleSystem(MultiBodySystem):
         )
 
         self.nbr_particles = len(self.particles)
-        nbr_dof = self.nbr_spatial_dimensions * self.nbr_particles
+        nbr_dof = nbr_spatial_dimensions * self.nbr_particles
 
         mass = [particle["mass"] for particle in self.particles]
 
