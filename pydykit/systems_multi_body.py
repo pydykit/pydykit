@@ -434,6 +434,7 @@ class ParticleSystem(MultiBodySystem):
         diss_mat = np.zeros([self.nbr_dof, self.nbr_dof])
 
         q = self.decompose_state()["position"]
+
         position_vectors = dict(
             particle=self.decompose_into_particles(q),
             support=self.get_positions_supports(),
@@ -457,15 +458,11 @@ class ParticleSystem(MultiBodySystem):
             )
             * self._dissipation_matrix(
                 nbr_dimensions=self.nbr_spatial_dimensions,
-                start_index=(
-                    damper["start"]["index"]
-                    if damper["start"]["type"] == "particle"
-                    else None
+                start_index=self.get_dissipation_matrix_index_argument(
+                    damper_ending=damper["start"]
                 ),
-                end_index=(
-                    damper["end"]["index"]
-                    if damper["end"]["type"] == "particle"
-                    else None
+                end_index=self.get_dissipation_matrix_index_argument(
+                    damper_ending=damper["end"]
                 ),
                 nbr_particles=self.nbr_particles,
             )
@@ -475,6 +472,19 @@ class ParticleSystem(MultiBodySystem):
         diss_mat += sum(contributions)
 
         return diss_mat
+
+    @staticmethod
+    def get_dissipation_matrix_index_argument(damper_ending):
+        _type = damper_ending["type"]
+
+        if _type == "particle":
+            result = damper_ending["index"]
+        else:
+            raise NotImplementedError(
+                f'damper_ending["type"]={_type} is not implemented'
+            )
+
+        return result
 
     @staticmethod
     def _dissipation_matrix(
