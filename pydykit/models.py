@@ -63,8 +63,8 @@ class Particle(PydykitBaseModel):
 
 
 class Spring(PydykitBaseModel):
-    particle_start: int
-    particle_end: int
+    particle_start: int  # TODO: This breaks the patter, switch to ending
+    particle_end: int  # TODO: This breaks the patter, switch to ending
     stiffness: float
     equilibrium_length: NonNegativeFloat
 
