@@ -5,6 +5,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    NonNegativeFloat,
     TypeAdapter,
     field_validator,
     model_validator,
@@ -58,14 +59,14 @@ class Particle(PydykitBaseModel):
     index: int
     initial_position: list[float]
     initial_momentum: list[float]
-    mass: float
+    mass: NonNegativeFloat
 
 
 class Spring(PydykitBaseModel):
     particle_start: int
     particle_end: int
     stiffness: float
-    equilibrium_length: float
+    equilibrium_length: NonNegativeFloat
 
 
 class Support(PydykitBaseModel):
@@ -82,15 +83,15 @@ class Ending(PydykitBaseModel):
 class Damper(PydykitBaseModel):
     start: Ending
     end: Ending
-    ground_viscosity: float
+    ground_viscosity: float  # TODO: Might this be negative?
     state_dependent: bool
-    alpha: float
+    alpha: float  # TODO: Might this be negative?
 
 
 class Constraint(PydykitBaseModel):
     start: Ending
     end: Ending
-    length: float
+    length: NonNegativeFloat
 
 
 class ParticleSystemKwargs(PydykitBaseModel):
