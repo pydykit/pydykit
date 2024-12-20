@@ -475,11 +475,17 @@ class ParticleSystem(MultiBodySystem):
 
     @staticmethod
     def get_dissipation_matrix_index_argument(damper_ending):
+        """
+        See discussion in
+        https://github.com/pydykit/pydykit/pull/56#issuecomment-2408621335
+        """
+
         _type = damper_ending["type"]
 
         if _type == "particle":
             result = damper_ending["index"]
-        # TODO: Implement the case: elif _type == "support"
+        elif _type == "support":
+            result = None
         else:
             raise NotImplementedError(
                 f'damper_ending["type"]={_type} is not implemented'
