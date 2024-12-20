@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydykit.configuration import Configuration
+from pydykit.models import Configuration
 from pydykit.utils import load_yaml_file
 
 path = Path(__file__).parent.parent.joinpath(
