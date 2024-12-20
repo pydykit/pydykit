@@ -193,13 +193,17 @@ class ParticleSystem(MultiBodySystem):
         gravity: list[float],
     ):
 
+        # Sort the particles as, e.g., the order of entries within the mass matrix is important
         self.particles = utils.sort_list_of_dicts_based_on_special_value(
             my_list=particles,
             key="index",
         )
+
         self.springs = springs
         self.dampers = dampers
         self.constraints = constraints
+
+        # Why do we have to sort the supports?
         self.supports = utils.sort_list_of_dicts_based_on_special_value(
             my_list=supports,
             key="index",
