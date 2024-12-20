@@ -49,32 +49,37 @@ class System(BaseModel):
 # TODO: Consider removing the nesting "configuration"
 
 
-class Particle(BaseModel):
+class PydykitBaseModel(BaseModel):
+    # Forbid extra attributes of this class, this should be the default for all systems kwargs to be rather strict
+    model_config = ConfigDict(extra="forbid")
+
+
+class Particle(PydykitBaseModel):
     index: int
     initial_position: list[float]
     initial_momentum: list[float]
     mass: float
 
 
-class Spring(BaseModel):
+class Spring(PydykitBaseModel):
     particle_start: int
     particle_end: int
     stiffness: float
     equilibrium_length: float
 
 
-class Support(BaseModel):
+class Support(PydykitBaseModel):
     index: int
     type: Literal["fixed"]
     position: list[float]
 
 
-class Ending(BaseModel):
+class Ending(PydykitBaseModel):
     type: Literal["fixed", "particle"]
     index: int
 
 
-class Damper(BaseModel):
+class Damper(PydykitBaseModel):
     start: Ending
     end: Ending
     ground_viscosity: float
@@ -82,13 +87,13 @@ class Damper(BaseModel):
     alpha: float
 
 
-class Constraint(BaseModel):
+class Constraint(PydykitBaseModel):
     start: Ending
     end: Ending
     length: float
 
 
-class ParticleSystemKwargs(BaseModel):
+class ParticleSystemKwargs(PydykitBaseModel):
 
     # TODO: Discuss whether this should be set to values [1, 2, 3]
     nbr_spatial_dimensions: int
