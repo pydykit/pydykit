@@ -13,8 +13,8 @@ configuration:
       - index: 0
         type: fixed
         position: [0.0, 0.0, 0.0]
-      springs: {}
-      dampers: {}
+      springs: []
+      dampers: []
       constraints:
       - start:
           type: support
