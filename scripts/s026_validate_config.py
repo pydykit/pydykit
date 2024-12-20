@@ -14,3 +14,8 @@ file_content = load_yaml_file(
 configuration = Configuration(
     **file_content["configuration"],
 )
+
+print(
+    f"configuration.system.kwargs.particles="
+    + f"\n{configuration.system.kwargs.particles}"
+)
