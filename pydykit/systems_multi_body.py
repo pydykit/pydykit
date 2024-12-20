@@ -193,7 +193,7 @@ class ParticleSystem(MultiBodySystem):
         gravity: list[float],
     ):
 
-        # Sort the particles as, e.g., the order of entries within the mass matrix is important
+        # Sort the particles because, e.g., the order of entries within the mass matrix is important
         self.particles = utils.sort_list_of_dicts_based_on_special_value(
             my_list=particles,
             key="index",
@@ -210,34 +210,25 @@ class ParticleSystem(MultiBodySystem):
         )
 
         self.nbr_particles = len(self.particles)
-        nbr_dof = nbr_spatial_dimensions * self.nbr_particles
 
-        mass = [particle["mass"] for particle in self.particles]
-
-        self.initial_state_q = utils.get_flat_list_of_list_attributes(
-            items=self.particles, key="initial_position"
-        )
-
-        self.initial_state_p = utils.get_flat_list_of_list_attributes(
-            items=self.particles, key="initial_momentum"
-        )
-        self.initial_state = {
-            "position": self.initial_state_q,
-            "momentum": self.initial_state_p,
-            "multiplier": np.zeros(len(self.constraints)),
-        }
-
-        # TODO: Remove redundancy... You pass several arguments to a super class and set them as attributes within the super classes init function.
-        # Some of these arguments have already been set as attributes within this childs init function. Why would you do this?
-        # TODO: Remove everything that has to do with parsing config files from system. System is about methods which evaluate physical quantities.
         super().__init__(
             manager=manager,
             nbr_spatial_dimensions=nbr_spatial_dimensions,
             nbr_constraints=len(self.constraints),
-            nbr_dof=nbr_dof,
-            mass=mass,
+            nbr_dof=nbr_spatial_dimensions * self.nbr_particles,
+            mass=[particle["mass"] for particle in self.particles],
             gravity=gravity,
-            state=self.initial_state,
+            state={
+                "position": utils.get_flat_list_of_list_attributes(
+                    items=self.particles,
+                    key="initial_position",
+                ),
+                "momentum": utils.get_flat_list_of_list_attributes(
+                    items=self.particles,
+                    key="initial_momentum",
+                ),
+                "multiplier": np.zeros(len(self.constraints)),
+            },
         )
 
     def get_state_columns(self):
