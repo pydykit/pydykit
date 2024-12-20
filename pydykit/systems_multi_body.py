@@ -479,6 +479,7 @@ class ParticleSystem(MultiBodySystem):
 
         if _type == "particle":
             result = damper_ending["index"]
+        # TODO: Implement the case: elif _type == "support"
         else:
             raise NotImplementedError(
                 f'damper_ending["type"]={_type} is not implemented'
