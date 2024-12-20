@@ -133,7 +133,7 @@ class ParticleSystemKwargs(PydykitBaseModel):
 
     @model_validator(mode="after")
     def enforce_existence_of_indices(self):
-        # TODO: Implement this on particles and supports referenced from endingsin springs, dampers, constraints
+        # TODO: Implement this on particles and supports referenced from endings in springs, dampers, constraints
         return self
 
     @model_validator(mode="after")
