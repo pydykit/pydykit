@@ -19,7 +19,7 @@ class Manager(abstract_base_classes.Manager):
         self._configure(configuration=configuration)
 
     def _configure(self, configuration):
-        # set configuration
+
         self.configuration = configuration
 
         # derive instances of classes
