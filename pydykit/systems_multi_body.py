@@ -193,7 +193,9 @@ class ParticleSystem(MultiBodySystem):
         gravity: list[float],
     ):
 
-        # Sort the particles because, e.g., the order of entries within the mass matrix is important
+        # Sort the particles because, e.g.,
+        # - the order of entries within the mass matrix is important
+        # - the names of state columns are derived from particle position
         self.particles = utils.sort_list_of_dicts_based_on_special_value(
             my_list=particles,
             key="index",
@@ -233,9 +235,9 @@ class ParticleSystem(MultiBodySystem):
 
     def get_state_columns(self):
         return [
-            f"{state_name}{dimension}_particle{number}"
+            f"{state_name}{dimension}_particle{index}"
             for state_name in ["position", "momentum"]
-            for number in range(self.nbr_particles)
+            for index in map(lambda particle: particle["index"], self.particles)
             for dimension in range(self.nbr_spatial_dimensions)
         ] + [f"lambda{number}" for number in range(self.nbr_constraints)]
 
