@@ -12,17 +12,7 @@ from pydantic import (
 )
 from typing_extensions import Annotated, Self
 
-from .factories import factories
 from .utils import get_indices, sort_based_on_attribute
-
-# TODO: Get rid of nesting in config files to avoid having both ParticleSystem and ParticleSystemKwargs.
-#       Switch to something flat, like
-# system:
-#   class_name: "ParticleSystem"
-#   particles: {}
-#   springs: {}
-
-# TODO: Consider removing the nesting "configuration"
 
 
 class PydykitBaseModel(BaseModel):
@@ -180,8 +170,3 @@ class ParticleSystemKwargs(PydykitBaseModel):
                     assert ending.index in indices[ending.type], message
 
         return self
-
-
-class ParticleSystem(BaseModel):
-    class_name: Literal["ParticleSystem"]
-    kwargs: ParticleSystemKwargs
