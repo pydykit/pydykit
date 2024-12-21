@@ -421,8 +421,8 @@ class ParticleSystem(MultiBodySystem):
         ]
 
         if contributions == []:
-            # Copilot proposed this... but the constraint does not work
-            result = np.zeros([self.nbr_constraints, self.nbr_dof])
+            # Random fix for missing constraints
+            result = []
         else:
             result = np.vstack(contributions)
 
