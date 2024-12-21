@@ -55,4 +55,6 @@ fig.show()
 # )
 # fig02 = plotter.visualize_time_evolution(quantities=["total_energy_current_time"])
 # fig02.show()
-df.to_csv(f"test/reference_results/{name}.csv")
+
+
+# df.to_csv(f"test/reference_results/{name}.csv")
