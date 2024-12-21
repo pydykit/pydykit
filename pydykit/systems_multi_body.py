@@ -405,7 +405,13 @@ class ParticleSystem(MultiBodySystem):
             for constraint in self.constraints
         ]
 
-        return np.vstack(contributions)
+        if contributions == []:
+            # Copilot proposed this... but the constraint does not work
+            result = np.zeros([self.nbr_constraints, self.nbr_dof])
+        else:
+            result = np.vstack(contributions)
+
+        return result
 
     def decompose_into_particles(self, vector):
 
