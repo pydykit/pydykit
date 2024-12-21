@@ -42,8 +42,8 @@ class Ending(PydykitBaseModel):
 
 
 class Spring(PydykitBaseModel):
-    start: Ending  # TODO: This breaks the patter, switch to ending
-    end: Ending  # TODO: This breaks the patter, switch to ending
+    start: Ending
+    end: Ending
     stiffness: float
     equilibrium_length: NonNegativeFloat
 
