@@ -31,7 +31,8 @@ configuration:
           index: 0
         ground_viscosity: 1
         state_dependent: false
-      constraints: {}
+        alpha: 0
+      constraints: []
       gravity: [0.0, 0.0, 9.81]
   simulator:
     class_name: OneStep
