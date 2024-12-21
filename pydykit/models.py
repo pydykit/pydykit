@@ -143,8 +143,12 @@ class ParticleSystemKwargs(PydykitBaseModel):
 
             message_start = f"{group}-indices should "
 
-            assert sorted(indices) == indices, message_start + "be sorted"
-            assert min(indices) == 0, message_start + "start at zero"
+            assert sorted(indices) == indices, (
+                message_start + f"be sorted, but found {indices}"
+            )
+            assert min(indices) == 0, (
+                message_start + f"start at zero, but found {indices}"
+            )
             assert indices == list(range(min(indices), max(indices) + 1)), (
                 message_start + f"be consecutive, but found {indices}"
             )
