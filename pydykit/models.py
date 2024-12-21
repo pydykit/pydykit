@@ -97,12 +97,13 @@ class ParticleSystemKwargs(PydykitBaseModel):
         return self
 
     @model_validator(mode="after")
-    def enforce_springs_endings_are_particles(self):
+    def enforce_springs_endings_are_valid(self):
+        valid_options = ["particle", "support"]
         for spring in self.springs:
             for ending in ["start", "end"]:
                 assert (
-                    getattr(spring, ending).type == "particle"
-                ), "Spring endings have to be of type particle"
+                    getattr(spring, ending).type in valid_options
+                ), f"Spring endings have to be of one of these types: {valid_options}"
         return self
 
     @model_validator(mode="after")
