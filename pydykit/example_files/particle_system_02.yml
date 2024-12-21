@@ -19,10 +19,14 @@ configuration:
         mass: 1.0
       supports: []
       springs:
-      - particle_start: 0
-        particle_end: 1
-        stiffness: 50
+      - stiffness: 50
         equilibrium_length: 0.5
+        start:
+          type: particle
+          index: 0
+        end:
+          type: particle
+          index: 1
       dampers: []
       constraints:
       - start:

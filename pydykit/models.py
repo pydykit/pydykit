@@ -36,9 +36,14 @@ class Particle(PydykitBaseModel):
     mass: NonNegativeFloat
 
 
+class Ending(PydykitBaseModel):
+    type: Literal["fixed", "particle"]
+    index: int
+
+
 class Spring(PydykitBaseModel):
-    particle_start: int  # TODO: This breaks the patter, switch to ending
-    particle_end: int  # TODO: This breaks the patter, switch to ending
+    start: Ending  # TODO: This breaks the patter, switch to ending
+    end: Ending  # TODO: This breaks the patter, switch to ending
     stiffness: float
     equilibrium_length: NonNegativeFloat
 
@@ -47,11 +52,6 @@ class Support(PydykitBaseModel):
     index: int
     type: Literal["fixed"]
     position: list[float]
-
-
-class Ending(PydykitBaseModel):
-    type: Literal["fixed", "particle"]
-    index: int
 
 
 class Damper(PydykitBaseModel):
@@ -103,6 +103,15 @@ class ParticleSystemKwargs(PydykitBaseModel):
 
         assert len(self.gravity) == dim, message
 
+        return self
+
+    @model_validator(mode="after")
+    def enforce_springs_endings_are_particles(self):
+        for spring in self.springs:
+            for ending in ["start", "end"]:
+                assert (
+                    getattr(spring, ending).type == "particle"
+                ), "Spring endings have to be of type particle"
         return self
 
     @model_validator(mode="after")
