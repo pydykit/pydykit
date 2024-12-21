@@ -20,12 +20,12 @@ result = manager.manage(result=result)
 df = result.to_df()
 fig = go.Figure()
 
-postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
+plotter = postprocessors.Plotter(results_df=df)
 
 
 for index in range(manager.system.nbr_particles):
 
-    postprocessor.plot_3d_trajectory(
+    plotter.plot_3d_trajectory(
         figure=fig,
         x_components=df[f"position0_particle{index}"],
         y_components=df[f"position1_particle{index}"],
@@ -34,7 +34,7 @@ for index in range(manager.system.nbr_particles):
     )
 
     index_time = 0
-    postprocessor.add_3d_annotation(
+    plotter.add_3d_annotation(
         figure=fig,
         x=df[f"position0_particle{index}"][index_time],
         y=df[f"position1_particle{index}"][index_time],
@@ -45,7 +45,7 @@ for index in range(manager.system.nbr_particles):
 
 fig.update_layout(font_family="Serif")
 
-postprocessor.fix_scene_bounds_to_extrema(figure=fig, df=df)
+plotter.fix_scene_bounds_to_extrema(figure=fig, df=df)
 
 fig.show()
 
