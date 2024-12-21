@@ -20,7 +20,7 @@ configuration:
         end:
           type: particle
           index: 0
-        stiffness: 50000
+        stiffness: 5000
         equilibrium_length: 1.0
       dampers:
       - start:
@@ -29,7 +29,7 @@ configuration:
         end:
           type: particle
           index: 0
-        ground_viscosity: 1
+        ground_viscosity: 0.1
         state_dependent: false
         alpha: 0
       constraints: []
