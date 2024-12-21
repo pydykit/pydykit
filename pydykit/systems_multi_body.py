@@ -194,16 +194,11 @@ class ParticleSystem(MultiBodySystem):
     ):
 
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
-        self.particles = utils.sort_list_of_dicts_based_on_special_value(
-            my_list=particles,
-            key="index",
-        )
+        self.particles = particles
         self.springs = springs
         self.dampers = dampers
         self.constraints = constraints
-        self.supports = utils.sort_list_of_dicts_based_on_special_value(
-            my_list=supports, key="index"
-        )
+        self.supports = supports
 
         self.nbr_particles = len(self.particles)
         nbr_dof = self.nbr_spatial_dimensions * self.nbr_particles
@@ -286,8 +281,8 @@ class ParticleSystem(MultiBodySystem):
             self._spring_energy(
                 stiffness=spring["stiffness"],
                 equilibrium_length=spring["equilibrium_length"],
-                start=position_vectors[spring["particle_start"]],
-                end=position_vectors[spring["particle_end"]],
+                start=position_vectors[spring["start"]["index"]],
+                end=position_vectors[spring["end"]["index"]],
             )
             for spring in self.springs
         ]
@@ -298,12 +293,14 @@ class ParticleSystem(MultiBodySystem):
     def _spring_energy_gradient(
         stiffness,
         equilibrium_length,
-        start_vector,
-        end_vector,
+        position_vectors,
         start_index,
         end_index,
         nbr_particles,
     ):
+        start_vector = position_vectors[start_index]
+        end_vector = position_vectors[end_index]
+
         vector = end_vector - start_vector
         tmp = (vector).T @ (vector) - equilibrium_length**2
 
@@ -325,10 +322,9 @@ class ParticleSystem(MultiBodySystem):
             self._spring_energy_gradient(
                 stiffness=spring["stiffness"],
                 equilibrium_length=spring["equilibrium_length"],
-                start_vector=position_vectors[spring["particle_start"]],
-                end_vector=position_vectors[spring["particle_end"]],
-                start_index=spring["particle_start"],
-                end_index=spring["particle_end"],
+                position_vectors=position_vectors,
+                start_index=spring["start"]["index"],
+                end_index=spring["end"]["index"],
                 nbr_particles=self.nbr_particles,
             )
             for spring in self.springs

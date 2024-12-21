@@ -12,16 +12,7 @@ from pydantic import (
 )
 from typing_extensions import Annotated, Self
 
-from .factories import factories
-
-# TODO: Get rid of nesting in config files to avoid having both ParticleSystem and ParticleSystemKwargs.
-#       Switch to something flat, like
-# system:
-#   class_name: "ParticleSystem"
-#   particles: {}
-#   springs: {}
-
-# TODO: Consider removing the nesting "configuration"
+from .utils import get_indices, sort_based_on_attribute
 
 
 class PydykitBaseModel(BaseModel):
@@ -36,9 +27,14 @@ class Particle(PydykitBaseModel):
     mass: NonNegativeFloat
 
 
+class Ending(PydykitBaseModel):
+    type: Literal["support", "particle"]
+    index: int
+
+
 class Spring(PydykitBaseModel):
-    particle_start: int  # TODO: This breaks the patter, switch to ending
-    particle_end: int  # TODO: This breaks the patter, switch to ending
+    start: Ending
+    end: Ending
     stiffness: float
     equilibrium_length: NonNegativeFloat
 
@@ -47,11 +43,6 @@ class Support(PydykitBaseModel):
     index: int
     type: Literal["fixed"]
     position: list[float]
-
-
-class Ending(PydykitBaseModel):
-    type: Literal["fixed", "particle"]
-    index: int
 
 
 class Damper(PydykitBaseModel):
@@ -106,54 +97,76 @@ class ParticleSystemKwargs(PydykitBaseModel):
         return self
 
     @model_validator(mode="after")
-    def enforce_existence_of_indices(self):
-        # TODO: Implement this on particles and supports referenced from endings in springs, dampers, constraints
+    def enforce_springs_endings_are_particles(self):
+        for spring in self.springs:
+            for ending in ["start", "end"]:
+                assert (
+                    getattr(spring, ending).type == "particle"
+                ), "Spring endings have to be of type particle"
         return self
 
     @model_validator(mode="after")
-    def enforce_indices_to_be_consecutive(self):
-        # TODO: Implement this on particles and supports
+    def sort_particles_and_supports(self):
+        self.particles = sort_based_on_attribute(
+            obj=self.particles,
+            attribute="index",
+        )
+        self.supports = sort_based_on_attribute(
+            obj=self.supports,
+            attribute="index",
+        )
         return self
 
+    @model_validator(mode="after")
+    def enforce_particle_and_support_indices_to_be_sorted_start_at_zero_and_be_consecutive(
+        self,
+    ):
 
-class ParticleSystem(BaseModel):
-    class_name: Literal["ParticleSystem"]
-    kwargs: ParticleSystemKwargs
+        workload = {}
+        for group in ["particles", "supports"]:
+            items = getattr(self, group)
+            # Only add to workload, if not empty list
+            if items != []:
+                workload.update({group: get_indices(items)})
 
+        for group, indices in workload.items():
 
-class Simulator(BaseModel):
-    class_name: str
-    kwargs: dict
+            message_start = f"{group}-indices should "
 
+            assert sorted(indices) == indices, (
+                message_start + f"be sorted, but found {indices}"
+            )
+            assert min(indices) == 0, (
+                message_start + f"start at zero, but found {indices}"
+            )
+            assert indices == list(range(min(indices), max(indices) + 1)), (
+                message_start + f"be consecutive, but found {indices}"
+            )
 
-class Integrator(BaseModel):
-    class_name: str
-    kwargs: dict
+        return self
 
+    @model_validator(mode="after")
+    def enforce_existence_of_indices(self):
 
-class TimeStepper(BaseModel):
-    class_name: str
-    kwargs: dict
+        particle_indices = get_indices(self.particles)
+        support_indices = get_indices(self.supports)
 
+        indices = {
+            "particle": particle_indices,
+            "support": support_indices,
+        }
 
-class System(BaseModel):
-    class_name: Literal[
-        "RigidBodyRotatingQuaternions",
-        "Pendulum2D",
-        "Lorenz",
-        "ChemicalReactor",
-    ]
-    kwargs: dict
+        for group in ["springs", "dampers", "constraints"]:
+            for item in getattr(self, group):
+                for ending_key in ["start", "end"]:
+                    ending = getattr(item, ending_key)
 
+                    message = (
+                        f"Could not find {ending.type} "
+                        + f"with index={ending.index} "
+                        + f"requested by attribute '{ending_key}' in {group} object \t'{item}'."
+                    )
 
-class Configuration(BaseModel):
-    system: Annotated[
-        Union[
-            System,
-            ParticleSystem,
-        ],
-        Field(discriminator="class_name"),
-    ]
-    simulator: Simulator
-    integrator: Integrator
-    time_stepper: TimeStepper
+                    assert ending.index in indices[ending.type], message
+
+        return self
