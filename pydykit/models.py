@@ -116,7 +116,31 @@ class ParticleSystemKwargs(PydykitBaseModel):
 
     @model_validator(mode="after")
     def enforce_existence_of_indices(self):
-        # TODO: Implement this on particles and supports referenced from endings in springs, dampers, constraints
+
+        def get_indices(l):
+            return [item.index for item in l]
+
+        particle_indices = get_indices(self.particles)
+        support_indices = get_indices(self.supports)
+
+        indices = {
+            "particle": particle_indices,
+            "support": support_indices,
+        }
+
+        for group in ["springs", "dampers", "constraints"]:
+            for item in getattr(self, group):
+                for ending_key in ["start", "end"]:
+                    ending = getattr(item, ending_key)
+
+                    message = (
+                        f"Could not find {ending.type} "
+                        + f"with index={ending.index} "
+                        + f"requested by attribute '{ending_key}' in {group} object \t'{item}'."
+                    )
+
+                    assert ending.index in indices[ending.type], message
+
         return self
 
     @model_validator(mode="after")
