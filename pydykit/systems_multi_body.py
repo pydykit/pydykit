@@ -194,16 +194,11 @@ class ParticleSystem(MultiBodySystem):
     ):
 
         self.nbr_spatial_dimensions = nbr_spatial_dimensions
-        self.particles = utils.sort_list_of_dicts_based_on_special_value(
-            my_list=particles,
-            key="index",
-        )
+        self.particles = particles
         self.springs = springs
         self.dampers = dampers
         self.constraints = constraints
-        self.supports = utils.sort_list_of_dicts_based_on_special_value(
-            my_list=supports, key="index"
-        )
+        self.supports = supports
 
         self.nbr_particles = len(self.particles)
         nbr_dof = self.nbr_spatial_dimensions * self.nbr_particles

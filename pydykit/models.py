@@ -13,6 +13,7 @@ from pydantic import (
 from typing_extensions import Annotated, Self
 
 from .factories import factories
+from .utils import get_indices, sort_based_on_attribute
 
 # TODO: Get rid of nesting in config files to avoid having both ParticleSystem and ParticleSystemKwargs.
 #       Switch to something flat, like
@@ -115,10 +116,43 @@ class ParticleSystemKwargs(PydykitBaseModel):
         return self
 
     @model_validator(mode="after")
-    def enforce_existence_of_indices(self):
+    def sort_particles_and_supports(self):
+        self.particles = sort_based_on_attribute(
+            obj=self.particles,
+            attribute="index",
+        )
+        self.supports = sort_based_on_attribute(
+            obj=self.supports,
+            attribute="index",
+        )
+        return self
 
-        def get_indices(l):
-            return [item.index for item in l]
+    @model_validator(mode="after")
+    def enforce_particle_and_support_indices_to_be_sorted_start_at_zero_and_be_consecutive(
+        self,
+    ):
+
+        workload = {}
+        for group in ["particles", "supports"]:
+            items = getattr(self, group)
+            # Only add to workload, if not empty list
+            if items != []:
+                workload.update({group: get_indices(items)})
+
+        for group, indices in workload.items():
+
+            message_start = f"{group}-indices should "
+
+            assert sorted(indices) == indices, message_start + "be sorted"
+            assert min(indices) == 0, message_start + "start at zero"
+            assert indices == list(range(min(indices), max(indices) + 1)), (
+                message_start + f"be consecutive, but found {indices}"
+            )
+
+        return self
+
+    @model_validator(mode="after")
+    def enforce_existence_of_indices(self):
 
         particle_indices = get_indices(self.particles)
         support_indices = get_indices(self.supports)
@@ -141,11 +175,6 @@ class ParticleSystemKwargs(PydykitBaseModel):
 
                     assert ending.index in indices[ending.type], message
 
-        return self
-
-    @model_validator(mode="after")
-    def enforce_indices_to_be_consecutive(self):
-        # TODO: Implement this on particles and supports
         return self
 
 
