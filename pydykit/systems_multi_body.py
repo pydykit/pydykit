@@ -284,13 +284,12 @@ class ParticleSystem(MultiBodySystem):
     def _spring_energy_gradient(
         stiffness,
         equilibrium_length,
-        position_vectors,
+        start_vector,
+        end_vector,
         start_index,
         end_index,
         nbr_particles,
     ):
-        start_vector = position_vectors[start_index]
-        end_vector = position_vectors[end_index]
 
         vector = end_vector - start_vector
         tmp = (vector).T @ (vector) - equilibrium_length**2
@@ -308,14 +307,30 @@ class ParticleSystem(MultiBodySystem):
 
     def internal_potential_gradient(self):
         q = self.decompose_state()["position"]
-        position_vectors = self.decompose_into_particles(q)
+        position_vectors = dict(
+            particle=self.decompose_into_particles(q),
+            support=self.get_positions_supports(),
+        )
         contributions = [
             self._spring_energy_gradient(
                 stiffness=spring["stiffness"],
                 equilibrium_length=spring["equilibrium_length"],
-                position_vectors=position_vectors,
-                start_index=spring["start"]["index"],
-                end_index=spring["end"]["index"],
+                start_vector=utils.select(
+                    position_vectors=position_vectors,
+                    element=spring,
+                    endpoint="start",
+                ),
+                end_vector=utils.select(
+                    position_vectors=position_vectors,
+                    element=spring,
+                    endpoint="end",
+                ),
+                start_index=self.get_index_argument_based_on_type(
+                    ending=spring["start"],
+                ),
+                end_index=self.get_index_argument_based_on_type(
+                    ending=spring["end"],
+                ),
                 nbr_particles=self.nbr_particles,
             )
             for spring in self.springs
