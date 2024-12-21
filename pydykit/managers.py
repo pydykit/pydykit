@@ -32,7 +32,11 @@ class Manager(abstract_base_classes.Manager):
         obj = getattr(self.configuration, key)
         factory = factories[key]
 
-        return factory.get(key=obj.class_name, manager=self, **obj.kwargs)
+        return factory.get(
+            key=obj.class_name,
+            manager=self,
+            **obj.kwargs.model_dump(),  # Note: kwargs is a pydantic BaseModel now, but had been a dict in the past
+        )
 
     def manage(self, result):
         return self.simulator.run(result=result)
