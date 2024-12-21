@@ -162,3 +162,18 @@ def add_columns_to_plot(columns_to_plot, results_df, quantity):
         col for col in results_df.columns if re.search(rf"^{quantity}(_\d+)?$", col)
     ]
     return columns_to_plot
+
+
+def get_final_values(result):
+    df_result = result.to_df()
+    final_position4_x = df_result["position0_particle3"].iloc[-1]
+    final_position4_y = df_result["position1_particle3"].iloc[-1]
+    final_position4_z = df_result["position2_particle3"].iloc[-1]
+    final_momentum4_x = df_result["momentum0_particle3"].iloc[-1]
+    final_momentum4_y = df_result["momentum1_particle3"].iloc[-1]
+    final_momentum4_z = df_result["momentum2_particle3"].iloc[-1]
+    final_multiplier_1 = df_result["lambda0"].iloc[-1]
+    final_position = np.array([final_position4_x, final_position4_y, final_position4_z])
+    final_momentum = np.array([final_momentum4_x, final_momentum4_y, final_momentum4_z])
+    final_multipliers = np.array([final_multiplier_1, 0, 0])
+    return final_position, final_momentum, final_multipliers

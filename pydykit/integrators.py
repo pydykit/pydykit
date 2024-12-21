@@ -44,14 +44,17 @@ class MidpointPH(IntegratorCommon):
 
         e_n05 = system_n05.descriptor_matrix()
 
-        z_vector_n05 = system_n05.costates()
+        # z_vector_n05 = system_n05.costates()
+        costate = self.get_discrete_costate(
+            system_n=system_n, system_n1=system_n1, system_n05=system_n05
+        )
 
         j_matrix_n05 = system_n05.structure_matrix()
         r_matrix_n05 = system_n05.dissipation_matrix()
 
         residuum = (
             e_n05 @ (state_n1 - state_n)
-            - time_step_size * (j_matrix_n05 - r_matrix_n05) @ z_vector_n05
+            - time_step_size * (j_matrix_n05 - r_matrix_n05) @ costate
         )
 
         return residuum
@@ -67,10 +70,20 @@ class MidpointPH(IntegratorCommon):
         )
 
         r_matrix_n05 = system_n05.dissipation_matrix()
-
         costates = system_n05.costates()
 
         return time_step_size * np.dot(costates, r_matrix_n05 @ costates)
+
+    def get_discrete_costate(self, system_n, system_n1, system_n05):
+
+        E_11_n05 = system_n05.nonsingular_descriptor_matrix()
+        DH_n05 = system_n05.hamiltonian_differential_gradient()
+
+        differential_costate = np.linalg.solve(E_11_n05.T, DH_n05)
+        algebraic_costate = system_n1.get_algebraic_costate()
+        costate = np.concatenate([differential_costate, algebraic_costate], axis=0)
+
+        return costate
 
 
 class DiscreteGradientPHDAE(IntegratorCommon):
