@@ -1,5 +1,5 @@
 ---
-title: "`pydykit`: A *Py*thon-based *dy*namics simulation tool*kit*"
+title: "pydykit: A Python-based dynamics simulation toolkit"
 tags:
   - Python
   - Mechanics
