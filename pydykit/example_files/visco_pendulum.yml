@@ -6,8 +6,8 @@ configuration:
       nbr_spatial_dimensions: 3
       particles:
       - index: 0
-        initial_position: [1.0, 0.0, 0.0]
-        initial_momentum: [0.0, 1.0, 0.0]
+        initial_position: [1.05, 0.0, 0.0]
+        initial_momentum: [0.0, 2.0, 0.0]
         mass: 1.0
       supports:
       - index: 0
@@ -20,7 +20,7 @@ configuration:
         end:
           type: particle
           index: 0
-        stiffness: 5000
+        stiffness: 500
         equilibrium_length: 1.0
       dampers:
       - start:
@@ -46,6 +46,6 @@ configuration:
   time_stepper:
     class_name: FixedIncrement
     kwargs:
-      step_size: 0.05 # 0.1
+      step_size: 0.01 # 0.1
       start: 0.0
-      end: 0.9
+      end: 0.09
