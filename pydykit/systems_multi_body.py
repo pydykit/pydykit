@@ -284,13 +284,12 @@ class ParticleSystem(MultiBodySystem):
     def _spring_energy_gradient(
         stiffness,
         equilibrium_length,
-        position_vectors,
+        start_vector,
+        end_vector,
         start_index,
         end_index,
         nbr_particles,
     ):
-        start_vector = position_vectors[start_index]
-        end_vector = position_vectors[end_index]
 
         vector = end_vector - start_vector
         tmp = (vector).T @ (vector) - equilibrium_length**2
@@ -308,14 +307,30 @@ class ParticleSystem(MultiBodySystem):
 
     def internal_potential_gradient(self):
         q = self.decompose_state()["position"]
-        position_vectors = self.decompose_into_particles(q)
+        position_vectors = dict(
+            particle=self.decompose_into_particles(q),
+            support=self.get_positions_supports(),
+        )
         contributions = [
             self._spring_energy_gradient(
                 stiffness=spring["stiffness"],
                 equilibrium_length=spring["equilibrium_length"],
-                position_vectors=position_vectors,
-                start_index=spring["start"]["index"],
-                end_index=spring["end"]["index"],
+                start_vector=utils.select(
+                    position_vectors=position_vectors,
+                    element=spring,
+                    endpoint="start",
+                ),
+                end_vector=utils.select(
+                    position_vectors=position_vectors,
+                    element=spring,
+                    endpoint="end",
+                ),
+                start_index=self.get_index_argument_based_on_type(
+                    ending=spring["start"],
+                ),
+                end_index=self.get_index_argument_based_on_type(
+                    ending=spring["end"],
+                ),
                 nbr_particles=self.nbr_particles,
             )
             for spring in self.springs
@@ -335,24 +350,30 @@ class ParticleSystem(MultiBodySystem):
             support=self.get_positions_supports(),
         )
 
-        return np.array(
-            [
-                self._constraint(
-                    length=constraint["length"],
-                    start=utils.select(
-                        position_vectors=position_vectors,
-                        element=constraint,
-                        endpoint="start",
-                    ),
-                    end=utils.select(
-                        position_vectors=position_vectors,
-                        element=constraint,
-                        endpoint="end",
-                    ),
-                )
-                for constraint in self.constraints
-            ]
-        )
+        contributions = [
+            self._constraint(
+                length=constraint["length"],
+                start=utils.select(
+                    position_vectors=position_vectors,
+                    element=constraint,
+                    endpoint="start",
+                ),
+                end=utils.select(
+                    position_vectors=position_vectors,
+                    element=constraint,
+                    endpoint="end",
+                ),
+            )
+            for constraint in self.constraints
+        ]
+
+        if contributions == []:
+            # Random fix for missing constraints
+            result = 0
+        else:
+            result = np.array(contributions)
+
+        return result
 
     @staticmethod
     def _constraint_gradient(
@@ -406,8 +427,8 @@ class ParticleSystem(MultiBodySystem):
         ]
 
         if contributions == []:
-            # Copilot proposed this... but the constraint does not work
-            result = np.zeros([self.nbr_constraints, self.nbr_dof])
+            # Random fix for missing constraints
+            result = np.zeros(len(q))
         else:
             result = np.vstack(contributions)
 

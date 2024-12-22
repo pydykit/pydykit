@@ -49,4 +49,12 @@ plotter.fix_scene_bounds_to_extrema(figure=fig, df=df)
 
 fig.show()
 
-# df.to_csv(f"test/reference_results/{name}.csv")
+# postproc = postprocessors.Postprocessor(manager=manager, state_results_df=df)
+# postproc.postprocess(
+#     quantities_and_evaluation_points={"total_energy": ["current_time"]}
+# )
+# fig02 = plotter.visualize_time_evolution(quantities=["total_energy_current_time"])
+# fig02.show()
+
+
+df.to_csv(f"test/reference_results/{name}.csv")
