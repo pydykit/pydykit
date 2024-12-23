@@ -2,9 +2,11 @@
 title: "pydykit: A Python-based dynamics simulation toolkit"
 tags:
   - Python
-  - Mechanics
   - Dynamics
+  - Finite-dimensional systems
+  - Simulation
   - Numerical methods
+  - Structure-preserving discretization
 authors:
   - name: Philipp Lothar Kinon^[corresponding author]
     orcid: 0000-0002-4128-5124
