@@ -121,9 +121,7 @@ Key theoretical concepts include:
 
 ## Usage so far
 
-`pydykit` has been recently used in the authors works (among others TODO [@kinon_ggl_2023] and TODO [@kinon_structure_2023]),
-where numerical schemes based on a mixed extension due to Livens principle TODO [@livens_hamiltons_1919]
-have been derived for systems with holonomic constraints.
+`pydykit` has been recently used in the authors work TODO where discrete gradient based methods have been discussed for the class of port-Hamiltonian systems governed by differential-algebraic equations.
 
 # Acknowledgements
 
