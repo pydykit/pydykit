@@ -8,15 +8,15 @@ tags:
   - Numerical methods
   - Structure-preserving discretization
 authors:
-  - name: Philipp Lothar Kinon^[corresponding author]
-    orcid: 0000-0002-4128-5124
-    affiliation: "1"
-  - name: Julian Karl Bauer
+  - name: Julian Karl Bauer^[corresponding author]
     orcid: 0000-0002-4931-5869
     affiliation: "2" # (Multiple affiliations must be quoted)
-  - name: Peter Betsch
-    orcid: 0000-0002-0596-2503
+  - name: Philipp Lothar Kinon
+    orcid: 0000-0002-4128-5124
     affiliation: "1"
+  # - name: Peter Betsch
+  #   orcid: 0000-0002-0596-2503
+  #   affiliation: "1"
 affiliations:
   - name: Institute of Mechanics, Karlsruhe Institute of Technology (KIT), Karlsruhe, Germany
     index: 1
