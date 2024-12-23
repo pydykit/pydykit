@@ -10,18 +10,18 @@ tags:
 authors:
   - name: Julian Karl Bauer^[corresponding author]
     orcid: 0000-0002-4931-5869
-    affiliation: "2" # (Multiple affiliations must be quoted)
+    affiliation: "1" # (Multiple affiliations must be quoted)
   - name: Philipp Lothar Kinon
     orcid: 0000-0002-4128-5124
-    affiliation: "1"
+    affiliation: "2"
   # - name: Peter Betsch
   #   orcid: 0000-0002-0596-2503
   #   affiliation: "1"
 affiliations:
   - name: Institute of Mechanics, Karlsruhe Institute of Technology (KIT), Karlsruhe, Germany
-    index: 1
-  - name: Independent Researcher, Karlsruhe, Germany
     index: 2
+  - name: Independent Researcher, Karlsruhe, Germany
+    index: 1
 date: 23 Dezember 2024
 bibliography: paper.bib
 ---
