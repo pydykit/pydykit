@@ -22,7 +22,7 @@ affiliations:
     index: 1
   - name: Independent Researcher, Karlsruhe, Germany
     index: 2
-date: 22 Dezember 2024
+date: 23 Dezember 2024
 bibliography: paper.bib
 ---
 
@@ -127,6 +127,6 @@ have been derived for systems with holonomic constraints.
 
 # Acknowledgements
 
-PLK and PB gratefully acknowledge financial support by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – project numbers TODO XX and TODO YY.
+PLK gratefully acknowledges financial support by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – project numbers TODO XX and TODO YY.
 
 # References
