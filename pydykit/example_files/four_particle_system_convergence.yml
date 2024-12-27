@@ -1,4 +1,4 @@
-name: four_particle_system_ph_discrete_gradient_dissipative
+name: four_particle_system_convergence
 configuration:
   system:
     class_name: ParticleSystem
