@@ -87,12 +87,12 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
 
         super().__init__(
             manager=manager,
-            state=state,
             nbr_spatial_dimensions=nbr_spatial_dimensions,
             nbr_constraints=nbr_constraints,
             nbr_dof=nbr_dof,
             mass=mass,
             gravity=gravity,
+            state=state,
         )
         self.gravity = np.array(self.gravity)
 
@@ -198,44 +198,37 @@ class ParticleSystem(MultiBodySystem):
         self.springs = springs
         self.dampers = dampers
         self.constraints = constraints
-        self.supports = supports
+        self.supports = utils.sort_list_of_dicts_based_on_special_value(
+            my_list=supports, key="index"
+        )
 
         self.nbr_particles = len(self.particles)
-        nbr_dof = self.nbr_spatial_dimensions * self.nbr_particles
 
-        mass = [particle["mass"] for particle in self.particles]
-
-        self.initial_state_q = utils.get_flat_list_of_list_attributes(
-            items=self.particles, key="initial_position"
-        )
-
-        self.initial_state_p = utils.get_flat_list_of_list_attributes(
-            items=self.particles, key="initial_momentum"
-        )
-        self.initial_state = {
-            "position": self.initial_state_q,
-            "momentum": self.initial_state_p,
-            "multiplier": np.zeros(len(self.constraints)),
-        }
-
-        # TODO: Remove redundancy... You pass several arguments to a super class and set them as attributes within the super classes init function.
-        # Some of these arguments have already been set as attributes within this childs init function. Why would you do this?
-        # TODO: Remove everything that has to do with parsing config files from system. System is about methods which evaluate physical quantities.
         super().__init__(
             manager=manager,
             nbr_spatial_dimensions=nbr_spatial_dimensions,
             nbr_constraints=len(self.constraints),
-            nbr_dof=nbr_dof,
-            mass=mass,
+            nbr_dof=nbr_spatial_dimensions * self.nbr_particles,
+            mass=[particle["mass"] for particle in self.particles],
             gravity=gravity,
-            state=self.initial_state,
+            state={
+                "position": utils.get_flat_list_of_list_attributes(
+                    items=self.particles,
+                    key="initial_position",
+                ),
+                "momentum": utils.get_flat_list_of_list_attributes(
+                    items=self.particles,
+                    key="initial_momentum",
+                ),
+                "multiplier": np.zeros(len(self.constraints)),
+            },
         )
 
     def get_state_columns(self):
         return [
-            f"{state_name}{dimension}_particle{number}"
+            f"{state_name}{dimension}_particle{index}"
             for state_name in ["position", "momentum"]
-            for number in range(self.nbr_particles)
+            for index in map(lambda particle: particle["index"], self.particles)
             for dimension in range(self.nbr_spatial_dimensions)
         ] + [f"lambda{number}" for number in range(self.nbr_constraints)]
 
@@ -403,15 +396,11 @@ class ParticleSystem(MultiBodySystem):
                     element=constraint,
                     endpoint="end",
                 ),
-                start_index=(
-                    constraint["start"]["index"]
-                    if constraint["start"]["type"] == "particle"
-                    else None
+                start_index=self.get_index_argument_based_on_type(
+                    ending=constraint["start"],
                 ),
-                end_index=(
-                    constraint["end"]["index"]
-                    if constraint["end"]["type"] == "particle"
-                    else None
+                end_index=self.get_index_argument_based_on_type(
+                    ending=constraint["end"],
                 ),
                 nbr_particles=self.nbr_particles,
             )
@@ -433,6 +422,7 @@ class ParticleSystem(MultiBodySystem):
         diss_mat = np.zeros([self.nbr_dof, self.nbr_dof])
 
         q = self.decompose_state()["position"]
+
         position_vectors = dict(
             particle=self.decompose_into_particles(q),
             support=self.get_positions_supports(),
@@ -456,15 +446,11 @@ class ParticleSystem(MultiBodySystem):
             )
             * self._dissipation_matrix(
                 nbr_dimensions=self.nbr_spatial_dimensions,
-                start_index=(
-                    damper["start"]["index"]
-                    if damper["start"]["type"] == "particle"
-                    else None
+                start_index=self.get_index_argument_based_on_type(
+                    ending=damper["start"],
                 ),
-                end_index=(
-                    damper["end"]["index"]
-                    if damper["end"]["type"] == "particle"
-                    else None
+                end_index=self.get_index_argument_based_on_type(
+                    ending=damper["end"],
                 ),
                 nbr_particles=self.nbr_particles,
             )
@@ -474,6 +460,26 @@ class ParticleSystem(MultiBodySystem):
         diss_mat += sum(contributions)
 
         return diss_mat
+
+    @staticmethod
+    def get_index_argument_based_on_type(ending):
+        """
+        See discussion in
+        https://github.com/pydykit/pydykit/pull/56#issuecomment-2408621335
+        """
+
+        _type = ending["type"]
+
+        if _type == "particle":
+            result = ending["index"]
+        elif _type == "support":
+            result = None
+        else:
+            raise NotImplementedError(
+                f'damper_ending["type"]={_type} is not implemented'
+            )
+
+        return result
 
     @staticmethod
     def _dissipation_matrix(
