@@ -1,0 +1,76 @@
+name: four_particle_system_convergence
+configuration:
+  system:
+    class_name: ParticleSystem
+    kwargs:
+      nbr_spatial_dimensions: 3
+      particles:
+      - index: 0
+        initial_position: [0.0, 0.0, 0.0]
+        initial_momentum: [0.0, 0.0, 0.0]
+        mass: 1.0
+      - index: 1
+        initial_position: [1.0, 0.0, 0.0]
+        initial_momentum: [0.0, 0.0, 0.0]
+        mass: 3.0
+      - index: 2
+        initial_position: [0.0, 1.0, 0.0]
+        initial_momentum: [0.0, 0.0, 0.0]
+        mass: 2.3
+      - index: 3
+        initial_position: [1.0, 1.0, 0.0]
+        initial_momentum: [0.0, 0.0, 1.1764705882352939]
+        mass: 1.7
+      supports: {}
+      springs:
+      - particle_start: 0
+        particle_end: 2
+        stiffness: 50
+        equilibrium_length: 1
+      - particle_start: 1
+        particle_end: 3
+        stiffness: 500
+        equilibrium_length: 1
+      dampers:
+      - start:
+          type: particle
+          index: 1
+        end:
+          type: particle
+          index: 2
+        ground_viscosity: 1
+        state_dependent: true
+        alpha: 0.5
+      constraints:
+      - start:
+          type: particle
+          index: 0
+        end:
+          type: particle
+          index: 1
+        length: 1
+      - start:
+          type: particle
+          index: 2
+        end:
+          type: particle
+          index: 3
+        length: 1
+      gravity: [0.0, 0.0, 0.0]
+  simulator:
+    class_name: OneStep
+    kwargs:
+      solver_name: NewtonPlainPython
+      newton_epsilon: 1.e-10
+      max_iterations: 40
+  integrator:
+    class_name: DiscreteGradientPHDAE
+    kwargs:
+      increment_tolerance: 1.e-12
+      discrete_gradient_type: Gonzalez
+  time_stepper:
+    class_name: FixedIncrement
+    kwargs:
+      step_size: 1.e-4
+      start: 0.0
+      end: 0.1

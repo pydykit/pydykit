@@ -71,18 +71,38 @@ class Pendulum2D(PortHamiltonianSystem):
         v = self.decompose_state()["angular_velocity"]
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
 
+    def get_algebraic_costate(self):
+        return []
+
     def hamiltonian(self):
-        pass
+        q = self.decompose_state()["angle"]
+        v = self.decompose_state()["angular_velocity"]
+        return (
+            -self.mass * self.gravity * self.length * np.cos(q)
+            + 0.5 * self.mass * self.length**2 * v**2
+        )
 
     def hamiltonian_gradient(self):
         q = self.decompose_state()["angle"]
-        return np.diag([self.mass * self.gravity * self.length * np.cos(q), 1])
+        v = self.decompose_state()["angular_velocity"]
+        return np.array(
+            [
+                self.mass * self.gravity * self.length * np.sin(q),
+                self.mass * self.length**2 * v,
+            ]
+        )
+
+    def hamiltonian_differential_gradient(self):
+        return self.hamiltonian_gradient()
 
     def structure_matrix(self):
         return np.array([[0, 1], [-1, 0]])
 
     def descriptor_matrix(self):
         return np.diag([1, self.mass * self.length**2])
+
+    def nonsingular_descriptor_matrix(self):
+        return self.descriptor_matrix()
 
     def port_matrix(self):
         pass
