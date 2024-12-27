@@ -2,6 +2,10 @@
   <a href="https://github.com/pydykit/pydykit"><img alt="pydykit" src="docs/assets/banner.png" width="50%"></a>
 </p>
 
+[![Pytest](https://github.com/pydykit/pydykit/actions/workflows/pytest.yml/badge.svg)](https://github.com/pydykit/pydykit/actions/workflows/pytest.yml)
+[![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 # `pydykit`: A *Py*thon-based *dy*namics simulation tool*kit*
 
 `pydykit` provides a basic framework for the simulation of dynamical systems.
