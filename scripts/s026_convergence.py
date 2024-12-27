@@ -4,10 +4,8 @@ import plotly.express as px
 
 import pydykit
 import pydykit.integrators
-import pydykit.postprocessors as postprocessors
 import pydykit.systems_port_hamiltonian as phs
 import pydykit.time_steppers
-import pydykit.utils as utils
 
 # Define the name of the configuration file
 name = "four_particle_system_convergence"
@@ -27,9 +25,25 @@ manager.system = porthamiltonian_system
 result = pydykit.results.Result(manager=manager)
 result = manager.manage(result=result)
 
+
+def get_final_values(result):
+    df_result = result.to_df()
+    final_position4_x = df_result["position0_particle3"].iloc[-1]
+    final_position4_y = df_result["position1_particle3"].iloc[-1]
+    final_position4_z = df_result["position2_particle3"].iloc[-1]
+    final_momentum4_x = df_result["momentum0_particle3"].iloc[-1]
+    final_momentum4_y = df_result["momentum1_particle3"].iloc[-1]
+    final_momentum4_z = df_result["momentum2_particle3"].iloc[-1]
+    final_multiplier_1 = df_result["lambda0"].iloc[-1]
+    final_position = np.array([final_position4_x, final_position4_y, final_position4_z])
+    final_momentum = np.array([final_momentum4_x, final_momentum4_y, final_momentum4_z])
+    final_multipliers = np.array([final_multiplier_1, 0, 0])
+    return final_position, final_momentum, final_multipliers
+
+
 # get positions of particle 4 at the end of the simulation
 reference_final_position, reference_final_momentum, reference_final_multipliers = (
-    utils.get_final_values(result=result)
+    get_final_values(result=result)
 )
 
 # Create a DataFrame with one column
@@ -47,10 +61,10 @@ df = pd.DataFrame(
     }
 )
 
-df.to_csv(
-    f"./pydykit/example_files/{name}_reference.csv",
-    index=False,
-)
+# df.to_csv(
+#     f"./pydykit/example_files/{name}_reference.csv",
+#     index=False,
+# )
 
 # save reference timestepping attributes
 reference_timestepper = manager.time_stepper
@@ -84,9 +98,7 @@ for timestep_size in all_timestep_sizes:
     result = manager.manage(result=result)
 
     # get values at the end of the simulation
-    final_position, final_momentum, final_multipliers = utils.get_final_values(
-        result=result
-    )
+    final_position, final_momentum, final_multipliers = get_final_values(result=result)
 
     # Append the final position, momentum, and multipliers to the DataFrame
     df[f"final_position_{timestep_size}"] = final_position
@@ -94,10 +106,10 @@ for timestep_size in all_timestep_sizes:
     df[f"final_multipliers_{timestep_size}"] = final_multipliers
 
 # Save the DataFrame to a CSV file
-df.to_csv(
-    f"./pydykit/example_files/{name}_{integrator}.csv",
-    index=False,
-)
+# df.to_csv(
+#     f"./pydykit/example_files/{name}_{integrator}.csv",
+#     index=False,
+# )
 
 # Compute the errors
 errors = {}
@@ -130,10 +142,10 @@ errors_df.columns = [
 ]
 
 # Save the errors to a CSV file
-errors_df.to_csv(
-    f"./pydykit/example_files/{name}_{integrator}_errors.csv",
-    index=False,
-)
+# errors_df.to_csv(
+#     f"./pydykit/example_files/{name}_{integrator}_errors.csv",
+#     index=False,
+# )
 
 # Create the plot using Plotly
 fig = px.line(
