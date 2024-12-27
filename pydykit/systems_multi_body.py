@@ -198,9 +198,7 @@ class ParticleSystem(MultiBodySystem):
         self.springs = springs
         self.dampers = dampers
         self.constraints = constraints
-        self.supports = utils.sort_list_of_dicts_based_on_special_value(
-            my_list=supports, key="index"
-        )
+        self.supports = supports
 
         self.nbr_particles = len(self.particles)
 
