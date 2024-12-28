@@ -2,29 +2,29 @@ name: rigid_body_rotating_quaternion
 
 system:
   class_name: RigidBodyRotatingQuaternions
-  kwargs:
-    nbr_spatial_dimensions: 3
-    nbr_dof: 4
-    nbr_constraints: 1
-    mass: 1.0
-    gravity: [0.0, 0.0, 0.0]
-    inertias: [6.0, 8.0, 3.0]
-    state:
-      position: [1.0, 0.0, 0.0, 0.0]
-      momentum: [0, 120, 320, 120] # mass matr (q0): diag([34,24,32,12]), velocity: [0.0, 5.0, 10.0, 10.0]
-      multiplier: [0.0]
+
+  nbr_spatial_dimensions: 3
+  nbr_dof: 4
+  nbr_constraints: 1
+  mass: 1.0
+  gravity: [0.0, 0.0, 0.0]
+  inertias: [6.0, 8.0, 3.0]
+  state:
+    position: [1.0, 0.0, 0.0, 0.0]
+    momentum: [0, 120, 320, 120] # mass matr (q0): diag([34,24,32,12]), velocity: [0.0, 5.0, 10.0, 10.0]
+    multiplier: [0.0]
 simulator:
   class_name: OneStep
-  kwargs:
-    solver_name: NewtonPlainPython
-    newton_epsilon: 1.e-09
-    max_iterations: 40
+
+  solver_name: NewtonPlainPython
+  newton_epsilon: 1.e-09
+  max_iterations: 40
 integrator:
   class_name: MidpointMultibody
-  kwargs: {}
+
 time_stepper:
   class_name: FixedIncrement
-  kwargs:
-    step_size: 0.05
-    start: 0.0
-    end: 0.45
+
+  step_size: 0.05
+  start: 0.0
+  end: 0.45
