@@ -61,8 +61,7 @@ class Constraint(PydykitBaseModel):
 
 class ParticleSystemKwargs(PydykitBaseModel):
 
-    # TODO: Discuss whether this should be set to values [1, 2, 3]
-    nbr_spatial_dimensions: int
+    nbr_spatial_dimensions: Literal[1, 2, 3]
 
     particles: Annotated[
         list[Particle],
