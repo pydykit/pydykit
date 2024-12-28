@@ -1,18 +1,10 @@
-from typing import Literal, Union
+from typing import ClassVar, Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from typing_extensions import Annotated
 
 from .factories import factories
 from .models import ParticleSystemKwargs, PydykitBaseModel
-
-map_class_name_to_config_file_param = {
-    "System": "system",
-    "Simulator": "simulator",
-    "Integrator": "integrator",
-    "TimeStepper": "time_stepper",
-}
-
 
 # TODO #114: Get rid of nesting in config files to avoid having both ParticleSystem and ParticleSystemKwargs.
 #       Switch to something flat, like
@@ -28,19 +20,18 @@ class RegisteredClassName(BaseModel):
     class_name: str
 
     @field_validator("class_name")
-    def validate_that_class_name_refers_to_registered_factory_method(
-        cls, class_name, info
+    def validate_that_class_name_value_refers_to_registered_factory_method(
+        cls,
+        class_name,
+        info,
     ):
 
-        title = info.config["title"]
-        # Example: During validation of any field of model "System",
-        # the expression "info.config['title'] will return 'System'"
+        constructors = (
+            cls.factory.constructors
+        )  # Assumes that current model has a ClassVar attribute representing the factory
 
-        key = map_class_name_to_config_file_param[title]
-        options = factories[key].constructors
-
-        if class_name not in options:
-            raise ValueError(f"supported options for {title} are {options.keys()}")
+        if class_name not in constructors:
+            raise ValueError(f"supported factory methods are {constructors.keys()}")
 
         return class_name
 
@@ -52,18 +43,28 @@ class Kwargs(BaseModel):
 
 
 class Simulator(RegisteredClassName):
+    factory: ClassVar = factories["simulator"]
+    # NOTE: Attributes typed as ClassVar do not represent attributes, but can, e.g., be used during validation, see
+    #       https://docs.pydantic.dev/latest/concepts/models/#automatically-excluded-attributes
+
     kwargs: Kwargs
 
 
 class Integrator(RegisteredClassName):
+    factory: ClassVar = factories["integrator"]
+
     kwargs: Kwargs
 
 
 class TimeStepper(RegisteredClassName):
+    factory: ClassVar = factories["time_stepper"]
+
     kwargs: Kwargs
 
 
 class System(RegisteredClassName):
+    factory: ClassVar = factories["system"]
+
     class_name: Literal[
         "RigidBodyRotatingQuaternions",
         "Pendulum2D",
@@ -73,19 +74,11 @@ class System(RegisteredClassName):
     kwargs: Kwargs
 
 
-class ParticleSystem(PydykitBaseModel):
+class ParticleSystem(PydykitBaseModel, RegisteredClassName):
+    factory: ClassVar = factories["system"]
+
     class_name: Literal["ParticleSystem"]
     kwargs: ParticleSystemKwargs
-
-    @field_validator("class_name")
-    def validate_that_class_name_refers_to_registered_factory_method(
-        cls, class_name, info
-    ):
-        assert (
-            class_name in factories["system"].constructors
-        ), f"Can't find registered factory method for class_name={class_name}"
-
-        return class_name
 
 
 class Configuration(BaseModel):
