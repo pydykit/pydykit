@@ -97,12 +97,12 @@ def print_residual_norm(value):
     print(f"residual norm = {value:.4E}")
 
 
-def get_indices(l):
-    return [item.index for item in l]
+def get_indices(my_list):
+    return [item.index for item in my_list]
 
 
 def sort_based_on_attribute(obj, attribute):
-    return sorted(obj, key=lambda d: getattr(d, attribute))
+    return sorted(obj, key=lambda item: getattr(item, attribute))
 
 
 def get_flat_list_of_list_attributes(items, key):

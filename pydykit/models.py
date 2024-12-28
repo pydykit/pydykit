@@ -16,7 +16,7 @@ from .utils import get_indices, sort_based_on_attribute
 
 
 class PydykitBaseModel(BaseModel):
-    # Forbid extra attributes of this class, this should be the default for all systems kwargs to be rather strict
+    # Forbid extra attributes of this class, see https://docs.pydantic.dev/latest/api/config/#pydantic.config.ConfigDict.extra
     model_config = ConfigDict(extra="forbid")
 
 
@@ -48,9 +48,9 @@ class Support(PydykitBaseModel):
 class Damper(PydykitBaseModel):
     start: Ending
     end: Ending
-    ground_viscosity: float  # TODO: Might this be negative?
+    ground_viscosity: NonNegativeFloat
     state_dependent: bool
-    alpha: float  # TODO: Might this be negative?
+    alpha: NonNegativeFloat
 
 
 class Constraint(PydykitBaseModel):
@@ -61,8 +61,7 @@ class Constraint(PydykitBaseModel):
 
 class ParticleSystemKwargs(PydykitBaseModel):
 
-    # TODO: Discuss whether this should be set to values [1, 2, 3]
-    nbr_spatial_dimensions: int
+    nbr_spatial_dimensions: Literal[1, 2, 3]
 
     particles: Annotated[
         list[Particle],

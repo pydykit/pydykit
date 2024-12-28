@@ -14,14 +14,14 @@ map_class_name_to_config_file_param = {
 }
 
 
-# TODO: Get rid of nesting in config files to avoid having both ParticleSystem and ParticleSystemKwargs.
+# TODO #114: Get rid of nesting in config files to avoid having both ParticleSystem and ParticleSystemKwargs.
 #       Switch to something flat, like
 # system:
 #   class_name: "ParticleSystem"
 #   particles: {}
 #   springs: {}
 
-# TODO: Consider removing the nesting "configuration"
+# TODO #114: Consider removing the nesting "configuration"
 
 
 class RegisteredClassName(BaseModel):
@@ -46,7 +46,7 @@ class RegisteredClassName(BaseModel):
 
 
 class Kwargs(BaseModel):
-    # This is a temporary placeholder to allow passing any arguments to classes which are not yet granularly pydantic validated.
+    # TODO #115: Remove placeholder: This is a temporary placeholder to allow passing any arguments to classes which are not yet granularly pydantic validated.
     # This object is a BaseModel which can be assigned any attributes.
     model_config = ConfigDict(extra="allow")
 
