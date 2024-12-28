@@ -48,9 +48,9 @@ class Support(PydykitBaseModel):
 class Damper(PydykitBaseModel):
     start: Ending
     end: Ending
-    ground_viscosity: float  # TODO: Might this be negative?
+    ground_viscosity: NonNegativeFloat
     state_dependent: bool
-    alpha: float  # TODO: Might this be negative?
+    alpha: NonNegativeFloat
 
 
 class Constraint(PydykitBaseModel):
