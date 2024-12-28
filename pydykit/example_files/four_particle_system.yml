@@ -21,17 +21,25 @@ configuration:
         initial_position: [1.0, 1.0, 0.0]
         initial_momentum: [0.0, 0.0, 2]
         mass: 1.7
-      supports: {}
+      supports: []
       springs:
-      - particle_start: 0
-        particle_end: 2
+      - start:
+          type: particle
+          index: 0
+        end:
+          type: particle
+          index: 2
         stiffness: 50
         equilibrium_length: 1
-      - particle_start: 1
-        particle_end: 3
+      - start:
+          type: particle
+          index: 1
+        end:
+          type: particle
+          index: 3
         stiffness: 500
         equilibrium_length: 1
-      dampers: {}
+      dampers: []
       constraints:
       - start:
           type: particle

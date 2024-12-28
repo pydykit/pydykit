@@ -1,4 +1,4 @@
-name: pendulum_3d_cartesian_full_time
+name: visco_pendulum
 configuration:
   system:
     class_name: ParticleSystem
@@ -6,36 +6,46 @@ configuration:
       nbr_spatial_dimensions: 3
       particles:
       - index: 0
-        initial_position: [1.0, 0.0, 0.0]
-        initial_momentum: [0.0, 1.0, 0.0]
+        initial_position: [1.05, 0.0, 0.0]
+        initial_momentum: [0.0, 2.0, 0.0]
         mass: 1.0
       supports:
       - index: 0
         type: fixed
         position: [0.0, 0.0, 0.0]
-      springs: []
-      dampers: []
-      constraints:
+      springs:
       - start:
           type: support
           index: 0
         end:
           type: particle
           index: 0
-        length: 1.0
+        stiffness: 500
+        equilibrium_length: 1.0
+      dampers:
+      - start:
+          type: support
+          index: 0
+        end:
+          type: particle
+          index: 0
+        ground_viscosity: 0.1
+        state_dependent: false
+        alpha: 0
+      constraints: []
       gravity: [0.0, 0.0, 9.81]
   simulator:
     class_name: OneStep
     kwargs:
       solver_name: NewtonPlainPython
-      newton_epsilon: 1.e-07
+      newton_epsilon: 1.e-10
       max_iterations: 40
   integrator:
     class_name: MidpointMultibody
     kwargs: {}
   time_stepper:
-    class_name: FixedIncrementHittingEnd
+    class_name: FixedIncrement
     kwargs:
-      step_size: 0.05
+      step_size: 0.01 # 0.1
       start: 0.0
-      end: 0.45
+      end: 0.09
