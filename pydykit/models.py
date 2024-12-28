@@ -16,7 +16,7 @@ from .utils import get_indices, sort_based_on_attribute
 
 
 class PydykitBaseModel(BaseModel):
-    # Forbid extra attributes of this class, this should be the default for all systems kwargs to be rather strict
+    # Forbid extra attributes of this class, see https://docs.pydantic.dev/latest/api/config/#pydantic.config.ConfigDict.extra
     model_config = ConfigDict(extra="forbid")
 
 
