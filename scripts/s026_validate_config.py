@@ -12,7 +12,7 @@ file_content = load_yaml_file(
 )
 
 configuration = Configuration(
-    **file_content["configuration"],
+    **file_content,
 )
 
 print(

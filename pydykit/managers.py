@@ -13,7 +13,7 @@ class Manager(abstract_base_classes.Manager):
             path=path,
         )
         configuration = Configuration(
-            **file_content["configuration"],
+            **file_content,
         )
 
         self._configure(configuration=configuration)

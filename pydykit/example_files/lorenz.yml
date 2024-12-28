@@ -1,25 +1,25 @@
 name: lorenz
-configuration:
-  system:
-    class_name: Lorenz
-    kwargs:
-      sigma: 10.0
-      rho: 28.0
-      beta: 2.6666666667
-      state:
-        state: [2.0, 1.0, 1.0]
-  simulator:
-    class_name: OneStep
-    kwargs:
-      solver_name: NewtonPlainPython
-      newton_epsilon: 1.e-07
-      max_iterations: 40
-  integrator:
-    class_name: MidpointDAE
-    kwargs: {}
-  time_stepper:
-    class_name: FixedIncrement
-    kwargs:
-      step_size: 0.02
-      start: 0.0
-      end: 0.1
+
+system:
+  class_name: Lorenz
+  kwargs:
+    sigma: 10.0
+    rho: 28.0
+    beta: 2.6666666667
+    state:
+      state: [2.0, 1.0, 1.0]
+simulator:
+  class_name: OneStep
+  kwargs:
+    solver_name: NewtonPlainPython
+    newton_epsilon: 1.e-07
+    max_iterations: 40
+integrator:
+  class_name: MidpointDAE
+  kwargs: {}
+time_stepper:
+  class_name: FixedIncrement
+  kwargs:
+    step_size: 0.02
+    start: 0.0
+    end: 0.1

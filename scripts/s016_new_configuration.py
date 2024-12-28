@@ -11,7 +11,7 @@ path_config_file = f"./pydykit/example_files/{name}.yml"
 # file_content = utils.load_yaml_file(
 #     path=path_config_file,
 # )
-# configuration = pydykit.configuration.Configuration(**file_content["configuration"])
+# configuration = pydykit.configuration.Configuration(**file_content)
 # manager.configure(configuration=configuration)
 
 manager.configure_from_path(path=path_config_file)
