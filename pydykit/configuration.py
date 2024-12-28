@@ -74,7 +74,10 @@ class System(RegisteredClassName):
     kwargs: Kwargs
 
 
-class ParticleSystem(PydykitBaseModel, RegisteredClassName):
+class ParticleSystem(
+    PydykitBaseModel,
+    RegisteredClassName,
+):
     factory: ClassVar = factories["system"]
 
     class_name: Literal["ParticleSystem"]
