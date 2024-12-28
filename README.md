@@ -5,6 +5,7 @@
 [![Pytest](https://github.com/pydykit/pydykit/actions/workflows/pytest.yml/badge.svg)](https://github.com/pydykit/pydykit/actions/workflows/pytest.yml)
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 <!-- [![PyPI](https://img.shields.io/pypi/v/pydykit?style=flat-square)](https://pypi.org/project/pydykit)
 [![PyPI - Implementation](https://img.shields.io/pypi/implementation/pydykit?style=flat-square)](https://pypi.org/project/pydykit)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydykit?style=flat-square)](https://pypi.org/project/pydykit) -->
@@ -30,7 +31,7 @@ which are discrete versions of the corresponding dynamics equations - either ord
    pip install --editable .
    ```
 
-   All dependencies are installed automatically. All detailed requirements can be found in the [requirements_dev](requirements_dev.txt).
+   Dependencies are installed automatically. Detailed requirements can be found in the [requirements_dev](requirements_dev.txt).
 
 3. Run your first script, e.g.
 
@@ -42,23 +43,21 @@ which are discrete versions of the corresponding dynamics equations - either ord
 
 See [test/README.md](./test/README.md)
 
-
 ## Built With
 
-* [Venv](https://docs.python.org/3/library/venv.html) - virtual environments for managing dependencies and package versioning.
-* [Pre-commit](https://pre-commit.com) - for styling with [black](https://github.com/psf/black) and other formatting.
+- [Venv](https://docs.python.org/3/library/venv.html) - virtual environments for managing dependencies and package versioning.
+- [Pre-commit](https://pre-commit.com) - for styling with [black](https://github.com/psf/black) and other formatting.
 
 ## Contributing
 
 Please read our code of conduct, fork this repo and initiate a pull request. Feel free to contact us if you have doubts.
 
-
 ## Main Contributors
+
 - **Julian K. Bauer** - _Code architect_ - [@JulianKarlBauer](https://github.com/JulianKarlBauer)
 - **Philipp L. Kinon** - _Core developer_ - [@plkinon](https://github.com/plkinon)
 
 See also the list of [contributors](https://github.com/pydykit/pydykit/contributors) who participated in this project.
-
 
 ## License
 
