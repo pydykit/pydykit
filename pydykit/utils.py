@@ -102,7 +102,7 @@ def get_indices(my_list):
 
 
 def sort_based_on_attribute(obj, attribute):
-    return sorted(obj, key=lambda d: getattr(d, attribute))
+    return sorted(obj, key=lambda item: getattr(item, attribute))
 
 
 def get_flat_list_of_list_attributes(items, key):
