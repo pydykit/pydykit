@@ -37,4 +37,9 @@ classifiers = [
 
 [tool.setuptools.packages.find]
 include = ["pydykit"]
+exclude = [
+  "docs*",
+  "tests",
+  "scripts",
+]
 namespaces = false
