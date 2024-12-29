@@ -1,8 +1,6 @@
 name: rigid_body_rotating_quaternion
-
 system:
   class_name: RigidBodyRotatingQuaternions
-
   nbr_spatial_dimensions: 3
   nbr_dof: 4
   nbr_constraints: 1
@@ -15,16 +13,13 @@ system:
     multiplier: [0.0]
 simulator:
   class_name: OneStep
-
   solver_name: NewtonPlainPython
   newton_epsilon: 1.e-09
   max_iterations: 40
 integrator:
   class_name: MidpointMultibody
-
 time_stepper:
   class_name: FixedIncrement
-
   step_size: 0.05
   start: 0.0
   end: 0.45
