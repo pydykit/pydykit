@@ -19,7 +19,7 @@ dependencies = [
   "pydantic",
   "pytest"
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 authors = [
   {name = "Philipp L. Kinon"},
   {name = "Julian Karl Bauer"},
