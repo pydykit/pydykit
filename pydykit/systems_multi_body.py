@@ -48,8 +48,9 @@ class MultiBodySystem(
         )
 
     def kinetic_energy(self):
-        q = self.decompose_state()["position"]
-        p = self.decompose_state()["momentum"]
+        state = self.decompose_state()
+        q = state["position"]
+        p = state["momentum"]
         return 0.5 * p.T @ self.inverse_mass_matrix() @ p
 
     def potential_energy(self):
@@ -120,8 +121,9 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return 0.25 * Ql_q @ inverse_extended_inertias_matrix @ Ql_q.T
 
     def kinetic_energy_gradient_from_momentum(self):
-        q = self.decompose_state()["position"]
-        p = self.decompose_state()["momentum"]
+        state = self.decompose_state()
+        q = state["position"]
+        p = state["momentum"]
 
         # extended inertia tensor
         J0 = np.trace(self.inertias_matrix)
@@ -136,8 +138,9 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return 0.25 * Ql_p @ inverse_extended_inertias @ Ql_p.T @ q
 
     def kinetic_energy_gradient_from_velocity(self):
-        q = self.decompose_state()["position"]
-        v = self.decompose_state()["velocity"]
+        state = self.decompose_state()
+        q = state["position"]
+        v = state["velocity"]
 
         tmp = v[:4]
 

@@ -67,24 +67,27 @@ class Pendulum2D(PortHamiltonianSystem):
         )
 
     def costates(self):
-        q = self.decompose_state()["angle"]
-        v = self.decompose_state()["angular_velocity"]
+        state = self.decompose_state()
+        q = state["angle"]
+        v = state["angular_velocity"]
         return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
 
     def get_algebraic_costate(self):
         return []
 
     def hamiltonian(self):
-        q = self.decompose_state()["angle"]
-        v = self.decompose_state()["angular_velocity"]
+        state = self.decompose_state()
+        q = state["angle"]
+        v = state["angular_velocity"]
         return (
             -self.mass * self.gravity * self.length * np.cos(q)
             + 0.5 * self.mass * self.length**2 * v**2
         )
 
     def hamiltonian_gradient(self):
-        q = self.decompose_state()["angle"]
-        v = self.decompose_state()["angular_velocity"]
+        state = self.decompose_state()
+        q = state["angle"]
+        v = state["angular_velocity"]
         return np.array(
             [
                 self.mass * self.gravity * self.length * np.sin(q),
