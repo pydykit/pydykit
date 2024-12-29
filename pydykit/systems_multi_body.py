@@ -180,7 +180,12 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return q.T[np.newaxis, :]
 
     def dissipation_matrix(self):
-        diss_mat = np.zeros([self.nbr_dof, self.nbr_dof])
+        diss_mat = np.zeros(
+            [
+                self.nbr_dof,
+                self.nbr_dof,
+            ]
+        )
         return diss_mat
 
 
