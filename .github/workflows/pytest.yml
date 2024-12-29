@@ -1,33 +1,26 @@
 name: Pytest
-
 on: [push]
-
 jobs:
   test:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
         python: ['3.11']
-
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python }}
-
-    - name: Update pip
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install pytest
-
-    - name: Install package
-      working-directory: .
-      run: |
-        python -m pip install .
-
-    - name: Pytest
-      working-directory: .
-      run: |
-        pytest -vv --runslow
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Update pip
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest
+      - name: Install package
+        working-directory: .
+        run: |
+          python -m pip install .
+      - name: Pytest
+        working-directory: .
+        run: |
+          pytest -vv --runslow

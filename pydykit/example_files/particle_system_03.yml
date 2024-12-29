@@ -1,53 +1,48 @@
 name: particle_system_03
-
 system:
   class_name: ParticleSystem
-
   nbr_spatial_dimensions: 3
   particles:
-  - index: 0
-    initial_position: [0.0, 0.0, 1.0]
-    initial_momentum: [0.0, 0.0, 0.0]
-    mass: 1.0
-  - index: 1
-    initial_position: [0.0, 0.0, 2.0]
-    initial_momentum: [0.0, 3.0, 0.0]
-    mass: 1.0
+    - index: 0
+      initial_position: [0.0, 0.0, 1.0]
+      initial_momentum: [0.0, 0.0, 0.0]
+      mass: 1.0
+    - index: 1
+      initial_position: [0.0, 0.0, 2.0]
+      initial_momentum: [0.0, 3.0, 0.0]
+      mass: 1.0
   supports:
-  - index: 0
-    type: fixed
-    position: [0.0, 0.0, 0.0]
+    - index: 0
+      type: fixed
+      position: [0.0, 0.0, 0.0]
   springs:
-  - start:
-      type: particle
-      index: 0
-    end:
-      type: particle
-      index: 1
-    stiffness: 50
-    equilibrium_length: 1.0
+    - start:
+        type: particle
+        index: 0
+      end:
+        type: particle
+        index: 1
+      stiffness: 50
+      equilibrium_length: 1.0
   dampers: []
   constraints:
-  - start:
-      type: support
-      index: 0
-    end:
-      type: particle
-      index: 0
-    length: 1.0
+    - start:
+        type: support
+        index: 0
+      end:
+        type: particle
+        index: 0
+      length: 1.0
   gravity: [0.0, 0.0, 0.0]
 simulator:
   class_name: OneStep
-
   solver_name: NewtonPlainPython
   newton_epsilon: 1.e-10
   max_iterations: 40
 integrator:
   class_name: MidpointMultibody
-
 time_stepper:
   class_name: FixedIncrement
-
   step_size: 0.2 # 0.05
   start: 0.0
   end: 0.6 # 3.5

@@ -1,8 +1,6 @@
 name: reactor
-
 system:
   class_name: ChemicalReactor
-
   constants: [1.0, 1.0, 1.0, -100.0]
   cooling_temperature: 10.0
   reactant_concentration: 0.5
@@ -11,7 +9,6 @@ system:
     state: [0.0, 50.0, 0.0]
 simulator:
   class_name: OneStep
-
   solver_name: NewtonPlainPython
   newton_epsilon: 1.e-10
   max_iterations: 40
@@ -19,7 +16,6 @@ integrator:
   class_name: MidpointDAE
 time_stepper:
   class_name: FixedIncrement
-
   step_size: 0.01
   start: 0.0
   end: 1
