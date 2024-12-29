@@ -142,7 +142,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         return self.mbs.decompose_state()
 
     def costates(self):
-        decomposed_state = self.decompose_state()
+        state = self.decompose_state()
         potential_forces = (
             self.mbs.external_potential_gradient()
             + self.mbs.internal_potential_gradient()
@@ -151,15 +151,15 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         return np.hstack(
             [
                 potential_forces,
-                decomposed_state["momentum"],
-                decomposed_state["multiplier"],
+                state["momentum"],
+                state["multiplier"],
             ]
         )
 
     def hamiltonian_gradient(self):
-        decomposed_state = self.decompose_state()
-        v = decomposed_state["momentum"]
-        lambd = decomposed_state["multiplier"]
+        state = self.decompose_state()
+        v = state["momentum"]
+        lambd = state["multiplier"]
         dim_lambd = len(lambd)
         mass_matrix = self.mbs.mass_matrix()
 
@@ -190,17 +190,17 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         )
 
     def hamiltonian_differential_gradient_2(self):
-        decomposed_state = self.decompose_state()
-        v = decomposed_state["momentum"]
+        state = self.decompose_state()
+        v = state["momentum"]
         mass_matrix = self.mbs.mass_matrix()
 
         return mass_matrix @ v
 
     def structure_matrix(self):
-        decomposed_state = self.decompose_state()
-        q = decomposed_state["position"]
-        v = decomposed_state["momentum"]
-        lambd = decomposed_state["multiplier"]
+        state = self.decompose_state()
+        q = state["position"]
+        v = state["momentum"]
+        lambd = state["multiplier"]
         G = self.mbs.constraint_gradient()
 
         return np.block(
@@ -236,8 +236,8 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         return self.mbs.external_potential() + self.mbs.internal_potential()
 
     def hamiltonian_2(self):
-        decomposed_state = self.decompose_state()
-        v = decomposed_state["momentum"]
+        state = self.decompose_state()
+        v = state["momentum"]
         return 0.5 * np.dot(v, self.mbs.mass_matrix() @ v)
 
     def port_matrix(self):
@@ -258,20 +258,20 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         return np.dot(self.costates(), self.dissipation_matrix() @ self.costates())
 
     def get_algebraic_costate(self):
-        decomposed_state = self.decompose_state()
-        lambd = decomposed_state["multiplier"]
+        state = self.decompose_state()
+        lambd = state["multiplier"]
         return lambd
 
     def get_differential_state(self):
-        decomposed_state = self.decompose_state()
-        q = decomposed_state["position"]
-        v = decomposed_state["momentum"]
+        state = self.decompose_state()
+        q = state["position"]
+        v = state["momentum"]
         return np.concatenate([q, v], axis=0)
 
     def constraint(self):
         return self.mbs.constraint()
 
     def constraint_velocity(self):
-        decomposed_state = self.decompose_state()
-        v = decomposed_state["momentum"]
+        state = self.decompose_state()
+        v = state["momentum"]
         return self.mbs.constraint_gradient() @ v
