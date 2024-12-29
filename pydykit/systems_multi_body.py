@@ -300,9 +300,9 @@ class ParticleSystem(MultiBodySystem):
         structure = []
         for index in range(nbr_particles):
             if index == start_index:
-                structure.append(-2 * vector)
+                structure.append(-2.0 * vector)
             elif index == end_index:
-                structure.append(2 * vector)
+                structure.append(2.0 * vector)
             else:
                 structure.append(np.zeros(3))
 
