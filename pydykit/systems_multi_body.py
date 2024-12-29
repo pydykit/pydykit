@@ -128,7 +128,10 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         # extended inertia tensor
         J0 = np.trace(self.inertias_matrix)
         extended_inertias = np.block(
-            [[J0, np.zeros((1, 3))], [np.zeros((3, 1)), self.inertias_matrix]]
+            [
+                [J0, np.zeros((1, 3))],
+                [np.zeros((3, 1)), self.inertias_matrix],
+            ]  # TODO: Avoid hardcoding, use dimension
         )
 
         inverse_extended_inertias = np.linalg.inv(extended_inertias)
@@ -304,7 +307,7 @@ class ParticleSystem(MultiBodySystem):
             elif index == end_index:
                 structure.append(2.0 * vector)
             else:
-                structure.append(np.zeros(3))
+                structure.append(np.zeros(3))  # TODO: Avoid hardcoding, use dimension
 
         return stiffness * tmp * np.hstack(structure)
 
@@ -395,7 +398,7 @@ class ParticleSystem(MultiBodySystem):
             elif index == end_index:
                 structure.append(vector)
             else:
-                structure.append(np.zeros(3))
+                structure.append(np.zeros(3))  # TODO: Avoid hardcoding, use dimension
 
         return np.hstack(structure)
 
