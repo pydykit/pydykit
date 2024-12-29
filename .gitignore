@@ -13,6 +13,8 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+pydykit/_version.py
+
 .Python
 build/
 develop-eggs/
@@ -129,7 +131,8 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
+.venv*
+.*_venv
 env/
 venv/
 ENV/
