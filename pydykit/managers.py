@@ -13,7 +13,7 @@ class Manager(abstract_base_classes.Manager):
             path=path,
         )
         configuration = Configuration(
-            **file_content["configuration"],
+            **file_content,
         )
 
         self._configure(configuration=configuration)
@@ -32,10 +32,15 @@ class Manager(abstract_base_classes.Manager):
         obj = getattr(self.configuration, key)
         factory = factories[key]
 
+        kwargs = obj.model_dump()
+        kwargs.pop(
+            "class_name"
+        )  # Remove discriminator entry "class_name" from kwargs passed to constructor
+
         return factory.get(
             key=obj.class_name,
             manager=self,
-            **obj.kwargs.model_dump(),  # Note: kwargs is a pydantic BaseModel now, but had been a dict in the past
+            **kwargs,
         )
 
     def manage(self, result):

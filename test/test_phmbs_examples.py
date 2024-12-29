@@ -35,7 +35,7 @@ class TestExamples:
 
         manager = pydykit.managers.Manager()
         configuration = pydykit.configuration.Configuration(
-            **content_config_file["configuration"],
+            **content_config_file,
         )
         manager._configure(configuration=configuration)
 

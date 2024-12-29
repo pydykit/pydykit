@@ -3,45 +3,47 @@
 default_language_version:
   python: python3.10
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.6.0
-  hooks:
-  - id: trailing-whitespace
-    args: [--markdown-linebreak-ext=md]     # In markdown, trailing white spaces contain information
-  - id: check-yaml
-  - id: check-added-large-files
-    args: [--maxkb=1000]
-  - id: end-of-file-fixer
-- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-  rev: v2.14.0
-  hooks:
-  - id: pretty-format-yaml
-    args: [--autofix]
-- repo: https://github.com/psf/black-pre-commit-mirror
-  rev: 24.4.2
-  hooks:
-  - id: black-jupyter
-- repo: https://github.com/kynan/nbstripout
-  rev: 0.7.1
-  hooks:
-  - id: nbstripout
-- repo: https://github.com/pycqa/isort
-  rev: 5.13.2
-  hooks:
-  - id: isort
-    args: [--profile, black, --filter-files]
-- repo: https://github.com/nbQA-dev/nbQA
-  rev: 1.8.5
-  hooks:
-  - id: nbqa-isort     # This hooks sorts imports within notebooks
-- repo: https://github.com/adamchainz/blacken-docs
-  rev: 1.18.0   # replace with latest tag on GitHub
-  hooks:
-  - id: blacken-docs
-    additional_dependencies:
-    - black==24.2.0
-# - repo: https://github.com/pre-commit/mirrors-mypy
-#   rev: ''  # Use the sha / tag you want to point at
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md] # In markdown, trailing white spaces contain information
+      - id: check-yaml
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: end-of-file-fixer
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.10.0
+    hooks:
+      - id: yamlfmt
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 24.4.2
+    hooks:
+      - id: black-jupyter
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.7.1
+    hooks:
+      - id: nbstripout
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: [--profile, black, --filter-files]
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.8.5
+    hooks:
+      - id: nbqa-isort # This hooks sorts imports within notebooks
+  - repo: https://github.com/adamchainz/blacken-docs
+    rev: 1.18.0 # replace with latest tag on GitHub
+    hooks:
+      - id: blacken-docs
+        additional_dependencies:
+          - black==24.2.0
+# - repo: https://github.com/hukkin/mdformat
+#   rev: 0.7.21   # Use the ref you want to point at
 #   hooks:
-#   - id: mypy
-#     args: [--ignore-missing-imports]
+#   - id: mdformat
+#         # Optionally add plugins
+#     additional_dependencies:
+#     - mdformat-gfm
+#     - mdformat-black

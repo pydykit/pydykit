@@ -38,7 +38,7 @@ def update_object_from_config_file(
     obj.content_config_file = content_config_file
 
     obj.name = obj.content_config_file["name"]
-    obj.configuration = obj.content_config_file["configuration"]
+    obj.configuration = obj.content_config_file
 
 
 def load_yaml_file(path):
