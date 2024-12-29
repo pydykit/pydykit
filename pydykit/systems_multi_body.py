@@ -104,7 +104,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             quat=quat,
         )
         singular_mass_matrix = 4.0 * G_q.T @ self.inertias_matrix @ G_q
-        regular_mass_matrix = singular_mass_matrix + 2 * np.trace(
+        regular_mass_matrix = singular_mass_matrix + 2.0 * np.trace(
             self.inertias_matrix
         ) * np.outer(quat, quat)
 
