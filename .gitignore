@@ -1,6 +1,8 @@
 # Mac-storage files
 **/*.DS_Store
 
+
+
 # tex-export pdfs
 docs/tex_export/**.pdf
 
@@ -129,7 +131,7 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
+.venv*
 env/
 venv/
 ENV/
