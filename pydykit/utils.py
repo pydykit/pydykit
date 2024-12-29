@@ -54,7 +54,12 @@ class PydykitException(Exception):
 def get_numerical_tangent(func, state, incrementation_factor=1e-10):
 
     state_dimension = len(state)
-    numerical_tangent = np.zeros((state_dimension, state_dimension))
+    numerical_tangent = np.zeros(
+        (
+            state_dimension,
+            state_dimension,
+        )
+    )
 
     for index in range(state_dimension):
 
