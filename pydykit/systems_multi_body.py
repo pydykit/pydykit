@@ -180,7 +180,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return q.T[np.newaxis, :]
 
     def dissipation_matrix(self):
-
         diss_mat = np.zeros([self.nbr_dof, self.nbr_dof])
         return diss_mat
 
@@ -441,9 +440,7 @@ class ParticleSystem(MultiBodySystem):
         return result
 
     def decompose_into_particles(self, vector):
-
         assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
-
         return np.split(vector, self.nbr_particles)
 
     def get_positions_supports(self):
