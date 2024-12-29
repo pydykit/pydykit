@@ -1,8 +1,6 @@
 # Mac-storage files
 **/*.DS_Store
 
-
-
 # tex-export pdfs
 docs/tex_export/**.pdf
 
@@ -15,6 +13,8 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+pydykit/_version.py
+
 .Python
 build/
 develop-eggs/
