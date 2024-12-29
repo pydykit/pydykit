@@ -54,7 +54,10 @@ class Pendulum2D(PortHamiltonianSystem):
         self.length = length
 
     def get_state_columns(self):
-        return ["angle", "angular_velocity"]
+        return [
+            "angle",
+            "angular_velocity",
+        ]
 
     def decompose_state(self):
         state = self.state
@@ -62,7 +65,10 @@ class Pendulum2D(PortHamiltonianSystem):
         return dict(
             zip(
                 self.get_state_columns(),
-                [state[0], state[1]],
+                [
+                    state[0],
+                    state[1],
+                ],
             )
         )
 
@@ -70,7 +76,12 @@ class Pendulum2D(PortHamiltonianSystem):
         state = self.decompose_state()
         q = state["angle"]
         v = state["angular_velocity"]
-        return np.array([self.mass * self.gravity * self.length * np.sin(q), v])
+        return np.array(
+            [
+                self.mass * self.gravity * self.length * np.sin(q),
+                v,
+            ]
+        )
 
     def get_algebraic_costate(self):
         return []
@@ -210,8 +221,16 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
                     np.eye(len(q)),
                     np.zeros((len(q), len(lambd))),
                 ],
-                [-np.eye(len(v)), np.zeros((len(v), len(v))), -G.T],
-                [np.zeros((len(lambd), len(q))), G, np.zeros((len(lambd), len(lambd)))],
+                [
+                    -np.eye(len(v)),
+                    np.zeros((len(v), len(v))),
+                    -G.T,
+                ],
+                [
+                    np.zeros((len(lambd), len(q))),
+                    G,
+                    np.zeros((len(lambd), len(lambd))),
+                ],
             ]
         )
 
