@@ -1,4 +1,4 @@
-name: four_particle_system_convergence
+name: four_particle_system_midpoint
 system:
   class_name: ParticleSystem
   nbr_spatial_dimensions: 3
@@ -17,28 +17,27 @@ system:
       mass: 2.3
     - index: 3
       initial_position: [1.0, 1.0, 0.0]
-      initial_momentum: [0.0, 0.0, 1.1764705882352939]
+      initial_momentum: [0.0, 0.0, 2]
       mass: 1.7
-  supports: {}
+  supports: []
   springs:
-    - particle_start: 0
-      particle_end: 2
+    - start:
+        type: particle
+        index: 0
+      end:
+        type: particle
+        index: 2
       stiffness: 50
       equilibrium_length: 1
-    - particle_start: 1
-      particle_end: 3
-      stiffness: 500
-      equilibrium_length: 1
-  dampers:
     - start:
         type: particle
         index: 1
       end:
         type: particle
-        index: 2
-      ground_viscosity: 1
-      state_dependent: true
-      alpha: 0.5
+        index: 3
+      stiffness: 500
+      equilibrium_length: 1
+  dampers: []
   constraints:
     - start:
         type: particle
@@ -61,11 +60,9 @@ simulator:
   newton_epsilon: 1.e-10
   max_iterations: 40
 integrator:
-  class_name: DiscreteGradientPHDAE
-  increment_tolerance: 1.e-12
-  discrete_gradient_type: Gonzalez
+  class_name: MidpointMultibody
 time_stepper:
   class_name: FixedIncrement
-  step_size: 1.e-4
+  step_size: 0.01
   start: 0.0
-  end: 0.1
+  end: 0.09

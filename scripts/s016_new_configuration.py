@@ -5,7 +5,7 @@ from pydykit import utils
 manager = pydykit.managers.Manager()
 
 
-name = "particle_system_02"
+name = "two_particle_system"
 path_config_file = f"./pydykit/example_files/{name}.yml"
 
 # file_content = utils.load_yaml_file(

@@ -6,7 +6,7 @@ import pydykit
 manager = pydykit.managers.Manager()
 
 # configure manager from input
-name = "pendulum_3d_cartesian"
+name = "pendulum_3d"
 path_config_file = f"./pydykit/example_files/{name}.yml"
 manager.configure_from_path(path=path_config_file)
 

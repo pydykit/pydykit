@@ -1,4 +1,4 @@
-name: four_particle_system
+name: four_particle_system_ph_midpoint
 system:
   class_name: ParticleSystem
   nbr_spatial_dimensions: 3
@@ -17,7 +17,7 @@ system:
       mass: 2.3
     - index: 3
       initial_position: [1.0, 1.0, 0.0]
-      initial_momentum: [0.0, 0.0, 2]
+      initial_momentum: [0.0, 0.0, 1.1764705882352939]
       mass: 1.7
   supports: []
   springs:
@@ -60,9 +60,9 @@ simulator:
   newton_epsilon: 1.e-10
   max_iterations: 40
 integrator:
-  class_name: MidpointMultibody
+  class_name: MidpointPH
 time_stepper:
   class_name: FixedIncrement
-  step_size: 0.01
+  step_size: 0.01 # 0.1
   start: 0.0
   end: 0.09

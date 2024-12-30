@@ -3,9 +3,8 @@ import plotly.graph_objects as go
 import pydykit
 import pydykit.postprocessors as postprocessors
 
-# name = "particle_system_02"
-# name = "particle_system_03"
-# name = "pendulum_3d_cartesian"
+# name = "two_particle_system"
+# name = "pendulum_3d"
 name = "visco_pendulum"
 
 manager = pydykit.managers.Manager()

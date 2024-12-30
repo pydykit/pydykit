@@ -10,13 +10,11 @@ from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
 example_manager = pydykit.examples.Manager()
 
 example_worklist = [
-    "pendulum_3d_cartesian",
+    "pendulum_3d",
     "pendulum_2d",
-    "particle_system_02",
-    "particle_system_03",
-    "four_particle_system",
-    "four_particle_system_discrete_gradient",
-    "four_particle_system_dissipative",
+    "two_particle_system",
+    "four_particle_system_midpoint",
+    "four_particle_system_discrete_gradient_dissipative",
     "visco_pendulum",
     "lorenz",
     "reactor",

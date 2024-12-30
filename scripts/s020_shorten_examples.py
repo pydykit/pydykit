@@ -7,10 +7,10 @@ PATH_REFERENCE_RESULTS = PATH_TEST_DIRECTORY.joinpath("reference_results")
 
 
 example_names = [
-    "pendulum_3d_cartesian_full_time",
+    "pendulum_3d",
     "rigid_body_rotating_quaternion",
     "four_particle_system",
-    "four_particle_system_port_hamiltonian",
+    "four_particle_system_ph_midpoint",
 ]
 
 examples = [dict(name=val) for val in example_names]
