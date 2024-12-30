@@ -1,4 +1,4 @@
-name: pendulum_3d_cartesian_full_time
+name: pendulum_3d
 system:
   class_name: ParticleSystem
   nbr_spatial_dimensions: 3

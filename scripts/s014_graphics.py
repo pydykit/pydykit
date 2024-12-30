@@ -7,7 +7,7 @@ import pydykit
 
 # get absolute config file path
 current_parent_path = pathlib.Path(__file__).parent.resolve()
-relative_config_file_path = "../pydykit/example_files/pendulum_3d_cartesian.yml"
+relative_config_file_path = "../pydykit/example_files/pendulum_3d.yml"
 absolute_config_file_path = (current_parent_path / relative_config_file_path).resolve()
 
 manager = pydykit.managers.Manager().configure_from_path(path=absolute_config_file_path)

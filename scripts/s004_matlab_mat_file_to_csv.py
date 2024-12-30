@@ -10,7 +10,7 @@ def load_result_of_metis_simulation(path):
 
 
 ref = load_result_of_metis_simulation(
-    path="test/reference_results/metis/pendulum_3d_cartesian_full_time.mat"
+    path="test/reference_results/metis/pendulum_3d.mat"
 )
 
 df = pd.DataFrame(
@@ -21,4 +21,4 @@ df = pd.DataFrame(
 )
 
 
-df.to_csv("test/reference_results/metis/pendulum_3d_cartesian_full_time.csv")
+df.to_csv("test/reference_results/metis/pendulum_3d.csv")
