@@ -174,7 +174,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         dim_lambd = len(lambd)
         mass_matrix = self.mbs.mass_matrix()
 
-        return np.concatenate(
+        gradH = np.concatenate(
             [
                 self.mbs.external_potential_gradient()
                 + self.mbs.internal_potential_gradient(),
@@ -183,6 +183,8 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
             ],
             axis=0,
         )
+
+        return gradH
 
     def hamiltonian_differential_gradient(self):
         return np.concatenate(
@@ -214,25 +216,33 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         lambd = state["multiplier"]
         G = self.mbs.constraint_gradient()
 
-        return np.block(
+        # Without constraints
+        structure_matrix = [
             [
-                [
-                    np.zeros((len(q), len(q))),
-                    np.eye(len(q)),
-                    np.zeros((len(q), len(lambd))),
-                ],
-                [
-                    -np.eye(len(v)),
-                    np.zeros((len(v), len(v))),
-                    -G.T,
-                ],
+                np.zeros((len(q), len(q))),
+                np.eye(len(q)),
+            ],
+            [
+                -np.eye(len(v)),
+                np.zeros((len(v), len(v))),
+            ],
+        ]
+
+        if len(lambd) > 0:
+            # Constraint contributions
+            structure_matrix[0].append(
+                np.zeros((len(q), len(lambd))),
+            )
+            structure_matrix[1].append(-G.T)
+            structure_matrix.append(
                 [
                     np.zeros((len(lambd), len(q))),
                     G,
                     np.zeros((len(lambd), len(lambd))),
-                ],
-            ]
-        )
+                ]
+            )
+
+        return np.block(structure_matrix)
 
     def descriptor_matrix(self):
         identity_mat = np.eye(self.mbs.nbr_dof)
