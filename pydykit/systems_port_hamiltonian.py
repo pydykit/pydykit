@@ -174,7 +174,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         dim_lambd = len(lambd)
         mass_matrix = self.mbs.mass_matrix()
 
-        return np.concatenate(
+        gradH = np.concatenate(
             [
                 self.mbs.external_potential_gradient()
                 + self.mbs.internal_potential_gradient(),
@@ -183,6 +183,8 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
             ],
             axis=0,
         )
+
+        return gradH
 
     def hamiltonian_differential_gradient(self):
         return np.concatenate(
