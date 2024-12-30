@@ -5,8 +5,7 @@ import plotly.graph_objects as go
 import pydykit
 import pydykit.postprocessors as postprocessors
 
-# name = "particle_system_01"
-name = "particle_system_02"
+name = "two_particle_system"
 manager = pydykit.managers.Manager()
 
 manager.configure_from_path(path=f"./pydykit/example_files/{name}.yml")

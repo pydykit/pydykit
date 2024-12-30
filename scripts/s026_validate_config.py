@@ -4,7 +4,7 @@ from pydykit.configuration import Configuration
 from pydykit.utils import load_yaml_file
 
 path = Path(__file__).parent.parent.joinpath(
-    "pydykit", "example_files", "particle_system_02.yml"
+    "pydykit", "example_files", "two_particle_system.yml"
 )
 
 file_content = load_yaml_file(
