@@ -14,7 +14,7 @@ example_worklist = [
     "pendulum_2d",
     "two_particle_system",
     "four_particle_system_midpoint",
-    "four_particle_system_dissipative",
+    "four_particle_system_discrete_gradient_dissipative",
     "visco_pendulum",
     "lorenz",
     "reactor",
