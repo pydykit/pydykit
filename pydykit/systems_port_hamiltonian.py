@@ -216,6 +216,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         lambd = state["multiplier"]
         G = self.mbs.constraint_gradient()
 
+        # Without constraints
         structure_matrix = [
             [
                 np.zeros((len(q), len(q))),
@@ -228,6 +229,7 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         ]
 
         if len(lambd) > 0:
+            # Constraint contributions
             structure_matrix[0].append(
                 np.zeros((len(q), len(lambd))),
             )
