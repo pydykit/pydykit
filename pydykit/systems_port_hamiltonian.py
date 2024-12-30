@@ -214,25 +214,35 @@ class PortHamiltonianMBS(PortHamiltonianSystem):
         lambd = state["multiplier"]
         G = self.mbs.constraint_gradient()
 
-        return np.block(
-            [
+        if len(lambd) == 0:
+            structure_matrix = np.block(
                 [
-                    np.zeros((len(q), len(q))),
-                    np.eye(len(q)),
-                    np.zeros((len(q), len(lambd))),
-                ],
+                    [np.zeros((len(q), len(q))), np.eye(len(q))],
+                    [-np.eye(len(v)), np.zeros((len(v), len(v)))],
+                ]
+            )
+        else:
+            structure_matrix = np.block(
                 [
-                    -np.eye(len(v)),
-                    np.zeros((len(v), len(v))),
-                    -G.T,
-                ],
-                [
-                    np.zeros((len(lambd), len(q))),
-                    G,
-                    np.zeros((len(lambd), len(lambd))),
-                ],
-            ]
-        )
+                    [
+                        np.zeros((len(q), len(q))),
+                        np.eye(len(q)),
+                        np.zeros((len(q), len(lambd))),
+                    ],
+                    [
+                        -np.eye(len(v)),
+                        np.zeros((len(v), len(v))),
+                        -G.T,
+                    ],
+                    [
+                        np.zeros((len(lambd), len(q))),
+                        G,
+                        np.zeros((len(lambd), len(lambd))),
+                    ],
+                ]
+            )
+
+        return structure_matrix
 
     def descriptor_matrix(self):
         identity_mat = np.eye(self.mbs.nbr_dof)
