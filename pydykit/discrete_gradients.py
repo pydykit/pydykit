@@ -153,5 +153,9 @@ def Gonzalez_discrete_gradient(
 def adjust_midpoint_jacobian(midpoint_jacobian, func_n, func_n1):
     """Helper function to adjust the midpoint Jacobian and function evaluations for scalar-valued functions."""
     if midpoint_jacobian.ndim == 1:
-        return midpoint_jacobian[np.newaxis, :], np.array([func_n]), np.array([func_n1])
+        return (
+            midpoint_jacobian[np.newaxis, :],
+            np.array([func_n]),
+            np.array([func_n1]),
+        )
     return midpoint_jacobian, func_n, func_n1

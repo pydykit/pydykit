@@ -59,7 +59,12 @@ class MidpointPH(IntegratorCommon):
 
         return residuum
 
-    def dissipated_work(self, current_state, next_state, current_step):
+    def dissipated_work(
+        self,
+        current_state,
+        next_state,
+        current_step,
+    ):
 
         time_step_size = current_step.increment
         state_midpoint = 0.5 * (current_state + next_state)
@@ -74,7 +79,12 @@ class MidpointPH(IntegratorCommon):
 
         return time_step_size * np.dot(costates, r_matrix_n05 @ costates)
 
-    def get_discrete_costate(self, system_n, system_n1, system_n05):
+    def get_discrete_costate(
+        self,
+        system_n,
+        system_n1,
+        system_n05,
+    ):
 
         E_11_n05 = system_n05.nonsingular_descriptor_matrix()
         DH_n05 = system_n05.hamiltonian_differential_gradient()
@@ -106,7 +116,9 @@ class DiscreteGradientPHDAE(IntegratorCommon):
             states=[current_state, state_midpoint, next_state],
         )
         costate = self.get_discrete_costate(
-            system_n=system_n, system_n1=system_n1, system_n05=system_n05
+            system_n=system_n,
+            system_n1=system_n1,
+            system_n05=system_n05,
         )
 
         e_matrix_n05 = system_n05.descriptor_matrix()
@@ -120,7 +132,12 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
         return residuum
 
-    def get_discrete_costate(self, system_n, system_n1, system_n05):
+    def get_discrete_costate(
+        self,
+        system_n,
+        system_n1,
+        system_n05,
+    ):
 
         differential_state_n = system_n.get_differential_state()
         differential_state_n1 = system_n1.get_differential_state()
@@ -144,11 +161,22 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
         differential_costate = np.linalg.solve(E_11_n05.T, DGH)
         algebraic_costate = system_n1.get_algebraic_costate()
-        costate = np.concatenate([differential_costate, algebraic_costate], axis=0)
+        costate = np.concatenate(
+            [
+                differential_costate,
+                algebraic_costate,
+            ],
+            axis=0,
+        )
 
         return costate
 
-    def dissipated_work(self, current_state, next_state, current_step):
+    def dissipated_work(
+        self,
+        current_state,
+        next_state,
+        current_step,
+    ):
 
         time_step_size = current_step.increment
         state_midpoint = 0.5 * (current_state + next_state)
@@ -161,7 +189,9 @@ class DiscreteGradientPHDAE(IntegratorCommon):
         r_matrix_n05 = system_n05.dissipation_matrix()
 
         costate = self.get_discrete_costate(
-            system_n=system_n, system_n1=system_n1, system_n05=system_n05
+            system_n=system_n,
+            system_n1=system_n1,
+            system_n05=system_n05,
         )
 
         return time_step_size * np.dot(costate, r_matrix_n05 @ costate)
@@ -169,7 +199,11 @@ class DiscreteGradientPHDAE(IntegratorCommon):
 
 class MidpointMultibody(IntegratorCommon):
 
-    parametrization = ["position", "momentum", "multiplier"]
+    parametrization = [
+        "position",
+        "momentum",
+        "multiplier",
+    ]
 
     def get_residuum(self, next_state):
 
@@ -255,9 +289,18 @@ class MidpointMultibody(IntegratorCommon):
 
 class DiscreteGradientMultibody(IntegratorCommon):
 
-    parametrization = ["position", "momentum", "multiplier"]
+    parametrization = [
+        "position",
+        "momentum",
+        "multiplier",
+    ]
 
-    def __init__(self, manager, increment_tolerance, discrete_gradient_type):
+    def __init__(
+        self,
+        manager,
+        increment_tolerance,
+        discrete_gradient_type,
+    ):
         super().__init__(manager)
         self.increment_tolerance = increment_tolerance
         self.discrete_gradient_type = discrete_gradient_type

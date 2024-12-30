@@ -34,27 +34,45 @@ class Lorenz(QuasiLinearDAESystem):
         return dict(
             zip(
                 self.get_state_columns(),
-                [state[0], state[1], state[2]],
+                [
+                    state[0],
+                    state[1],
+                    state[2],
+                ],
             )
         )
 
     def get_state_columns(self):
-        return ["x", "y", "z"]
+        return [
+            "x",
+            "y",
+            "z",
+        ]
 
     def right_hand_side(self):
-        x = self.decompose_state()["x"]
-        y = self.decompose_state()["y"]
-        z = self.decompose_state()["z"]
+        state = self.decompose_state()
+        x = state["x"]
+        y = state["y"]
+        z = state["z"]
 
         return np.array(
-            [self.sigma * (y - x), x * (self.rho - z) - y, x * y - self.beta * z]
+            [
+                self.sigma * (y - x),
+                x * (self.rho - z) - y,
+                x * y - self.beta * z,
+            ]
         )
 
     def jacobian(self):
-        x = self.decompose_state()["x"]
-        y = self.decompose_state()["y"]
+        state = self.decompose_state()
+        x = state["x"]
+        y = state["y"]
         matrix = np.array(
-            [[-self.sigma, self.sigma, 0], [self.rho, -1, -x], [y, x, -self.beta]]
+            [
+                [-self.sigma, self.sigma, 0],
+                [self.rho, -1, -x],
+                [y, x, -self.beta],
+            ]
         )
         return matrix
 
@@ -90,27 +108,36 @@ class ChemicalReactor(QuasiLinearDAESystem):
         return dict(
             zip(
                 self.get_state_columns(),
-                [state[0], state[1], state[2]],
+                [
+                    state[0],
+                    state[1],
+                    state[2],
+                ],
             )
         )
 
     def get_state_columns(self):
-        return ["concentration", "temperature", "reaction_rate"]
+        return [
+            "concentration",
+            "temperature",
+            "reaction_rate",
+        ]
 
     def descriptor_matrix(self):
         return np.diag((1, 1, 0))
 
     def right_hand_side(self):
-        c = self.decompose_state()["concentration"]
-        T = self.decompose_state()["temperature"]
-        R = self.decompose_state()["reaction_rate"]
+        state = self.decompose_state()
+        c = state["concentration"]
+        T = state["temperature"]
+        R = state["reaction_rate"]
 
         k1, k2, k3, k4 = self.constants
         TC = self.cooling_temperature
         c0 = self.reactant_concentration
         T0 = self.initial_temperature
 
-        RHS = np.array(
+        rhs = np.array(
             [
                 k1 * (c0 - c) - R,
                 k1 * (T0 - T) + k2 * R - k3 * (T - TC),
@@ -118,11 +145,12 @@ class ChemicalReactor(QuasiLinearDAESystem):
             ]
         )
 
-        return RHS
+        return rhs
 
     def jacobian(self):
-        c = self.decompose_state()["concentration"]
-        T = self.decompose_state()["temperature"]
+        state = self.decompose_state()
+        c = state["concentration"]
+        T = state["temperature"]
 
         k1, k2, k3, k4 = self.constants
 

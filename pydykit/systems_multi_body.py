@@ -48,8 +48,9 @@ class MultiBodySystem(
         )
 
     def kinetic_energy(self):
-        q = self.decompose_state()["position"]
-        p = self.decompose_state()["momentum"]
+        state = self.decompose_state()
+        q = state["position"]
+        p = state["momentum"]
         return 0.5 * p.T @ self.inverse_mass_matrix() @ p
 
     def potential_energy(self):
@@ -103,7 +104,7 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             quat=quat,
         )
         singular_mass_matrix = 4.0 * G_q.T @ self.inertias_matrix @ G_q
-        regular_mass_matrix = singular_mass_matrix + 2 * np.trace(
+        regular_mass_matrix = singular_mass_matrix + 2.0 * np.trace(
             self.inertias_matrix
         ) * np.outer(quat, quat)
 
@@ -120,13 +121,17 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return 0.25 * Ql_q @ inverse_extended_inertias_matrix @ Ql_q.T
 
     def kinetic_energy_gradient_from_momentum(self):
-        q = self.decompose_state()["position"]
-        p = self.decompose_state()["momentum"]
+        state = self.decompose_state()
+        q = state["position"]
+        p = state["momentum"]
 
         # extended inertia tensor
         J0 = np.trace(self.inertias_matrix)
         extended_inertias = np.block(
-            [[J0, np.zeros((1, 3))], [np.zeros((3, 1)), self.inertias_matrix]]
+            [
+                [J0, np.zeros((1, 3))],
+                [np.zeros((3, 1)), self.inertias_matrix],
+            ]  # TODO: Avoid hardcoding, use dimension
         )
 
         inverse_extended_inertias = np.linalg.inv(extended_inertias)
@@ -136,8 +141,9 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return 0.25 * Ql_p @ inverse_extended_inertias @ Ql_p.T @ q
 
     def kinetic_energy_gradient_from_velocity(self):
-        q = self.decompose_state()["position"]
-        v = self.decompose_state()["velocity"]
+        state = self.decompose_state()
+        q = state["position"]
+        v = state["velocity"]
 
         tmp = v[:4]
 
@@ -174,8 +180,12 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         return q.T[np.newaxis, :]
 
     def dissipation_matrix(self):
-
-        diss_mat = np.zeros([self.nbr_dof, self.nbr_dof])
+        diss_mat = np.zeros(
+            [
+                self.nbr_dof,
+                self.nbr_dof,
+            ]
+        )
         return diss_mat
 
 
@@ -297,11 +307,11 @@ class ParticleSystem(MultiBodySystem):
         structure = []
         for index in range(nbr_particles):
             if index == start_index:
-                structure.append(-2 * vector)
+                structure.append(-2.0 * vector)
             elif index == end_index:
-                structure.append(2 * vector)
+                structure.append(2.0 * vector)
             else:
-                structure.append(np.zeros(3))
+                structure.append(np.zeros(3))  # TODO: Avoid hardcoding, use dimension
 
         return stiffness * tmp * np.hstack(structure)
 
@@ -392,7 +402,7 @@ class ParticleSystem(MultiBodySystem):
             elif index == end_index:
                 structure.append(vector)
             else:
-                structure.append(np.zeros(3))
+                structure.append(np.zeros(3))  # TODO: Avoid hardcoding, use dimension
 
         return np.hstack(structure)
 
@@ -435,9 +445,7 @@ class ParticleSystem(MultiBodySystem):
         return result
 
     def decompose_into_particles(self, vector):
-
         assert len(vector) == self.nbr_particles * self.nbr_spatial_dimensions
-
         return np.split(vector, self.nbr_particles)
 
     def get_positions_supports(self):
