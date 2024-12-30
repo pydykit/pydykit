@@ -1,4 +1,4 @@
-name: four_particle_system_port_hamiltonian
+name: four_particle_system_ph_midpoint
 system:
   class_name: ParticleSystem
   nbr_spatial_dimensions: 3

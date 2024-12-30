@@ -8,7 +8,7 @@ import pydykit.systems_port_hamiltonian as phs
 import pydykit.time_steppers
 
 # Define the name of the configuration file
-name = "four_particle_system_port_hamiltonian"
+name = "four_particle_system_ph_midpoint"
 path_config_file = f"./pydykit/example_files/{name}.yml"
 
 # Create a manager and configure it from the configuration file
