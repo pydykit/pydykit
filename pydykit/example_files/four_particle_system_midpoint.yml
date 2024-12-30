@@ -1,4 +1,4 @@
-name: four_particle_system
+name: four_particle_system_midpoint
 system:
   class_name: ParticleSystem
   nbr_spatial_dimensions: 3

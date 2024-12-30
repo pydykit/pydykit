@@ -13,7 +13,7 @@ example_worklist = [
     "pendulum_3d_cartesian",
     "pendulum_2d",
     "two_particle_system",
-    "four_particle_system",
+    "four_particle_system_midpoint",
     "four_particle_system_dissipative",
     "visco_pendulum",
     "lorenz",
