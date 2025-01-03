@@ -4,7 +4,6 @@ from pydantic import NonNegativeFloat
 
 from .factories import factories
 from .models import PydykitBaseModel, RegisteredClassName
-from .utils import get_indices, sort_based_on_attribute
 
 
 class State(PydykitBaseModel):
