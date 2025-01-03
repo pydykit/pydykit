@@ -5,7 +5,7 @@ from typing_extensions import Annotated
 
 from .factories import factories
 from .models import PydykitBaseModel, RegisteredClassName
-from .models_system import ParticleSystem, RigidBodyRotatingQuaternions
+from .models_system_multibody import ParticleSystem, RigidBodyRotatingQuaternions
 
 
 class ExtendableModel(BaseModel):
