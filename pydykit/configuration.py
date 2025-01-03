@@ -5,6 +5,7 @@ from typing_extensions import Annotated
 
 from .factories import factories
 from .models import PydykitBaseModel, RegisteredClassName
+from .models_system_dae import Lorenz
 from .models_system_multibody import ParticleSystem, RigidBodyRotatingQuaternions
 from .models_system_port_hamiltonian import Pendulum2D
 
@@ -44,20 +45,12 @@ class System(
 ):
     factory: ClassVar = factories["system"]
 
-    class_name: Literal[
-        "Lorenz",
-        "ChemicalReactor",
-    ]
+    class_name: Literal["ChemicalReactor",]
 
 
 class Configuration(BaseModel):
     system: Annotated[
-        Union[
-            System,
-            ParticleSystem,
-            RigidBodyRotatingQuaternions,
-            Pendulum2D,
-        ],
+        Union[System, ParticleSystem, RigidBodyRotatingQuaternions, Pendulum2D, Lorenz],
         Field(discriminator="class_name"),
     ]
     simulator: Simulator
