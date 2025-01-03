@@ -1,6 +1,7 @@
 <p align="center">
   <a href="https://github.com/pydykit/pydykit"><img alt="pydykit" src="docs/assets/banner.png" width="50%"></a>
 </p>
+<!-- As soon as we have pydykit public, we can include the image in the pypi readme by exchanging the link with: https://raw.githubusercontent.com/pydykit/pydykit/main/docs/assets/banner.png -->
 
 [![Pytest](https://github.com/pydykit/pydykit/actions/workflows/pytest.yml/badge.svg)](https://github.com/pydykit/pydykit/actions/workflows/pytest.yml)
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)

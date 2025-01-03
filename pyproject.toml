@@ -28,7 +28,7 @@ maintainers = [
   {name = "Philipp L. Kinon"},
   {name = "Julian Karl Bauer"},
 ]
-description = "..."
+description = "pydykit: A Python-based dynamics simulation toolkit."
 readme = "README.md"
 classifiers = [
   "Development Status :: 4 - Beta",
