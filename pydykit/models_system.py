@@ -17,6 +17,39 @@ from .models import PydykitBaseModel, RegisteredClassName
 from .utils import get_indices, sort_based_on_attribute
 
 
+class State(PydykitBaseModel):
+    position: list[float]
+    momentum: list[float]
+    multiplier: list[float]
+
+
+class RigidBodyRotatingQuaternions(PydykitBaseModel, RegisteredClassName):
+
+    factory: ClassVar = factories["system"]
+
+    class_name: Literal["RigidBodyRotatingQuaternions"]
+
+    nbr_spatial_dimensions: Literal[3]
+
+    nbr_dof: Literal[4]
+
+    nbr_constraints: Literal[1]
+
+    mass: NonNegativeFloat
+
+    gravity: Annotated[
+        list[float],
+        Len(min_length=3, max_length=3),
+    ]
+
+    inertias: Annotated[
+        list[NonNegativeFloat],
+        Len(min_length=3, max_length=3),
+    ]
+
+    state: State
+
+
 class Particle(PydykitBaseModel):
     index: int
     initial_position: list[float]

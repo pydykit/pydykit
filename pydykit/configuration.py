@@ -5,7 +5,7 @@ from typing_extensions import Annotated
 
 from .factories import factories
 from .models import PydykitBaseModel, RegisteredClassName
-from .models_system import ParticleSystem
+from .models_system import ParticleSystem, RigidBodyRotatingQuaternions
 
 
 class ExtendableModel(BaseModel):
@@ -44,7 +44,6 @@ class System(
     factory: ClassVar = factories["system"]
 
     class_name: Literal[
-        "RigidBodyRotatingQuaternions",
         "Pendulum2D",
         "Lorenz",
         "ChemicalReactor",
@@ -56,6 +55,7 @@ class Configuration(BaseModel):
         Union[
             System,
             ParticleSystem,
+            RigidBodyRotatingQuaternions,
         ],
         Field(discriminator="class_name"),
     ]
