@@ -40,15 +40,12 @@ class TimeStepper(
 
 
 class Configuration(BaseModel):
-    system: Annotated[
-        Union[
-            ParticleSystem,
-            RigidBodyRotatingQuaternions,
-            Pendulum2D,
-            Lorenz,
-            ChemicalReactor,
-        ],
-        Field(discriminator="class_name"),
+    system: Union[
+        ParticleSystem,
+        RigidBodyRotatingQuaternions,
+        Pendulum2D,
+        Lorenz,
+        ChemicalReactor,
     ]
     simulator: Simulator
     integrator: Integrator
