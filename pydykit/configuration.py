@@ -1,9 +1,7 @@
-from typing import ClassVar, Union
+from typing import Union
 
 from pydantic import BaseModel, ConfigDict
 
-from .factories import factories
-from .models import RegisteredClassName
 from .models_integrators import (
     DiscreteGradientMultibody,
     DiscreteGradientPHDAE,
