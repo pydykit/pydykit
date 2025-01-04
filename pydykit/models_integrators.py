@@ -13,25 +13,25 @@ class MidpointPH(PydykitBaseModel, RegisteredClassName):
     class_name: Literal["MidpointPH",]
 
 
-class DiscreteGradientPHDAE(PydykitBaseModel, RegisteredClassName):
-    factory: ClassVar = factories["integrator"]
-    class_name: Literal["DiscreteGradientPHDAE",]
-    increment_tolerance: NonNegativeFloat
-    discrete_gradient_type: Literal["Gonzalez_decomposed", "Gonzalez"]
-
-
 class MidpointMultibody(PydykitBaseModel, RegisteredClassName):
     factory: ClassVar = factories["integrator"]
     class_name: Literal["MidpointMultibody",]
 
 
-class DiscreteGradientMultibody(PydykitBaseModel, RegisteredClassName):
+class MidpointDAE(PydykitBaseModel, RegisteredClassName):
     factory: ClassVar = factories["integrator"]
-    class_name: Literal["DiscreteGradientMultibody",]
+    class_name: Literal["MidpointDAE",]
+
+
+class DiscreteGradientBase(PydykitBaseModel, RegisteredClassName):
+    factory: ClassVar = factories["integrator"]
     increment_tolerance: NonNegativeFloat
     discrete_gradient_type: Literal["Gonzalez_decomposed", "Gonzalez"]
 
 
-class MidpointDAE(PydykitBaseModel, RegisteredClassName):
-    factory: ClassVar = factories["integrator"]
-    class_name: Literal["MidpointDAE",]
+class DiscreteGradientPHDAE(DiscreteGradientBase):
+    class_name: Literal["DiscreteGradientPHDAE",]
+
+
+class DiscreteGradientMultibody(DiscreteGradientBase):
+    class_name: Literal["DiscreteGradientMultibody",]
