@@ -4,6 +4,13 @@ from pydantic import BaseModel, ConfigDict
 
 from .factories import factories
 from .models import RegisteredClassName
+from .models_integrators import (
+    DiscreteGradientMultibody,
+    DiscreteGradientPHDAE,
+    MidpointDAE,
+    MidpointMultibody,
+    MidpointPH,
+)
 from .models_simulators import OneStep
 from .models_system_dae import ChemicalReactor, Lorenz
 from .models_system_multibody import ParticleSystem, RigidBodyRotatingQuaternions
@@ -17,15 +24,6 @@ class ExtendableModel(BaseModel):
     model_config = ConfigDict(extra="allow")
 
 
-class Integrator(
-    RegisteredClassName,
-    ExtendableModel,
-):
-    factory: ClassVar = factories["integrator"]
-    # NOTE: Attributes typed as ClassVar do not represent attributes, but can, e.g., be used during validation, see
-    #       https://docs.pydantic.dev/latest/concepts/models/#automatically-excluded-attributes
-
-
 class Configuration(BaseModel):
     system: Union[
         ParticleSystem,
@@ -35,5 +33,11 @@ class Configuration(BaseModel):
         ChemicalReactor,
     ]
     simulator: OneStep
-    integrator: Integrator
+    integrator: Union[
+        MidpointPH,
+        DiscreteGradientPHDAE,
+        MidpointMultibody,
+        DiscreteGradientMultibody,
+        MidpointDAE,
+    ]
     time_stepper: Union[FixedIncrement, FixedIncrementHittingEnd]
