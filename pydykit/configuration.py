@@ -1,6 +1,6 @@
 from typing import Union
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 from .models_integrators import (
     DiscreteGradientMultibody,
