@@ -11,8 +11,8 @@ class State(PydykitBaseModel):
 
 
 class Pendulum2D(System):
-
     class_name: Literal["Pendulum2D"]
+
     mass: NonNegativeFloat
     gravity: float
     length: NonNegativeFloat

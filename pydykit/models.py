@@ -1,6 +1,8 @@
-from pydantic import BaseModel, ConfigDict, field_validator
-from .factories import factories
 from typing import ClassVar
+
+from pydantic import BaseModel, ConfigDict, field_validator
+
+from .factories import factories
 
 
 class PydykitBaseModel(BaseModel):

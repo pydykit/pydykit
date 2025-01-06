@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
 from .factories import factories
-from .models import RegisteredClassName, ExtendableModel
+from .models import ExtendableModel, RegisteredClassName
 from .models_system_dae import ChemicalReactor, Lorenz
 from .models_system_multibody import ParticleSystem, RigidBodyRotatingQuaternions
 from .models_system_port_hamiltonian import Pendulum2D
