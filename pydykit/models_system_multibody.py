@@ -1,11 +1,10 @@
-from typing import ClassVar, Literal
+from typing import Literal
 
 from annotated_types import Len
 from pydantic import NonNegativeFloat, model_validator
 from typing_extensions import Annotated
 
-from .factories import factories
-from .models import PydykitBaseModel, RegisteredClassName
+from .models import PydykitBaseModel, System
 from .utils import get_indices, sort_based_on_attribute
 
 
@@ -15,9 +14,7 @@ class State(PydykitBaseModel):
     multiplier: list[float]
 
 
-class RigidBodyRotatingQuaternions(PydykitBaseModel, RegisteredClassName):
-
-    factory: ClassVar = factories["system"]
+class RigidBodyRotatingQuaternions(System):
 
     class_name: Literal["RigidBodyRotatingQuaternions"]
 
@@ -81,9 +78,7 @@ class Constraint(PydykitBaseModel):
     length: NonNegativeFloat
 
 
-class ParticleSystem(PydykitBaseModel, RegisteredClassName):
-
-    factory: ClassVar = factories["system"]
+class ParticleSystem(System):
 
     class_name: Literal["ParticleSystem"]
 

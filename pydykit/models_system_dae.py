@@ -1,11 +1,10 @@
-from typing import ClassVar, Literal
+from typing import Literal
 
 from annotated_types import Le, Len
 from pydantic import NonNegativeFloat, PositiveFloat
 from typing_extensions import Annotated
 
-from .factories import factories
-from .models import PydykitBaseModel, RegisteredClassName
+from .models import PydykitBaseModel, System
 
 
 class State(PydykitBaseModel):
@@ -15,9 +14,8 @@ class State(PydykitBaseModel):
     ]
 
 
-class Lorenz(PydykitBaseModel, RegisteredClassName):
+class Lorenz(System):
 
-    factory: ClassVar = factories["system"]
     class_name: Literal["Lorenz"]
     sigma: PositiveFloat
     rho: PositiveFloat
@@ -25,8 +23,8 @@ class Lorenz(PydykitBaseModel, RegisteredClassName):
     state: State
 
 
-class ChemicalReactor(PydykitBaseModel, RegisteredClassName):
-    factory: ClassVar = factories["system"]
+class ChemicalReactor(System):
+
     class_name: Literal["ChemicalReactor"]
     state: State
     constants: Annotated[

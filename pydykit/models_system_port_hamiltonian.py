@@ -1,9 +1,8 @@
-from typing import ClassVar, Literal
+from typing import Literal
 
 from pydantic import NonNegativeFloat
 
-from .factories import factories
-from .models import PydykitBaseModel, RegisteredClassName
+from .models import PydykitBaseModel, System
 
 
 class State(PydykitBaseModel):
@@ -11,9 +10,8 @@ class State(PydykitBaseModel):
     angular_velocity: list[float]
 
 
-class Pendulum2D(PydykitBaseModel, RegisteredClassName):
+class Pendulum2D(System):
 
-    factory: ClassVar = factories["system"]
     class_name: Literal["Pendulum2D"]
     mass: NonNegativeFloat
     gravity: float
