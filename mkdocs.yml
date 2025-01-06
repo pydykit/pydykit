@@ -49,4 +49,7 @@ extra:
   generator: false
   version:
     provider: mike # TODO: Check this when deployed
+plugins:
+  - search
+  - mkdocstrings
 copyright: Copyright &copy; 2024 - 2025 The authors of PyDyKIT
