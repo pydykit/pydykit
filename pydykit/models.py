@@ -50,3 +50,10 @@ class Integrator(
     ExtendableModel,
 ):
     factory: ClassVar = factories["integrator"]
+
+
+class Simulator(
+    RegisteredClassName,
+    ExtendableModel,
+):
+    factory: ClassVar = factories["simulator"]

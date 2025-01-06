@@ -1,16 +1,15 @@
-from typing import ClassVar, Literal
+from typing import Literal
 
 from pydantic import NonNegativeFloat, PositiveInt
 
-from .factories import factories
-from .models import PydykitBaseModel, RegisteredClassName
+from .models import Simulator
 
 
-class OneStep(PydykitBaseModel, RegisteredClassName):
-    factory: ClassVar = factories["simulator"]
+class OneStep(Simulator):
     solver_name: Literal[
         "NewtonPlainPython",
         "RootScipy",
     ]
+
     newton_epsilon: NonNegativeFloat
     max_iterations: PositiveInt
