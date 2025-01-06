@@ -57,3 +57,10 @@ class Simulator(
     ExtendableModel,
 ):
     factory: ClassVar = factories["simulator"]
+
+
+class TimeStepper(
+    RegisteredClassName,
+    ExtendableModel,
+):
+    factory: ClassVar = factories["time_stepper"]

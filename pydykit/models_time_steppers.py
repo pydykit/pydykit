@@ -1,13 +1,11 @@
-from typing import ClassVar, Literal
+from typing import Literal
 
 from pydantic import PositiveFloat, model_validator
 
-from .factories import factories
-from .models import PydykitBaseModel, RegisteredClassName
+from .models import TimeStepper
 
 
-class FixedIncrementBase(PydykitBaseModel, RegisteredClassName):
-    factory: ClassVar = factories["time_stepper"]
+class FixedIncrementBase(TimeStepper):
     step_size: PositiveFloat
     start: float
     end: float
