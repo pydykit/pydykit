@@ -43,3 +43,10 @@ class System(
     # NOTE: Attributes typed as ClassVar do not represent attributes, but can, e.g., be used during validation, see
     #       https://docs.pydantic.dev/latest/concepts/models/#automatically-excluded-attributes
     factory: ClassVar = factories["system"]
+
+
+class Integrator(
+    RegisteredClassName,
+    ExtendableModel,
+):
+    factory: ClassVar = factories["integrator"]
