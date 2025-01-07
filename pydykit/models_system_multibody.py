@@ -1,20 +1,41 @@
-from typing import ClassVar, Literal, Union
+from typing import Literal
 
 from annotated_types import Len
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-    Field,
-    NonNegativeFloat,
-    TypeAdapter,
-    field_validator,
-    model_validator,
-)
-from typing_extensions import Annotated, Self
+from pydantic import NonNegativeFloat, model_validator
+from typing_extensions import Annotated
 
-from .factories import factories
-from .models import PydykitBaseModel, RegisteredClassName
+from .models import PydykitBaseModel, System
 from .utils import get_indices, sort_based_on_attribute
+
+
+class State(PydykitBaseModel):
+    position: list[float]
+    momentum: list[float]
+    multiplier: list[float]
+
+
+class RigidBodyRotatingQuaternions(System):
+    class_name: Literal["RigidBodyRotatingQuaternions"]
+
+    nbr_spatial_dimensions: Literal[3]
+    nbr_dof: Literal[4]
+    nbr_constraints: Literal[1]
+    mass: NonNegativeFloat
+    gravity: Annotated[
+        list[float],
+        Len(
+            min_length=3,
+            max_length=3,
+        ),
+    ]
+    inertias: Annotated[
+        list[NonNegativeFloat],
+        Len(
+            min_length=3,
+            max_length=3,
+        ),
+    ]
+    state: State
 
 
 class Particle(PydykitBaseModel):
@@ -25,7 +46,10 @@ class Particle(PydykitBaseModel):
 
 
 class Ending(PydykitBaseModel):
-    type: Literal["support", "particle"]
+    type: Literal[
+        "support",
+        "particle",
+    ]
     index: int
 
 
@@ -56,13 +80,15 @@ class Constraint(PydykitBaseModel):
     length: NonNegativeFloat
 
 
-class ParticleSystem(PydykitBaseModel, RegisteredClassName):
-
-    factory: ClassVar = factories["system"]
+class ParticleSystem(System):
 
     class_name: Literal["ParticleSystem"]
 
-    nbr_spatial_dimensions: Literal[1, 2, 3]
+    nbr_spatial_dimensions: Literal[
+        1,
+        2,
+        3,
+    ]
 
     particles: Annotated[
         list[Particle],

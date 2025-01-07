@@ -1,17 +1,13 @@
-from typing import ClassVar, Literal, Union
+from typing import ClassVar, Union
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
 from .factories import factories
-from .models import PydykitBaseModel, RegisteredClassName
-from .models_system import ParticleSystem
-
-
-class ExtendableModel(BaseModel):
-    # TODO #115: Remove placeholder: This is a temporary placeholder to allow passing any arguments to classes which are not yet granularly pydantic validated.
-    # This object is a BaseModel which can be assigned any attributes.
-    model_config = ConfigDict(extra="allow")
+from .models import ExtendableModel, RegisteredClassName
+from .models_system_dae import ChemicalReactor, Lorenz
+from .models_system_multibody import ParticleSystem, RigidBodyRotatingQuaternions
+from .models_system_port_hamiltonian import Pendulum2D
 
 
 class Simulator(
@@ -19,8 +15,6 @@ class Simulator(
     ExtendableModel,
 ):
     factory: ClassVar = factories["simulator"]
-    # NOTE: Attributes typed as ClassVar do not represent attributes, but can, e.g., be used during validation, see
-    #       https://docs.pydantic.dev/latest/concepts/models/#automatically-excluded-attributes
 
 
 class Integrator(
@@ -37,25 +31,14 @@ class TimeStepper(
     factory: ClassVar = factories["time_stepper"]
 
 
-class System(
-    RegisteredClassName,
-    ExtendableModel,
-):
-    factory: ClassVar = factories["system"]
-
-    class_name: Literal[
-        "RigidBodyRotatingQuaternions",
-        "Pendulum2D",
-        "Lorenz",
-        "ChemicalReactor",
-    ]
-
-
 class Configuration(BaseModel):
     system: Annotated[
         Union[
-            System,
             ParticleSystem,
+            RigidBodyRotatingQuaternions,
+            Pendulum2D,
+            Lorenz,
+            ChemicalReactor,
         ],
         Field(discriminator="class_name"),
     ]
