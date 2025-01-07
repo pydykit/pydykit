@@ -30,16 +30,31 @@ class RegisteredClassName(BaseModel):
         return class_name
 
 
-class ExtendableModel(BaseModel):
-    # TODO #115: Remove placeholder: This is a temporary placeholder to allow passing any arguments to classes which are not yet granularly pydantic validated.
-    # This object is a BaseModel which can be assigned any attributes.
-    model_config = ConfigDict(extra="allow")
-
-
-class System(
+class SystemModel(
     RegisteredClassName,
-    ExtendableModel,
+    PydykitBaseModel,
 ):
     # NOTE: Attributes typed as ClassVar do not represent attributes, but can, e.g., be used during validation, see
     #       https://docs.pydantic.dev/latest/concepts/models/#automatically-excluded-attributes
     factory: ClassVar = factories["system"]
+
+
+class IntegratorModel(
+    RegisteredClassName,
+    PydykitBaseModel,
+):
+    factory: ClassVar = factories["integrator"]
+
+
+class SimulatorModel(
+    RegisteredClassName,
+    PydykitBaseModel,
+):
+    factory: ClassVar = factories["simulator"]
+
+
+class TimeStepperModel(
+    RegisteredClassName,
+    PydykitBaseModel,
+):
+    factory: ClassVar = factories["time_stepper"]

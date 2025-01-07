@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import NonNegativeFloat
 
-from .models import PydykitBaseModel, System
+from .models import PydykitBaseModel, SystemModel
 
 
 class State(PydykitBaseModel):
@@ -10,7 +10,7 @@ class State(PydykitBaseModel):
     angular_velocity: list[float]
 
 
-class Pendulum2D(System):
+class Pendulum2D(SystemModel):
     class_name: Literal["Pendulum2D"]
 
     mass: NonNegativeFloat

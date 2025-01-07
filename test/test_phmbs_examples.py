@@ -5,6 +5,9 @@ import pydykit
 import pydykit.examples
 import pydykit.postprocessors as postprocessors
 import pydykit.systems_port_hamiltonian as phs
+from pydykit.configuration import Configuration
+from pydykit.managers import Manager
+from pydykit.results import Result
 
 from . import utils
 from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
@@ -32,8 +35,8 @@ class TestExamples:
     )
     def test_run_examples(self, content_config_file, expected_result_df):
 
-        manager = pydykit.managers.Manager()
-        configuration = pydykit.configuration.Configuration(
+        manager = Manager()
+        configuration = Configuration(
             **content_config_file,
         )
         manager._configure(configuration=configuration)
@@ -43,7 +46,7 @@ class TestExamples:
         # creates an instance of PHS with attribute MBS
         manager.system = porthamiltonian_system
 
-        result = pydykit.results.Result(manager=manager)
+        result = Result(manager=manager)
         result = manager.manage(result=result)
         new = result.to_df()
 
