@@ -1,38 +1,45 @@
-from typing import ClassVar, Literal
+from typing import Literal
 
 from annotated_types import Le, Len
 from pydantic import NonNegativeFloat, PositiveFloat
 from typing_extensions import Annotated
 
-from .factories import factories
-from .models import PydykitBaseModel, RegisteredClassName
+from .models import PydykitBaseModel, System
 
 
 class State(PydykitBaseModel):
     state: Annotated[
         list[float],
-        Len(min_length=3, max_length=3),
+        Len(
+            min_length=3,
+            max_length=3,
+        ),
     ]
 
 
-class Lorenz(PydykitBaseModel, RegisteredClassName):
-
-    factory: ClassVar = factories["system"]
+class Lorenz(System):
     class_name: Literal["Lorenz"]
+
     sigma: PositiveFloat
     rho: PositiveFloat
     beta: PositiveFloat
     state: State
 
 
-class ChemicalReactor(PydykitBaseModel, RegisteredClassName):
-    factory: ClassVar = factories["system"]
+class ChemicalReactor(System):
     class_name: Literal["ChemicalReactor"]
+
     state: State
     constants: Annotated[
         list[float],
-        Len(min_length=4, max_length=4),
+        Len(
+            min_length=4,
+            max_length=4,
+        ),
     ]
     cooling_temperature: NonNegativeFloat
-    reactant_concentration: Annotated[NonNegativeFloat, Le(1.0)]
+    reactant_concentration: Annotated[
+        NonNegativeFloat,
+        Le(1.0),
+    ]
     initial_temperature: NonNegativeFloat
