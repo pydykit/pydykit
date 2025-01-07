@@ -2,10 +2,10 @@ from typing import Literal
 
 from pydantic import PositiveFloat, model_validator
 
-from .models import TimeStepper
+from .models import TimeStepperModel
 
 
-class FixedIncrementBase(TimeStepper):
+class FixedIncrementBase(TimeStepperModel):
     step_size: PositiveFloat
     start: float
     end: float

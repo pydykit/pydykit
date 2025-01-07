@@ -2,22 +2,22 @@ from typing import Literal
 
 from pydantic import NonNegativeFloat
 
-from .models import Integrator
+from .models import IntegratorModel
 
 
-class MidpointPH(Integrator):
+class MidpointPH(IntegratorModel):
     class_name: Literal["MidpointPH"]
 
 
-class MidpointMultibody(Integrator):
+class MidpointMultibody(IntegratorModel):
     class_name: Literal["MidpointMultibody"]
 
 
-class MidpointDAE(Integrator):
+class MidpointDAE(IntegratorModel):
     class_name: Literal["MidpointDAE"]
 
 
-class DiscreteGradientBase(Integrator):
+class DiscreteGradientBase(IntegratorModel):
 
     increment_tolerance: NonNegativeFloat
     discrete_gradient_type: Literal[

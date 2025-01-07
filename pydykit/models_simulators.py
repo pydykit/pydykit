@@ -2,10 +2,10 @@ from typing import Literal
 
 from pydantic import NonNegativeFloat, PositiveInt
 
-from .models import Simulator
+from .models import SimulatorModel
 
 
-class OneStep(Simulator):
+class OneStep(SimulatorModel):
     solver_name: Literal[
         "NewtonPlainPython",
         "RootScipy",

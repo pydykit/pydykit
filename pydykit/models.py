@@ -30,7 +30,7 @@ class RegisteredClassName(BaseModel):
         return class_name
 
 
-class System(
+class SystemModel(
     RegisteredClassName,
     PydykitBaseModel,
 ):
@@ -39,21 +39,21 @@ class System(
     factory: ClassVar = factories["system"]
 
 
-class Integrator(
+class IntegratorModel(
     RegisteredClassName,
     PydykitBaseModel,
 ):
     factory: ClassVar = factories["integrator"]
 
 
-class Simulator(
+class SimulatorModel(
     RegisteredClassName,
     PydykitBaseModel,
 ):
     factory: ClassVar = factories["simulator"]
 
 
-class TimeStepper(
+class TimeStepperModel(
     RegisteredClassName,
     PydykitBaseModel,
 ):

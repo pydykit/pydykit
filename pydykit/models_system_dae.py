@@ -4,7 +4,7 @@ from annotated_types import Le, Len
 from pydantic import NonNegativeFloat, PositiveFloat
 from typing_extensions import Annotated
 
-from .models import PydykitBaseModel, System
+from .models import PydykitBaseModel, SystemModel
 
 
 class State(PydykitBaseModel):
@@ -17,7 +17,7 @@ class State(PydykitBaseModel):
     ]
 
 
-class Lorenz(System):
+class Lorenz(SystemModel):
     class_name: Literal["Lorenz"]
 
     sigma: PositiveFloat
@@ -26,7 +26,7 @@ class Lorenz(System):
     state: State
 
 
-class ChemicalReactor(System):
+class ChemicalReactor(SystemModel):
     class_name: Literal["ChemicalReactor"]
 
     state: State

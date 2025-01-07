@@ -4,7 +4,7 @@ from annotated_types import Len
 from pydantic import NonNegativeFloat, model_validator
 from typing_extensions import Annotated
 
-from .models import PydykitBaseModel, System
+from .models import PydykitBaseModel, SystemModel
 from .utils import get_indices, sort_based_on_attribute
 
 
@@ -14,7 +14,7 @@ class State(PydykitBaseModel):
     multiplier: list[float]
 
 
-class RigidBodyRotatingQuaternions(System):
+class RigidBodyRotatingQuaternions(SystemModel):
     class_name: Literal["RigidBodyRotatingQuaternions"]
 
     nbr_spatial_dimensions: Literal[3]
@@ -80,7 +80,7 @@ class Constraint(PydykitBaseModel):
     length: NonNegativeFloat
 
 
-class ParticleSystem(System):
+class ParticleSystem(SystemModel):
 
     class_name: Literal["ParticleSystem"]
 
