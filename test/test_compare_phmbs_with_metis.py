@@ -4,6 +4,9 @@ import pytest
 import pydykit
 import pydykit.examples
 import pydykit.systems_port_hamiltonian as phs
+from pydykit.configuration import Configuration
+from pydykit.managers import Manager
+from pydykit.results import Result
 
 from . import constants, utils
 
@@ -37,8 +40,8 @@ class TestCompareWithMetis:
     @pytest.mark.slow
     def test_run(self, content_config_file, name, result_indices):
 
-        manager = pydykit.managers.Manager()
-        configuration = pydykit.configuration.Configuration(
+        manager = Manager()
+        configuration = Configuration(
             **content_config_file,
         )
         manager._configure(configuration=configuration)
@@ -48,7 +51,7 @@ class TestCompareWithMetis:
         # creates an instance of PHS with attribute MBS
         manager.system = porthamiltonian_system
 
-        result = pydykit.results.Result(manager=manager)
+        result = Result(manager=manager)
         result = manager.manage(result=result)
 
         reference = utils.load_result_of_metis_simulation(

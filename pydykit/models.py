@@ -1,4 +1,8 @@
+from typing import ClassVar
+
 from pydantic import BaseModel, ConfigDict, field_validator
+
+from .factories import factories
 
 
 class PydykitBaseModel(BaseModel):
@@ -24,3 +28,33 @@ class RegisteredClassName(BaseModel):
             raise ValueError(f"supported factory methods are {constructors.keys()}")
 
         return class_name
+
+
+class SystemModel(
+    RegisteredClassName,
+    PydykitBaseModel,
+):
+    # NOTE: Attributes typed as ClassVar do not represent attributes, but can, e.g., be used during validation, see
+    #       https://docs.pydantic.dev/latest/concepts/models/#automatically-excluded-attributes
+    factory: ClassVar = factories["system"]
+
+
+class IntegratorModel(
+    RegisteredClassName,
+    PydykitBaseModel,
+):
+    factory: ClassVar = factories["integrator"]
+
+
+class SimulatorModel(
+    RegisteredClassName,
+    PydykitBaseModel,
+):
+    factory: ClassVar = factories["simulator"]
+
+
+class TimeStepperModel(
+    RegisteredClassName,
+    PydykitBaseModel,
+):
+    factory: ClassVar = factories["time_stepper"]
