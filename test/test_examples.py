@@ -3,6 +3,9 @@ import pytest
 
 import pydykit
 import pydykit.examples
+from pydykit.configuration import Configuration
+from pydykit.managers import Manager
+from pydykit.results import Result
 
 from . import utils
 from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
@@ -37,13 +40,13 @@ class TestExamples:
     )
     def test_run_examples(self, content_config_file, expected_result_df):
 
-        manager = pydykit.managers.Manager()
-        configuration = pydykit.configuration.Configuration(
+        manager = Manager()
+        configuration = Configuration(
             **content_config_file,
         )
         manager._configure(configuration=configuration)
 
-        result = pydykit.results.Result(manager=manager)
+        result = Result(manager=manager)
         result = manager.manage(result=result)
         old = expected_result_df
         new = result.to_df()
