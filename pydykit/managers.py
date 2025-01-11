@@ -1,40 +1,22 @@
+"""My module
+
+Blabla
+
+Classes:
+    Manager
+"""
+
 from . import abstract_base_classes, results, utils
 from .configuration import Configuration
 from .factories import factories
 
 
 class Manager(abstract_base_classes.Manager):
-    """
+    """My class
+
     Methods:
-
-        Args:
-            configuration (Configuration): The configuration object to set up the manager.
-
-
-        Args:
-            path (str): The file path to the YAML configuration file.
-
-
-        Args:
-            configuration (Configuration): The configuration object to set up the manager.
-
-
-        Args:
-            key (str): The key to identify which instance to retrieve.
-
-        Returns:
-            object: The instance of the class corresponding to the key.
-
-        Args:
-            result (Result): The result object to be processed by the simulator.
-
-        Returns:
-            object: The result of the simulation.
-
-
-        Raises:
-            AssertionError: If the system and integrator parametrizations do not match.
-            PydykitException: If either the integrator or system does not have a parametrization attribute.
+        __init__: Get going
+        configure: Bla
     """
 
     def configure(self, configuration: Configuration):
@@ -45,6 +27,24 @@ class Manager(abstract_base_classes.Manager):
         ----------
         configuration : Configuration
             The configuration object to set up the manager.
+
+        Examples:
+            Some explanation of what is possible.
+
+            >>> print("hello!")
+            hello!
+
+            Blank lines delimit prose vs. console blocks.
+
+            >>> a = 0
+            >>> a += 1
+            >>> a
+            1
+
+
+        Note:
+            Some information.
+
         """
 
         self._configure(configuration=configuration)
