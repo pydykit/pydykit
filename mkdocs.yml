@@ -5,7 +5,7 @@ nav:
   - Home: index.md
   - About: about.md
 theme:
-  name: readthedocs
+  name: material
   language: en
   logo: assets/logo.png
   favicon: assets/logo.png # TODO: Check this when deployed
