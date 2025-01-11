@@ -1,3 +1,13 @@
+"""
+My system DAE module
+
+This module contains the system classes DAE.
+
+Classes:
+    QuasiLinearDAESystem: A class quasilinear DAE systems.
+    ChemicalReactor: A chemical reactor system.
+"""
+
 import numpy as np
 
 from . import abstract_base_classes
@@ -8,14 +18,13 @@ class QuasiLinearDAESystem(System, abstract_base_classes.AbstractQuasiLinearDAES
     r"""
     These systems follow the pattern:
 
-    .. math::
-    E(x) \dot{x} = f(x)
+    $$
+       E(x) \dot{x} = f(x)
+    $$
 
-    where x: state
-          E: descriptor matrix
-          f: right-hand side
-          \nabla f(x): Jacobian
-    It includes ODEs for E(x) = I. Singular E induce true DAEs.
+    where $x$: state, $E$: descriptor matrix, $f$: right-hand side and $\nabla f(x)$: Jacobian.
+
+    It includes ODEs for $E(x) = I$. Singular $E$ induce true DAEs.
     """
 
     def __init__(self, manager, state: dict):
@@ -84,10 +93,13 @@ class Lorenz(QuasiLinearDAESystem):
 
 
 class ChemicalReactor(QuasiLinearDAESystem):
-    r"""
-    Follows [1] and [2].
-    [1]: https://doi.org/10.1137/0909014 , Eq. 33a
-    [2]: https://doi.org/10.4171/017 , Eq. 1.8
+    """
+    Follows the equations described in the following references:
+
+    References
+    ----------
+    1. https://doi.org/10.1137/0909014, Eq. 33a
+    2. https://doi.org/10.4171/017, Eq. 1.8
     """
 
     def __init__(

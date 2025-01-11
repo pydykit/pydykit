@@ -4,6 +4,7 @@ repo_url: https://github.com/pydykit/pydykit # TODO: Check this link when deploy
 nav:
   - Home: index.md
   - About: about.md
+  - General DAE Systems: systems_dae.md
 theme:
   name: material
   language: en
