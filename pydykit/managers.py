@@ -1,9 +1,10 @@
-"""My module
+"""
+My module
 
-Blabla
+This module contains the Manager class.
 
 Classes:
-    Manager
+    Manager: A class to manage configurations and instances.
 """
 
 from . import abstract_base_classes, results, utils

@@ -233,7 +233,7 @@ class Plotter:
         extremum="max",
     ):
         tmp = df.filter(
-            regex=f"^[{axis}][\d]$",
+            regex=rf"^[{axis}][\d]$",
             axis=1,
         )
         tmp = getattr(tmp, extremum)(numeric_only=True)
