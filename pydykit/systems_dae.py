@@ -5,9 +5,12 @@ from .systems import System
 
 
 class QuasiLinearDAESystem(System, abstract_base_classes.AbstractQuasiLinearDAESystem):
-    """
+    r"""
     These systems follow the pattern:
+
+    .. math::
     E(x) \dot{x} = f(x)
+
     where x: state
           E: descriptor matrix
           f: right-hand side
@@ -81,7 +84,7 @@ class Lorenz(QuasiLinearDAESystem):
 
 
 class ChemicalReactor(QuasiLinearDAESystem):
-    """
+    r"""
     Follows [1] and [2].
     [1]: https://doi.org/10.1137/0909014 , Eq. 33a
     [2]: https://doi.org/10.4171/017 , Eq. 1.8
