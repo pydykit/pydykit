@@ -61,6 +61,7 @@ extra:
 plugins:
   - search
   - mkdocstrings
+  - markdown-exec
 copyright: Copyright &copy; 2024 - 2025 The authors of PyDyKIT
 markdown_extensions:
   - pymdownx.arithmatex:
@@ -68,6 +69,14 @@ markdown_extensions:
   - toc:
       permalink: true
       title: Page content
+  - pymdownx.superfences
+  # - admonition
+  # - pymdownx.blocks.admonition
+  # - pymdownx.blocks.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      base_path: docs
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
