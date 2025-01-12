@@ -10,7 +10,7 @@ from pydykit.results import Result
 from . import utils
 from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
 
-example_manager = pydykit.examples.Manager()
+example_manager = pydykit.examples.ExampleManager()
 
 example_worklist = [
     "pendulum_3d",

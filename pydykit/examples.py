@@ -3,7 +3,7 @@ from importlib.resources import files
 from . import utils
 
 
-class Manager:
+class ExampleManager:
 
     def __init__(self):
         """TODO: Add docstring"""
