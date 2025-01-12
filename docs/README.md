@@ -1,6 +1,6 @@
 # Docs
 
-## Build docs with `mkdocks`
+## Build docs with `mkdocs`
 
 Install
 
