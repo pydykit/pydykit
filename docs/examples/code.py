@@ -2,20 +2,14 @@ from markdown import markdown
 
 from pydykit import examples
 
-
-def to_markdown_list(llist):
-    return "\n".join(
-        [
-            f"- [{item}](https://github.com/pydykit/pydykit/tree/main/pydykit/example_files/{item}.yml)"
-            for item in llist
-        ]
-    )
-
-
-keys = examples.ExampleManager().examples.keys()
-html = markdown(
-    f"""
-{to_markdown_list(llist=keys)}
-"""
+example_manager = examples.ExampleManager()
+keys = example_manager.examples.keys()
+content = "\n".join(
+    [
+        f"- {item} [config file]({example_manager.BASE_URL_EXAMPLE_FILES}{item}.yml)"
+        for item in keys
+    ]
 )
+
+html = markdown(content)
 print(html)
