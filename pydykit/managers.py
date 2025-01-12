@@ -1,10 +1,3 @@
-"""
-TODO: Add docstring
-
-Classes:
-    Manager: A class to manage configurations and instances.
-"""
-
 from . import abstract_base_classes, results, utils
 from .configuration import Configuration
 from .factories import factories

@@ -6,6 +6,8 @@ from . import utils
 class Manager:
 
     def __init__(self):
+        """TODO: Add docstring"""
+
         self.examples = self.load_examples()
 
     def load_examples(self):
