@@ -14,6 +14,7 @@ class Postprocessor:
         manager,
         state_results_df: pd.DataFrame,
     ):
+        """TODO: Add docstring"""
 
         self.manager = manager
         self.nbr_time_point = self.manager.time_stepper.nbr_time_points
@@ -29,7 +30,7 @@ class Postprocessor:
         return list(self._evaluation_strategies.keys())
 
     def postprocess(self, quantities_and_evaluation_points):
-
+        """TODO: Add docstring"""
         for quantity, evaluation_points in quantities_and_evaluation_points.items():
 
             for evaluation_point in evaluation_points:
@@ -138,6 +139,7 @@ class Postprocessor:
         return system.copy(state=updated_state)
 
     def add_sum_of(self, quantities, sum_name):
+        """TODO: Add docstring"""
         self.results_df[sum_name] = self.results_df[quantities].sum(
             axis=1, skipna=False
         )
@@ -146,6 +148,8 @@ class Postprocessor:
 class Plotter:
 
     def __init__(self, results_df):
+        """TODO: Add docstring"""
+
         self.results_df = results_df
         self.plotting_backend = "plotly"
         self.color_palette = [
@@ -161,6 +165,7 @@ class Plotter:
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
 
     def plot_3d_trajectory(self, figure, **kwargs):
+        """TODO: Add docstring"""
         figure.add_trace(self.get_trace_3d_trajectory(**kwargs))
 
     @staticmethod
@@ -277,6 +282,7 @@ class Plotter:
         y_axis_scale="linear",
         figure: None | go.Figure = None,
     ):
+        """TODO: Add docstring"""
 
         pd.options.plotting.backend = self.plotting_backend
 
