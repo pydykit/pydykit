@@ -1,5 +1,5 @@
 site_name: PyDyKIT - A Python-based Dynamics toolKIT
-site_url: https://example.com # TODO: Update this
+site_url: https://pydykit.github.io/pydykit/
 repo_url: https://github.com/pydykit/pydykit # TODO: Check this link when deployed
 nav:
   - Home: index.md
