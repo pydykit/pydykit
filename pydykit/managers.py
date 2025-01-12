@@ -1,7 +1,5 @@
 """
-My module
-
-This module contains the Manager class.
+TODO: Add docstring
 
 Classes:
     Manager: A class to manage configurations and instances.
@@ -13,7 +11,7 @@ from .factories import factories
 
 
 class Manager(abstract_base_classes.Manager):
-    """My class
+    """TODO: Validate docstring
 
     Methods:
         __init__: Get going
@@ -22,6 +20,7 @@ class Manager(abstract_base_classes.Manager):
 
     def configure(self, configuration: Configuration):
         """
+        TODO: Validate docstring
         Configures the manager with the given configuration.
 
         Parameters
@@ -52,6 +51,7 @@ class Manager(abstract_base_classes.Manager):
 
     def configure_from_path(self, path):
         """
+        TODO: Validate docstring
         Loads configuration from a YAML file and configures the manager.
 
         Parameters
@@ -96,6 +96,7 @@ class Manager(abstract_base_classes.Manager):
 
     def manage(self, result):
         """
+        TODO: Validate docstring
         Runs the simulator with the given result.
 
         Parameters
