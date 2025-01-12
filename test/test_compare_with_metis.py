@@ -9,7 +9,7 @@ from pydykit.results import Result
 
 from . import constants, utils
 
-example_manager = pydykit.examples.Manager()
+example_manager = pydykit.examples.ExampleManager()
 
 example_worklist = [
     dict(
