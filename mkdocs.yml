@@ -3,7 +3,6 @@ site_url: https://example.com # TODO: Update this
 repo_url: https://github.com/pydykit/pydykit # TODO: Check this link when deployed
 nav:
   - Home: index.md
-  - About: about.md
   - API Reference:
       - General DAE Systems: api_reference/systems_dae.md
       - Managers: api_reference/managers.md
