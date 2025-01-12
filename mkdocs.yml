@@ -6,7 +6,10 @@ nav:
   - API Reference:
       - General DAE Systems: api_reference/systems_dae.md
       - Managers: api_reference/managers.md
-  - Examples: examples/example.md
+      - ExampleManager: api_reference/example_manager.md
+  - Examples:
+      - List: examples/index.md
+      - Pendulum 3D: examples/pendulum_3d.md
   - About: about.md
 theme:
   name: material
