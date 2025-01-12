@@ -251,6 +251,7 @@ class Plotter:
         df,
         aspectmode="data",
     ):
+        """TODO: Add docstring"""
         figure.update_layout(
             scene=dict(
                 {
