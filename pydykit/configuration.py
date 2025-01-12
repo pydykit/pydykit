@@ -17,6 +17,8 @@ from .models_time_steppers import FixedIncrement, FixedIncrementHittingEnd
 
 
 class Configuration(BaseModel):
+    """TODO: Add docstring"""
+
     system: Union[
         ParticleSystem,
         RigidBodyRotatingQuaternions,
