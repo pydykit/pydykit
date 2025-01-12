@@ -69,37 +69,17 @@ class Manager(abstract_base_classes.Manager):
         self._configure(configuration=configuration)
 
     def _configure(self, configuration):
-        """
-        Internal method to set the configuration and derive instances of classes.
-
-        Parameters
-        ----------
-        configuration : Configuration
-            The configuration object to set up the manager.
-        """
 
         self.configuration = configuration
 
         # derive instances of classes
         for key in factories.keys():
-            setattr(self, key, self.get_instance(key=key))
+            setattr(self, key, self._get_instance(key=key))
 
         # self.result = results.Result(manager=self)
 
-    def get_instance(self, key):
-        """
-        Retrieves an instance of a class based on the configuration.
+    def _get_instance(self, key):
 
-        Parameters
-        ----------
-        key : str
-            The key to identify which instance to retrieve.
-
-        Returns
-        -------
-        object
-            The instance of the class corresponding to the key.
-        """
         obj = getattr(self.configuration, key)
         factory = factories[key]
 
@@ -130,17 +110,7 @@ class Manager(abstract_base_classes.Manager):
         """
         return self.simulator.run(result=result)
 
-    def validate_integrator_system_combination(self):
-        """
-        Validates the compatibility of the integrator and system based on their parametrization.
-
-        Raises
-        ------
-        AssertionError
-            If the system and integrator parametrizations do not match.
-        PydykitException
-            If either the integrator or system does not have a parametrization attribute.
-        """
+    def _validate_integrator_system_combination(self):
 
         if hasattr(self.integrator, "parametrization") and hasattr(
             self.system, "parametrization"

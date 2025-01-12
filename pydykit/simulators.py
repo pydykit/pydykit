@@ -31,7 +31,7 @@ class OneStep(Simulator):
     def run(self, result):
         time_stepper = self.manager.time_stepper
         manager = self.manager
-        manager.validate_integrator_system_combination()
+        manager._validate_integrator_system_combination()
 
         # Initialze the time stepper
         steps = time_stepper.make_steps()
