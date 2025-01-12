@@ -7,7 +7,7 @@ to browse and explore available examples.
 The following tab shows available examples in tab `Result` and the source code to derive this list of examples in tab `Source`.
 
 ```python exec="true" source="tabbed-right" html="true"
---8<-- "examples/code.py"
+--8<-- "snippets/code.py"
 ```
 
 <!-- ````md exec="true" source="tabbed-right"
