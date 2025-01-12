@@ -4,7 +4,9 @@ repo_url: https://github.com/pydykit/pydykit # TODO: Check this link when deploy
 nav:
   - Home: index.md
   - About: about.md
-  - General DAE Systems: systems_dae.md
+  - API Reference:
+      - General DAE Systems: api_reference/systems_dae.md
+      - Managers: api_reference/managers.md
 theme:
   name: material
   language: en
@@ -40,6 +42,8 @@ theme:
     - navigation.footer
     - navigation.instant
     - navigation.instant.prefetch
+    - navigation.sections
+    - navigation.tabs
 extra_css:
   - stylesheets/extra.css
 extra:
