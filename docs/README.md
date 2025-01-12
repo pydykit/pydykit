@@ -1,3 +1,19 @@
+# Docs
+
+## Build docs with `mkdocks`
+
+Install
+
+```bash
+pip install -r requirements_mkdocs.txt
+```
+
+Create docs and serve on local URL (see termianl output for URL).
+
+```bash
+mkdocs serve
+```
+
 ## Visualize the Code Structure
 
 Following this [stackoverflow contribution](https://stackoverflow.com/a/7554457/8935243)
