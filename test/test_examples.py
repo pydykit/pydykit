@@ -8,8 +8,8 @@ from pydykit.managers import Manager
 from pydykit.postprocessors import Postprocessor
 from pydykit.systems_port_hamiltonian import PortHamiltonianMBS
 
-from . import utils
 from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
+from .utils import load_result_of_pydykit_simulation, print_compare
 
 example_manager = pydykit.examples.ExampleManager()
 
@@ -36,7 +36,7 @@ class TestExamples:
         (
             pytest.param(
                 example_manager.get_example(name=key),
-                utils.load_result_of_pydykit_simulation(
+                load_result_of_pydykit_simulation(
                     path=PATH_REFERENCE_RESULTS.joinpath(f"{key}.csv")
                 ),
                 key in phmbs,
@@ -70,7 +70,7 @@ class TestExamples:
             )
             new = postprocessor.results_df
 
-        utils.print_compare(old=old, new=new)
+        print_compare(old=old, new=new)
 
         assert np.allclose(
             old,

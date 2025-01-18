@@ -4,7 +4,6 @@ import pytest
 import pydykit.systems_port_hamiltonian as phs
 from pydykit.configuration import Configuration
 from pydykit.managers import Manager
-from pydykit.results import Result
 from pydykit.utils import load_yaml_file
 
 from .constants import A_TOL, PATH_CONFIG_FILES, PATH_REFERENCE_RESULTS, R_TOL

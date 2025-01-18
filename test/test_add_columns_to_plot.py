@@ -1,8 +1,7 @@
 import pandas as pd
 import pytest
 
-from pydykit import utils
-from pydykit.postprocessors import Postprocessor
+from pydykit.utils import add_columns_to_plot
 
 
 def test_add_columns_to_plot():
@@ -17,7 +16,7 @@ def test_add_columns_to_plot():
     expected_columns = ["existing_column", "quantity_1", "quantity_2"]
 
     # Call the method
-    updated_columns = utils.add_columns_to_plot(columns_to_plot, results_df, quantity)
+    updated_columns = add_columns_to_plot(columns_to_plot, results_df, quantity)
 
     # Assert the result
     assert updated_columns == expected_columns
