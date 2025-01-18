@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -6,12 +8,13 @@ import pydykit.examples
 from pydykit.configuration import Configuration
 from pydykit.managers import Manager
 from pydykit.results import Result
+from pydykit.utils import load_yaml_file
 
 from . import constants, utils
 
-example_manager = pydykit.examples.Manager()
+path_config_files_directory = Path(__file__).parent.joinpath("config_files")
 
-example_worklist = [
+worklist = [
     dict(
         name="pendulum_3d",
         result_indices=[0, 1, 2],
@@ -36,12 +39,14 @@ class TestCompareWithMetis:
         ("content_config_file", "name", "result_indices"),
         (
             pytest.param(
-                example_manager.get_example(name=example["name"]),
-                example["name"],
-                example["result_indices"],
-                id=example["name"],
+                load_yaml_file(
+                    path=path_config_files_directory.joinpath(task["name"] + ".yml")
+                ),
+                task["name"],
+                task["result_indices"],
+                id=task["name"],
             )
-            for example in example_worklist
+            for task in worklist
         ),
     )
     @pytest.mark.slow
