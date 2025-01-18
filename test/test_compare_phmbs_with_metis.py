@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import numpy as np
 import pytest
 
@@ -9,10 +7,8 @@ from pydykit.managers import Manager
 from pydykit.results import Result
 from pydykit.utils import load_yaml_file
 
-from . import constants, utils
-
-path_config_files_directory = Path(__file__).parent.joinpath("config_files")
-
+from .constants import A_TOL, PATH_CONFIG_FILES, PATH_REFERENCE_RESULTS, R_TOL
+from .utils import load_result_of_metis_simulation, print_compare
 
 worklist = [
     dict(
@@ -31,9 +27,7 @@ class TestCompareWithMetis:
         ("content_config_file", "name", "result_indices"),
         (
             pytest.param(
-                load_yaml_file(
-                    path=path_config_files_directory.joinpath(task["name"] + ".yml")
-                ),
+                load_yaml_file(path=PATH_CONFIG_FILES.joinpath(task["name"] + ".yml")),
                 task["name"],
                 task["result_indices"],
                 id=task["name"],
@@ -58,8 +52,8 @@ class TestCompareWithMetis:
         result = Result(manager=manager)
         result = manager.manage(result=result)
 
-        reference = utils.load_result_of_metis_simulation(
-            path=constants.PATH_REFERENCE_RESULTS.joinpath(
+        reference = load_result_of_metis_simulation(
+            path=PATH_REFERENCE_RESULTS.joinpath(
                 "metis",
                 f"{name}.mat",
             )
@@ -68,11 +62,11 @@ class TestCompareWithMetis:
 
         new = result.results[:, result_indices]
 
-        utils.print_compare(old=old, new=new)
+        print_compare(old=old, new=new)
 
         assert np.allclose(
             new,
             old,
-            rtol=constants.R_TOL,
-            atol=constants.A_TOL,
+            rtol=R_TOL,
+            atol=A_TOL,
         )
