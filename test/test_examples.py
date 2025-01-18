@@ -44,10 +44,9 @@ class TestExamples:
         configuration = Configuration(
             **content_config_file,
         )
-        manager._configure(configuration=configuration)
+        manager.configure(configuration=configuration)
+        result = manager.manage()
 
-        result = Result(manager=manager)
-        result = manager.manage(result=result)
         old = expected_result_df
         new = result.to_df()
 

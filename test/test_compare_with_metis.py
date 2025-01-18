@@ -74,8 +74,7 @@ class TestCompareWithMetis:
             # creates an instance of PHS with attribute MBS
             manager.system = porthamiltonian_system
 
-        result = Result(manager=manager)
-        result = manager.manage(result=result)
+        result = manager.manage()
 
         reference = load_result_of_metis_simulation(
             path=PATH_REFERENCE_RESULTS.joinpath(
