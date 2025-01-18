@@ -25,7 +25,7 @@ class Integrator(abc.ABC):
 class Simulator(abc.ABC):
 
     @abc.abstractmethod
-    def run(self):
+    def run(self) -> results.Result:
         pass
 
 
