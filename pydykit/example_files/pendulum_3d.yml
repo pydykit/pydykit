@@ -31,6 +31,6 @@ integrator:
   class_name: MidpointMultibody
 time_stepper:
   class_name: FixedIncrementHittingEnd
-  step_size: 0.05
+  step_size: 0.08
   start: 0.0
-  end: 0.45
+  end: 1.3
