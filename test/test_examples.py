@@ -25,7 +25,9 @@ worklist = [
     "four_particle_system_ph_discrete_gradient_dissipative",
 ]
 
-phmbs = ["four_particle_system_ph_discrete_gradient_dissipative"]
+phmbs = [
+    "four_particle_system_ph_discrete_gradient_dissipative",
+]
 
 
 class TestExamples:
