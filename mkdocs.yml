@@ -10,6 +10,7 @@ nav:
   - Examples:
       - List: examples/index.md
       - Pendulum 3D: examples/pendulum_3d.md
+      - Lorenz System: examples/lorenz.md
       - Chemical Reactor: examples/reactor.md
   - About: about.md
 theme:
