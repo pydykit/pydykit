@@ -12,7 +12,7 @@ from .utils import load_result_of_metis_simulation, print_compare
 
 mbs = [
     dict(
-        name="pendulum_3d",
+        name="pendulum_3d_metis",
         result_indices=[0, 1, 2],
     ),
     dict(

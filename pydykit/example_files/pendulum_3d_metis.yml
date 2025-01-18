@@ -1,4 +1,4 @@
-name: pendulum_3d
+name: pendulum_3d_metis
 system:
   class_name: ParticleSystem
   nbr_spatial_dimensions: 3
@@ -22,15 +22,15 @@ system:
         index: 0
       length: 1.0
   gravity: [0.0, 0.0, 9.81]
-integrator:
-  class_name: MidpointMultibody
 simulator:
   class_name: OneStep
   solver_name: NewtonPlainPython
   newton_epsilon: 1.e-07
   max_iterations: 40
+integrator:
+  class_name: MidpointMultibody
 time_stepper:
   class_name: FixedIncrementHittingEnd
-  step_size: 0.08
+  step_size: 0.05
   start: 0.0
-  end: 1.3
+  end: 0.45

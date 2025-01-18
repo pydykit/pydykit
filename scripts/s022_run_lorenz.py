@@ -1,7 +1,7 @@
 import plotly.graph_objects as go
 
 import pydykit
-import pydykit.postprocessors as postprocessors
+from pydykit.postprocessors import Plotter
 
 manager = pydykit.managers.Manager()
 
@@ -15,10 +15,10 @@ result = manager.manage(result=result)
 
 df = result.to_df()
 
-postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
+plotter = Plotter(results_df=df)
 
 fig = go.Figure()
-postprocessor.plot_3d_trajectory(
+plotter.plot_3d_trajectory(
     figure=fig,
     x_components=df["x"],
     y_components=df["y"],
