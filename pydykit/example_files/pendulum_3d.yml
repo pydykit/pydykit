@@ -21,7 +21,7 @@ system:
         type: particle
         index: 0
       length: 1.0
-  gravity: [0.0, 0.0, 9.81]
+  gravity: [0.0, 0.0, -9.81]
 integrator:
   class_name: MidpointMultibody
 simulator:
