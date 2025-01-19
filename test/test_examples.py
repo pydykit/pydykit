@@ -8,7 +8,7 @@ from pydykit.managers import Manager
 from pydykit.postprocessors import Postprocessor
 from pydykit.systems_port_hamiltonian import PortHamiltonianMBS
 
-from .constants import A_TOL, PATH_REFERENCE_RESULTS, R_TOL
+from .constants import A_TOL, OVERWRITE_EXISTING_RESULTS, PATH_REFERENCE_RESULTS, R_TOL
 from .utils import load_result_of_pydykit_simulation, print_compare
 
 example_manager = pydykit.examples.ExampleManager()
@@ -32,20 +32,18 @@ phmbs = [
 
 class TestExamples:
     @pytest.mark.parametrize(
-        ("content_config_file", "expected_result_df", "is_phmbs"),
+        ("content_config_file", "name", "is_phmbs"),
         (
             pytest.param(
                 example_manager.get_example(name=key),
-                load_result_of_pydykit_simulation(
-                    path=PATH_REFERENCE_RESULTS.joinpath(f"{key}.csv")
-                ),
+                key,
                 key in phmbs,
                 id=key,
             )
             for key in worklist
         ),
     )
-    def test_run_examples(self, content_config_file, expected_result_df, is_phmbs):
+    def test_run_examples(self, content_config_file, name, is_phmbs):
 
         manager = Manager()
         configuration = Configuration(
@@ -60,7 +58,6 @@ class TestExamples:
             manager.system = porthamiltonian_system
 
         result = manager.manage()
-        old = expected_result_df
         new = result.to_df()
 
         if is_phmbs:
@@ -69,6 +66,14 @@ class TestExamples:
                 quantities_and_evaluation_points={"hamiltonian": ["current_time"]}
             )
             new = postprocessor.results_df
+
+        path_old_result = PATH_REFERENCE_RESULTS.joinpath(f"{name}.csv")
+
+        if OVERWRITE_EXISTING_RESULTS:
+            # Attention, this should only be used to update the reference results due to major code changes.
+            new.to_csv(path_old_result)
+
+        old = load_result_of_pydykit_simulation(path=path_old_result)
 
         print_compare(old=old, new=new)
 
