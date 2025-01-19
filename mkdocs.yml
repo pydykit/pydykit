@@ -53,7 +53,7 @@ theme:
 extra_css:
   - stylesheets/extra.css
 extra:
-  homepage: https://example.com # TODO: Update this
+  homepage: https://pydykit.github.io/pydykit
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/pydykit/pydykit # TODO: Check this
@@ -64,6 +64,15 @@ plugins:
   - search
   - mkdocstrings
   - markdown-exec
+  - macros:
+      on_undefined: strict
+  - print-site:
+      add_to_navigation: true
+      add_table_of_contents: true
+      toc_depth: 2
+      enumerate_headings: true
+      enumerate_figures: true
+      add_cover_page: true
 copyright: Copyright &copy; 2024 - 2025 The authors of PyDyKIT
 markdown_extensions:
   - pymdownx.arithmatex:
