@@ -5,7 +5,6 @@ system:
   nbr_dof: 4
   nbr_constraints: 1
   mass: 1.0
-  gravity: [0.0, 0.0, 0.0]
   inertias: [6.0, 8.0, 3.0]
   state:
     position: [1.0, 0.0, 0.0, 0.0]
