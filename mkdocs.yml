@@ -62,7 +62,10 @@ extra:
     provider: mike # TODO: Check this when deployed
 plugins:
   - search
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+          docstring_style: google
   - markdown-exec
   - macros:
       on_undefined: strict
