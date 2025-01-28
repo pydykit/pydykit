@@ -27,9 +27,9 @@ or shortcut with
 pip install pydykit
 ```
 
-## [Contributing](CONTRIBUTING.md)
+## Contributing
 
-Please read our code of conduct, fork this repo and initiate a pull request.
+Please refer to [CONTRIBUTIONG.md](CONTRIBUTING.md)
 Feel free to contact us if you have doubts.
 
 ## Main Contributors
