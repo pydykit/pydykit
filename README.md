@@ -30,7 +30,7 @@ pip install pydykit
 ## Contributing
 
 Please refer to [CONTRIBUTIONG.md](CONTRIBUTING.md).
-Feel free to contact us if you have doubts.
+Feel free to contact us if you have doubts or questions.
 
 ## Main Contributors
 
