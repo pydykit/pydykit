@@ -15,4 +15,4 @@ TODO: Fill with content
 Check out the
 [getting started](getting_started.md)
 and
-[examples](examples/index.md).
+[examples](examples/pendulum_3d.md).

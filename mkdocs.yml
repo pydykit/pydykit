@@ -5,10 +5,10 @@ nav:
   - About: index.md
   - Getting Started: getting_started.md
   - Examples:
-      - List: examples/index.md
       - Pendulum 3D: examples/pendulum_3d.md
       - Lorenz System: examples/lorenz.md
       - Chemical Reactor: examples/reactor.md
+      - List examples: examples/list.md
 theme:
   name: material
   language: en
