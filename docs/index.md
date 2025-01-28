@@ -8,22 +8,32 @@ TODO: Fill with content
 
 ## How to install?
 
-1. Starting on a new machine, create a new virtual environment and activate it. We recommend using `venv`:
+Directly install from
+[the Python Package Index (PyPI)](https://pypi.org/project/pydykit/)
+with
+
+```bash
+pip install pydykit
+```
+
+or clone the repository and install the package locally following these steps:
+
+1. Create a new virtual environment and activate it.
+   We recommend using `venv`:
 
    ```bash
    python3.12 -m venv .venv
    source .venv/bin/activate
    ```
 
-2. Install the local python package `pydykit` in editable-/develoment-mode:
+2. Clone the repository
+3. Install in editable- / development-mode:
 
    ```bash
    pip install --editable .
    ```
 
-   Dependencies are installed automatically. Detailed requirements can be found in the [requirements_dev](requirements_dev.txt).
-
-3. Run your first script, e.g.
+4. Run your first script, e.g.
 
    ```bash
    python scripts/s*.py
