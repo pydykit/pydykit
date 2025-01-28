@@ -16,25 +16,20 @@ with
 pip install pydykit
 ```
 
-or clone the repository and install the package locally following these steps:
+or clone the repository and install the package locally, following these steps:
 
 1. Create a new virtual environment and activate it.
    We recommend using `venv`:
-
    ```bash
    python3.12 -m venv .venv
    source .venv/bin/activate
    ```
-
 2. Clone the repository
 3. Install in editable- / development-mode:
-
    ```bash
    pip install --editable .
    ```
-
 4. Run your first script, e.g.
-
    ```bash
    python scripts/s*.py
    ```
