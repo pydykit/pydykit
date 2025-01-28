@@ -5,6 +5,7 @@ import numpy.typing as npt
 import yaml
 
 from . import abstract_base_classes
+from .settings import VERBOSE
 
 
 def update_object_from_config_file(
@@ -89,18 +90,19 @@ def get_numerical_tangent(func, state, incrementation_factor=1e-10):
 
 
 def print_current_step(step):
-
-    print(
-        "****** ",
-        f"time = {step.time:.8},",
-        f" step index {step.index}",
-        " ******",
-    )
+    if VERBOSE:
+        print(
+            "****** ",
+            f"time = {step.time:.8},",
+            f" step index {step.index}",
+            " ******",
+        )
 
 
 def print_residual_norm(value):
+    if VERBOSE:
 
-    print(f"residual norm = {value:.4E}")
+        print(f"residual norm = {value:.4E}")
 
 
 def get_indices(my_list):
