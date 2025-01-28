@@ -13,6 +13,6 @@ TODO: Fill with content
 ## How to use?
 
 Check out the
-[API reference](api_reference/managers.md)
+[getting started](getting_started.md)
 and
-[examples](examples/index.md).
+[examples](examples/pendulum_3d.md).

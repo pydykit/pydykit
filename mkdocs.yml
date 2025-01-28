@@ -2,17 +2,13 @@ site_name: PyDyKIT - A Python-based Dynamics toolKIT
 site_url: https://pydykit.github.io/pydykit/
 repo_url: https://github.com/pydykit/pydykit # TODO: Check this link when deployed
 nav:
-  - Home: index.md
-  - API Reference:
-      - General DAE Systems: api_reference/systems_dae.md
-      - Managers: api_reference/managers.md
-      - ExampleManager: api_reference/example_manager.md
+  - About: index.md
+  - Getting Started: getting_started.md
   - Examples:
-      - List: examples/index.md
       - Pendulum 3D: examples/pendulum_3d.md
       - Lorenz System: examples/lorenz.md
       - Chemical Reactor: examples/reactor.md
-  - About: about.md
+      - List examples: examples/list.md
 theme:
   name: material
   language: en
