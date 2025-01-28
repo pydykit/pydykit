@@ -3,9 +3,15 @@ from importlib.resources import files
 from . import utils
 
 
-class Manager:
+class ExampleManager:
+
+    BASE_URL_EXAMPLE_FILES = (
+        "https://github.com/pydykit/pydykit/tree/main/pydykit/example_files/"
+    )
 
     def __init__(self):
+        """TODO: Add docstring"""
+
         self.examples = self.load_examples()
 
     def load_examples(self):

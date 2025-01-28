@@ -1,0 +1,3 @@
+# Managers
+
+::: pydykit.managers

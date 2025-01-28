@@ -1,3 +1,5 @@
+"""TODO: Add docstring"""
+
 from itertools import pairwise
 
 import numpy as np

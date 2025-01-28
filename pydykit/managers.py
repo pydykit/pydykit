@@ -1,14 +1,58 @@
 from . import abstract_base_classes, results, utils
 from .configuration import Configuration
 from .factories import factories
+from .results import Result
 
 
 class Manager(abstract_base_classes.Manager):
+    """TODO: Validate docstring
+
+    Methods:
+        __init__: Get going
+        configure: Bla
+    """
 
     def configure(self, configuration: Configuration):
+        """
+        TODO: Validate docstring
+        Configures the manager with the given configuration.
+
+        Parameters
+        ----------
+        configuration : Configuration
+            The configuration object to set up the manager.
+
+        Examples:
+            Some explanation of what is possible.
+
+            >>> print("hello!")
+            hello!
+
+            Blank lines delimit prose vs. console blocks.
+
+            >>> a = 0
+            >>> a += 1
+            >>> a
+            1
+
+
+        Note:
+            Some information.
+
+        """
+
         self._configure(configuration=configuration)
 
     def configure_from_path(self, path):
+        """
+        TODO: Validate docstring
+        Loads configuration from a YAML file and configures the manager.
+
+        Parameters
+        ----------
+        path : str
+            The file path to the YAML configuration file.
+        """
         file_content = utils.load_yaml_file(
             path=path,
         )
@@ -24,11 +68,12 @@ class Manager(abstract_base_classes.Manager):
 
         # derive instances of classes
         for key in factories.keys():
-            setattr(self, key, self.get_instance(key=key))
+            setattr(self, key, self._get_instance(key=key))
 
         # self.result = results.Result(manager=self)
 
-    def get_instance(self, key):
+    def _get_instance(self, key):
+
         obj = getattr(self.configuration, key)
         factory = factories[key]
 
@@ -43,10 +88,27 @@ class Manager(abstract_base_classes.Manager):
             **kwargs,
         )
 
-    def manage(self, result):
+    def manage(self, result=None) -> Result:
+        """
+        TODO: Validate docstring
+        Runs the simulator with the given result.
+
+        Parameters
+        ----------
+        result : Result
+            The result object to be processed by the simulator.
+
+        Returns
+        -------
+        object
+            The result of the simulation.
+        """
+        if result is None:
+            result = Result(manager=self)
+
         return self.simulator.run(result=result)
 
-    def validate_integrator_system_combination(self):
+    def _validate_integrator_system_combination(self):
 
         if hasattr(self.integrator, "parametrization") and hasattr(
             self.system, "parametrization"

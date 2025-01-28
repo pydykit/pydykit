@@ -266,8 +266,7 @@ class ParticleSystem(MultiBodySystem):
         return self._body_force()
 
     def _body_force(self):
-        body_force = self.mass_matrix() @ np.repeat(self.gravity, self.nbr_particles)
-        return body_force
+        return -self.mass_matrix() @ np.repeat(self.gravity, self.nbr_particles)
 
     @staticmethod
     def _spring_energy(stiffness, equilibrium_length, start, end):
