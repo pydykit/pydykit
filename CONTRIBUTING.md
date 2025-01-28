@@ -34,4 +34,24 @@ Please
 - **fork** the repository,
 - **modify** and extend the code in your personal fork,
 - run **tests**,
+- run `pre-commit` to ensure code style,
 - open a **pull request** to incorporate your changes into original the project after review.
+
+## Run tests
+
+See [test/README.md](./test/README.md)
+
+## Format with [`pre-commit`][pre_commit]
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Manually run `pre-commit` with
+
+```bash
+pre-commit run -a
+```
+
+[pre_commit]: https://pre-commit.com
