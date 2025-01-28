@@ -4,8 +4,8 @@ import pydykit
 import pydykit.postprocessors as postprocessors
 
 # name = "two_particle_system"
-# name = "pendulum_3d"
-name = "visco_pendulum"
+name = "pendulum_3d"
+# name = "visco_pendulum"
 
 manager = pydykit.managers.Manager()
 
