@@ -1,6 +1,7 @@
 from . import abstract_base_classes, results, utils
 from .configuration import Configuration
 from .factories import factories
+from .results import Result
 
 
 class Manager(abstract_base_classes.Manager):
@@ -87,7 +88,7 @@ class Manager(abstract_base_classes.Manager):
             **kwargs,
         )
 
-    def manage(self, result):
+    def manage(self, result=None) -> Result:
         """
         TODO: Validate docstring
         Runs the simulator with the given result.
@@ -102,6 +103,9 @@ class Manager(abstract_base_classes.Manager):
         object
             The result of the simulation.
         """
+        if result is None:
+            result = Result(manager=self)
+
         return self.simulator.run(result=result)
 
     def _validate_integrator_system_combination(self):

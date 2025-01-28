@@ -1,12 +1,17 @@
 site_name: PyDyKIT - A Python-based Dynamics toolKIT
-site_url: https://example.com # TODO: Update this
+site_url: https://pydykit.github.io/pydykit/
 repo_url: https://github.com/pydykit/pydykit # TODO: Check this link when deployed
 nav:
   - Home: index.md
   - API Reference:
       - General DAE Systems: api_reference/systems_dae.md
       - Managers: api_reference/managers.md
-  - Examples: examples/example.md
+      - ExampleManager: api_reference/example_manager.md
+  - Examples:
+      - List: examples/index.md
+      - Pendulum 3D: examples/pendulum_3d.md
+      - Lorenz System: examples/lorenz.md
+      - Chemical Reactor: examples/reactor.md
   - About: about.md
 theme:
   name: material
@@ -48,7 +53,7 @@ theme:
 extra_css:
   - stylesheets/extra.css
 extra:
-  homepage: https://example.com # TODO: Update this
+  homepage: https://pydykit.github.io/pydykit
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/pydykit/pydykit # TODO: Check this
@@ -58,6 +63,16 @@ extra:
 plugins:
   - search
   - mkdocstrings
+  - markdown-exec
+  - macros:
+      on_undefined: strict
+  - print-site:
+      add_to_navigation: true
+      add_table_of_contents: true
+      toc_depth: 2
+      enumerate_headings: true
+      enumerate_figures: true
+      add_cover_page: true
 copyright: Copyright &copy; 2024 - 2025 The authors of PyDyKIT
 markdown_extensions:
   - pymdownx.arithmatex:
@@ -65,6 +80,16 @@ markdown_extensions:
   - toc:
       permalink: true
       title: Page content
+  - pymdownx.superfences
+  # - admonition
+  # - pymdownx.blocks.admonition
+  # - pymdownx.blocks.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      base_path:
+        - docs
+        - pydykit/example_files
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js

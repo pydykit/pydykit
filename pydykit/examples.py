@@ -5,6 +5,10 @@ from . import utils
 
 class ExampleManager:
 
+    BASE_URL_EXAMPLE_FILES = (
+        "https://github.com/pydykit/pydykit/tree/main/pydykit/example_files/"
+    )
+
     def __init__(self):
         """TODO: Add docstring"""
 

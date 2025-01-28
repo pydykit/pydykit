@@ -33,12 +33,13 @@ repos:
     rev: 1.8.5
     hooks:
       - id: nbqa-isort # This hooks sorts imports within notebooks
-  - repo: https://github.com/adamchainz/blacken-docs
-    rev: 1.18.0 # replace with latest tag on GitHub
-    hooks:
-      - id: blacken-docs
-        additional_dependencies:
-          - black==24.2.0
+        # - repo: https://github.com/adamchainz/blacken-docs # This broke mkdownexec tabbed block "--8<--"
+        #   rev: 1.18.0 # replace with latest tag on GitHub
+        #   hooks:
+        #     - id: blacken-docs
+        #       additional_dependencies:
+        #         - black==24.2.0
+
 # - repo: https://github.com/hukkin/mdformat
 #   rev: 0.7.21   # Use the ref you want to point at
 #   hooks:
