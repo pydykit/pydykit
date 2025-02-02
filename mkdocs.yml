@@ -46,6 +46,7 @@ theme:
     - navigation.instant.prefetch
     - navigation.sections
     - navigation.tabs
+    - content.code.copy
 extra_css:
   - stylesheets/extra.css
 extra:
@@ -86,6 +87,8 @@ markdown_extensions:
       base_path:
         - docs
         - pydykit/example_files
+  - pymdownx.highlight:
+      linenums: true
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
