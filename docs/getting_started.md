@@ -13,8 +13,8 @@ and some of them are discussed in more detail in [Examples](examples/pendulum_3d
 
 The `system` defines the system of ordinary differential equations (ODEs)
 or differential algebraic equations (DAEs), to be solved.
-`Pydykit`covers three main system families,
-such that each defined system belongs to one of the three categories:
+`Pydykit` covers three system families,
+which are:
 
 1. Multibody systems
 2. Port-Hamiltonian systems
