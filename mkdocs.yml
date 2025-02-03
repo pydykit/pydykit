@@ -9,6 +9,7 @@ nav:
       - Lorenz System: examples/lorenz.md
       - Chemical Reactor: examples/reactor.md
       - List examples: examples/list.md
+  - Postprocessing: postproc.md
 theme:
   name: material
   language: en
@@ -59,7 +60,11 @@ extra:
     provider: mike # TODO: Check this when deployed
 plugins:
   - search
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
   - markdown-exec
   - macros:
       on_undefined: strict
