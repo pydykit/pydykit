@@ -1,11 +1,11 @@
 # Pendulum 3D
 
 Let's use the system class `pydykit.systems_multi_body.ParticleSystem`
-to simulate a single particle within a three-dimensional space.
+to simulate a single particle with concentrated mass within a three-dimensional space.
 
 The particle's initial position is
 `(1.0, 0.0, 0.0)`
-and it is moving into `y`-direction.
+and its initial velocity points into the `y`-direction.
 The particle's distance to a fixed support at `(0.0, 0.0, 0.0)`
 is constraint to be of length `1.0` and there is a gravitational field into negative `z`-direction.
 
@@ -33,7 +33,9 @@ This includes definition of the particle, the fixed support, the constraint and 
 
 The `system`-sections variable `class_name` tells `pydykit` that the
 scene shall be based on the system class
-[`ParticleSystem`][source_particle_system].
+[`ParticleSystem`][source_particle_system],
+which belongs to the family of [MBS](getting_started.md/system/1.-multibody-system-(MBS)-dynamics).
+<!-- TODO: this link does not work :/ -->
 This class is known to `pydykit` as it has been
 [registered][source_register_particle_system]
 within the
@@ -43,8 +45,7 @@ within the
 
 The `integrator`-section in the above configuration file
 defines the integration scheme to be used.
-As the integration scheme defines whether a numerical procedure is energy consistent,
-`pydykit` places particular emphasis on integrator classed.
+Here, the implicit midpoint rule, tailored to the MBS system family, is used.
 
 Similar to the registration pattern of the `system`,
 the variable `class_name` within section `integrator` tells `pydykit`
@@ -61,7 +62,9 @@ also applies to the sections `simulator` and `time_stepper`.
 
 The `simulator`-section
 defines the solution procedure, aka. simulator, to be used.
-The simulator uses a specific Newton method implementation with specified numerical settings internally.
+The simulator uses a specific, self-implemented Newton method with
+a prescribed accuracy for the norm of the residual `newton_epsilon`
+and a maximum number of iterations per time step before `pydykit` terminates the simulation.
 
 ### Time Stepper
 
