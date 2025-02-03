@@ -37,9 +37,12 @@ or clone the repository and install the package locally, following these steps:
 ## How to use?
 
 Check out the
-[getting started](getting_started.md)
+[getting started](getting_started.md) to familiarize yourself with `pydykit`
 and
-[examples](examples/pendulum_3d.md).
+[examples](examples/pendulum_3d.md) for more details.
 
 
-## People
+## Who are we?
+
+- **Julian K. Bauer** - _Code architect_ - [@JulianKarlBauer](https://github.com/JulianKarlBauer)
+- **Philipp L. Kinon** - _Core developer_ - [@plkinon](https://github.com/plkinon)
