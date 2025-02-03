@@ -80,7 +80,6 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
         nbr_constraints: int,
         nbr_dof: int,
         mass: list[float,],
-        gravity: list[float,],
         inertias: list[float,],
     ):
         self.inertias = inertias
@@ -92,10 +91,9 @@ class RigidBodyRotatingQuaternions(MultiBodySystem):
             nbr_constraints=nbr_constraints,
             nbr_dof=nbr_dof,
             mass=mass,
-            gravity=gravity,
+            gravity=[0.0, 0.0, 0.0],
             state=state,
         )
-        self.gravity = np.array(self.gravity)
 
     def mass_matrix(self):
         q = self.decompose_state()["position"]

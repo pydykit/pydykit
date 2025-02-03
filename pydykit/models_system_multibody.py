@@ -21,13 +21,7 @@ class RigidBodyRotatingQuaternions(SystemModel):
     nbr_dof: Literal[4]
     nbr_constraints: Literal[1]
     mass: NonNegativeFloat
-    gravity: Annotated[
-        list[float],
-        Len(
-            min_length=3,
-            max_length=3,
-        ),
-    ]
+
     inertias: Annotated[
         list[NonNegativeFloat],
         Len(
