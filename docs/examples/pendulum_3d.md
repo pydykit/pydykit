@@ -34,7 +34,7 @@ This includes definition of the particle, the fixed support, the constraint and 
 The `system`-sections variable `class_name` tells `pydykit` that the
 scene shall be based on the system class
 [`ParticleSystem`][source_particle_system],
-which belongs to the family of [MBS](../getting_started.md#mbs).
+which belongs to the family of [MBS][mbs].
 This class is known to `pydykit` as it has been
 [registered][source_register_particle_system]
 within the
@@ -44,7 +44,8 @@ within the
 
 The `integrator`-section in the above configuration file
 defines the integration scheme to be used.
-Here, the implicit midpoint rule will be applied to the system which is formulated as a MBS.
+Here, the implicit midpoint rule will be applied
+to the system which is formulated as a [MBS][mbs].
 
 Similar to the registration pattern of the `system`,
 the variable `class_name` within section `integrator` tells `pydykit`
@@ -79,3 +80,4 @@ start time, end time and step size.
 [source_midpoint_multibody]: https://github.com/pydykit/pydykit/blob/main/pydykit/integrators.py#L200
 [source_register_midpoint_multibody]: https://github.com/pydykit/pydykit/blob/main/pydykit/factories.py#L28
 [source_integrator_factory]: https://github.com/pydykit/pydykit/blob/main/pydykit/factories.py#L82
+[mbs]: ../getting_started.md#mbs
