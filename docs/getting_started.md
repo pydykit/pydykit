@@ -2,14 +2,12 @@
 
 Each `pydykit`-simulation is composed of a `system`, `integrator`, `simulator` and a `time_stepper`. These ingredients are determined from a config file.
 
-
 ## Config File
 
 Every simulation with `pydykit` gets defined in a config file,
 which sets up the different components by choosing certain parameters and methods.
 Some example config files can be found in [pydykit/example_files][source_pydykit_examples]
 and some of them are discussed in more detail in [Examples](examples/pendulum_3d.md).
-
 
 ## System
 
@@ -24,7 +22,7 @@ such that each defined system belongs to one of the three categories:
 
 Lets briefly introduce them one by one.
 
-#### 1. Multibody system (MBS) dynamics
+#### 1. Multibody system (MBS) dynamics <a name="mbs"></a>
 
 This family covers DAEs belonging to mechanical systems composed of multiple rigid bodies, governed by
 
@@ -92,7 +90,6 @@ Although a system may fit into even two or three of the abovementioned framework
 the user might want to introduce specialized integrators to capture as much of the underlying structure as possible,
 e.g. exactly preserve the constraint functions of the MBS or the skew-symmetry of the structure matrix of a PHS.
 
-
 ## Simulator
 
 The `simulator` defines the solution procedure to be used.
@@ -105,6 +102,5 @@ The `time_stepper` defines the discrete temporal grid,
 where approximative solutions are computed.
 Currently, `pydykit` supports one-step methods only,
 i.e. for a known solution at one time-instance it computes the solution at the next time instance on the specified grid.
-
 
 [source_pydykit_examples]: https://github.com/pydykit/pydykit/blob/main/pydykit/example_files
