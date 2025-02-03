@@ -35,10 +35,6 @@ The `system`-sections variable `class_name` tells `pydykit` that the
 scene shall be based on the system class
 [`ParticleSystem`][source_particle_system],
 which belongs to the family of [MBS](../getting_started.md#mbs).
-
-<!-- [MBS](getting_started.md/system/1.-multibody-system-(MBS)-dynamics). -->
-<!-- TODO: this link does not work :/ -->
-
 This class is known to `pydykit` as it has been
 [registered][source_register_particle_system]
 within the
@@ -67,7 +63,7 @@ The `simulator`-section
 defines the solution procedure, aka. simulator, to be used.
 The simulator uses a Newton method with
 a specific accuracy for the norm of the residual `newton_epsilon`
-and a maximum number of iterations per time step before `pydykit` terminates the simulation.
+and a maximum number of iterations per time step before the simulation procedure is stopped.
 
 ### Time Stepper
 
