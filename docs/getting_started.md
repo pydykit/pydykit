@@ -1,6 +1,6 @@
 # Getting Started
 
-Each `pydykit`-simulation is composed of a `system`, `integrator`, `simulator` and a `time_stepper`. These ingredients are determined from a config file.
+Each `pydykit`-simulation is composed of a `system`, `integrator`, `simulator` and a `time_stepper`. These components are determined from a config file.
 
 ## Config File
 
