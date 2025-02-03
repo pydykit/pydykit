@@ -46,7 +46,7 @@ within the
 
 The `integrator`-section in the above configuration file
 defines the integration scheme to be used.
-Here, the implicit midpoint rule, tailored to the MBS system family, is used.
+Here, the implicit midpoint rule will be applied to the system which is formulated as a MBS.
 
 Similar to the registration pattern of the `system`,
 the variable `class_name` within section `integrator` tells `pydykit`
@@ -63,8 +63,8 @@ also applies to the sections `simulator` and `time_stepper`.
 
 The `simulator`-section
 defines the solution procedure, aka. simulator, to be used.
-The simulator uses a specific, self-implemented Newton method with
-a prescribed accuracy for the norm of the residual `newton_epsilon`
+The simulator uses a Newton method with
+a specific accuracy for the norm of the residual `newton_epsilon`
 and a maximum number of iterations per time step before `pydykit` terminates the simulation.
 
 ### Time Stepper
