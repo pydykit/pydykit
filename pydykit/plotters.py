@@ -1,3 +1,8 @@
+import re
+
+import plotly.graph_objects as go
+
+
 class Plotter:
 
     def __init__(self, results_df):
