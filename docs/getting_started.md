@@ -101,6 +101,6 @@ e.g. Newton's method and its characeteristics such as accuracy.
 The `time_stepper` defines the discrete temporal grid,
 where approximative solutions are computed.
 Currently, `pydykit` supports one-step methods only,
-i.e. for a known solution at one time-instance it computes the solution at the next time instance on the specified grid.
+i.e. for a known solution at one time-instance `pydykit` computes the solution at the next time instance on the specified grid.
 
 [source_pydykit_examples]: https://github.com/pydykit/pydykit/blob/main/pydykit/example_files
