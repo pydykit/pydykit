@@ -1,7 +1,9 @@
 # Lorenz System
 
 Let's use the system class `pydykit.systems_dae.Lorenz`
-to simulate the famous [Lorenz attractor][wiki_lorenz].
+to simulate the famous [Lorenz attractor][wiki_lorenz],
+which is modelled in terms a quasilinear differential algebraic equations.
+<!-- TODO: insert link -->
 
 ```python exec="true" source="tabbed-right"
 --8<-- "snippets/run_lorenz.py"

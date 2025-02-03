@@ -1,6 +1,6 @@
 # Welcome to PyDyKIT
 
-Refer to [About](about.md), [License](../LICENSE).
+See also the [License](../LICENSE).
 
 ## What is PyDyKIT?
 
@@ -37,6 +37,12 @@ or clone the repository and install the package locally, following these steps:
 ## How to use?
 
 Check out the
-[getting started](getting_started.md)
+[getting started](getting_started.md) to familiarize yourself with `pydykit`
 and
-[examples](examples/pendulum_3d.md).
+[examples](examples/pendulum_3d.md) for more details.
+
+
+## Who are we?
+
+- **Julian K. Bauer** - _Code architect_ - [@JulianKarlBauer](https://github.com/JulianKarlBauer)
+- **Philipp L. Kinon** - _Core developer_ - [@plkinon](https://github.com/plkinon)

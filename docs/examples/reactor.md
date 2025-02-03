@@ -2,6 +2,8 @@
 
 Let's use the system class `pydykit.systems_dae.ChemicalReactor`
 to represent a chemical reactor in terms of a differential-algebraic system and solve it's behavior in time.
+This system is modelled as quasilinear differential-algebraic equations.
+<!-- TODO: insert link -->
 
 ```python exec="true" source="tabbed-right"
 --8<-- "snippets/run_reactor.py"
