@@ -2,7 +2,7 @@
 
 Let's use the system class `pydykit.systems_dae.Lorenz`
 to simulate the famous [Lorenz attractor][wiki_lorenz],
-which can be interpreted as a quasilinear differential algebraic equation (DAE).
+which is modelled in terms a quasilinear differential algebraic equations.
 <!-- TODO: insert link -->
 
 ```python exec="true" source="tabbed-right"
