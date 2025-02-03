@@ -1,7 +1,7 @@
 import plotly.graph_objects as go
 
 import pydykit
-from pydykit.postprocessors import Plotter
+from pydykit.plotters import Plotter
 
 manager = pydykit.managers.Manager()
 

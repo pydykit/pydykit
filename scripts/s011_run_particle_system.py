@@ -19,7 +19,7 @@ result = manager.manage(result=result)
 df = result.to_df()
 fig = go.Figure()
 
-plotter = postprocessors.Plotter(results_df=df)
+plotter = plotters.Plotter(results_df=df)
 
 
 for index in range(manager.system.nbr_particles):
