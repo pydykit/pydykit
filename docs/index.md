@@ -40,3 +40,6 @@ Check out the
 [getting started](getting_started.md)
 and
 [examples](examples/pendulum_3d.md).
+
+
+## People
