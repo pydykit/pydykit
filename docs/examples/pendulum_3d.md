@@ -34,7 +34,8 @@ This includes definition of the particle, the fixed support, the constraint and 
 The `system`-sections variable `class_name` tells `pydykit` that the
 scene shall be based on the system class
 [`ParticleSystem`][source_particle_system],
-which belongs to the family of [MBS](getting_started.md/system/1.-multibody-system-(MBS)-dynamics).
+which belongs to the family of MBS.
+<!-- [MBS](getting_started.md/system/1.-multibody-system-(MBS)-dynamics). -->
 <!-- TODO: this link does not work :/ -->
 This class is known to `pydykit` as it has been
 [registered][source_register_particle_system]

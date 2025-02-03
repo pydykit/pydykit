@@ -1,6 +1,6 @@
 # Welcome to PyDyKIT
 
-Refer to [About](about.md), [License](../LICENSE).
+See also the [License](../LICENSE).
 
 ## What is PyDyKIT?
 
