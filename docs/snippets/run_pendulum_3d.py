@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from pydykit.configuration import Configuration
 from pydykit.examples import ExampleManager
 from pydykit.managers import Manager
-from pydykit.postprocessors import Plotter
+from pydykit.plotters import Plotter
 
 ####### Simulation
 file_content = ExampleManager().get_example(name="pendulum_3d")

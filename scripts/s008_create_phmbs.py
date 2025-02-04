@@ -24,7 +24,7 @@ df = result.to_df()
 postprocessor = postprocessors.Postprocessor(manager, state_results_df=df)
 
 # Plotter object gets result dataframe
-plotter = postprocessors.Plotter(results_df=postprocessor.results_df)
+plotter = plotters.Plotter(results_df=postprocessor.results_df)
 
 # the 3d plotting routine is now also a static method of this postprocessing object
 fig = go.Figure()
