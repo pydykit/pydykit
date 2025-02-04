@@ -43,7 +43,7 @@ def update_object_from_config_file(
 
 
 def load_yaml_file(path):
-    """TODO: Add docstring"""
+
     with open(path, "r") as file:
         content = yaml.safe_load(file)
     return content

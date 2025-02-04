@@ -11,7 +11,6 @@ class Postprocessor:
         manager,
         state_results_df: pd.DataFrame,
     ):
-        """TODO: Add docstring"""
 
         self.manager = manager
         self.nbr_time_point = self.manager.time_stepper.nbr_time_points
@@ -27,7 +26,7 @@ class Postprocessor:
         return list(self._evaluation_strategies.keys())
 
     def postprocess(self, quantities_and_evaluation_points):
-        """TODO: Add docstring"""
+
         for quantity, evaluation_points in quantities_and_evaluation_points.items():
 
             for evaluation_point in evaluation_points:
@@ -136,7 +135,7 @@ class Postprocessor:
         return system.copy(state=updated_state)
 
     def add_sum_of(self, quantities, sum_name):
-        """TODO: Add docstring"""
+
         self.results_df[sum_name] = self.results_df[quantities].sum(
             axis=1, skipna=False
         )
