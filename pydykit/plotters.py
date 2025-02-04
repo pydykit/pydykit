@@ -6,7 +6,6 @@ import plotly.graph_objects as go
 class Plotter:
 
     def __init__(self, results_df):
-        """TODO: Add docstring"""
 
         self.results_df = results_df
         self.plotting_backend = "plotly"
@@ -23,7 +22,7 @@ class Plotter:
         # https://clauswilke.com/dataviz/color-pitfalls.html#not-designing-for-color-vision-deficiency
 
     def plot_3d_trajectory(self, figure, **kwargs):
-        """TODO: Add docstring"""
+
         figure.add_trace(self.get_trace_3d_trajectory(**kwargs))
 
     @staticmethod
@@ -109,7 +108,7 @@ class Plotter:
         df,
         aspectmode="data",
     ):
-        """TODO: Add docstring"""
+
         figure.update_layout(
             scene=dict(
                 {
@@ -141,7 +140,6 @@ class Plotter:
         y_axis_scale="linear",
         figure: None | go.Figure = None,
     ):
-        """TODO: Add docstring"""
 
         pd.options.plotting.backend = self.plotting_backend
 

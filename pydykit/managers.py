@@ -5,54 +5,11 @@ from .results import Result
 
 
 class Manager(abstract_base_classes.Manager):
-    """TODO: Validate docstring
-
-    Methods:
-        __init__: Get going
-        configure: Bla
-    """
 
     def configure(self, configuration: Configuration):
-        """
-        TODO: Validate docstring
-        Configures the manager with the given configuration.
-
-        Parameters
-        ----------
-        configuration : Configuration
-            The configuration object to set up the manager.
-
-        Examples:
-            Some explanation of what is possible.
-
-            >>> print("hello!")
-            hello!
-
-            Blank lines delimit prose vs. console blocks.
-
-            >>> a = 0
-            >>> a += 1
-            >>> a
-            1
-
-
-        Note:
-            Some information.
-
-        """
-
         self._configure(configuration=configuration)
 
     def configure_from_path(self, path):
-        """
-        TODO: Validate docstring
-        Loads configuration from a YAML file and configures the manager.
-
-        Parameters
-        ----------
-        path : str
-            The file path to the YAML configuration file.
-        """
         file_content = utils.load_yaml_file(
             path=path,
         )
@@ -89,20 +46,6 @@ class Manager(abstract_base_classes.Manager):
         )
 
     def manage(self, result=None) -> Result:
-        """
-        TODO: Validate docstring
-        Runs the simulator with the given result.
-
-        Parameters
-        ----------
-        result : Result
-            The result object to be processed by the simulator.
-
-        Returns
-        -------
-        object
-            The result of the simulation.
-        """
         if result is None:
             result = Result(manager=self)
 

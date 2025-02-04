@@ -1,5 +1,3 @@
-"""TODO: Add docstring"""
-
 from typing import Union
 
 from pydantic import BaseModel
@@ -19,8 +17,6 @@ from .models_time_steppers import FixedIncrement, FixedIncrementHittingEnd
 
 
 class Configuration(BaseModel):
-    """TODO: Add docstring"""
-
     system: Union[
         ParticleSystem,
         RigidBodyRotatingQuaternions,
