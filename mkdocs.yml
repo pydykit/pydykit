@@ -78,9 +78,6 @@ markdown_extensions:
       permalink: true
       title: Page content
   - pymdownx.superfences
-  # - admonition
-  # - pymdownx.blocks.admonition
-  # - pymdownx.blocks.details
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.snippets:
