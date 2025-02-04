@@ -1,10 +1,10 @@
-# Welcome to PyDyKIT
+# Welcome to `pydykit`
 
 Refer to [About](about.md), [License](../LICENSE).
 
-## What is PyDyKIT?
+## What is `pydykit`?
 
-TODO: Fill with content
+`pydykit` is a _Py_thon-based _dy_namics simulation tool_kit_ for dynamical systems. The package is based on time stepping methods, which are discrete versions of the corresponding dynamics equations - either ordinary differential equations (ODEs) or differential-algebraic equations (DAEs).
 
 ## How to install?
 
