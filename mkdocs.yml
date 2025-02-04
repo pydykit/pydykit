@@ -1,4 +1,4 @@
-site_name: PyDyKIT - A Python-based Dynamics toolKIT
+site_name: pydykit - A Python-based Dynamics toolKIT
 site_url: https://pydykit.github.io/pydykit/
 repo_url: https://github.com/pydykit/pydykit # TODO: Check this link when deployed
 nav:
@@ -70,7 +70,7 @@ plugins:
       enumerate_headings: true
       enumerate_figures: true
       add_cover_page: true
-copyright: Copyright &copy; 2024 - 2025 The authors of PyDyKIT
+copyright: Copyright &copy; 2024 - 2025 The authors of pydykit
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true

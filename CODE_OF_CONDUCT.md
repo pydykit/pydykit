@@ -1,5 +1,5 @@
 
-# PyDyKIT Code of Conduct
+# `pydykit` Code of Conduct
 
 We as members, contributors, and users are dedicated to make participation in our
 community a harassment-free experience for everyone, regardless of age, body
