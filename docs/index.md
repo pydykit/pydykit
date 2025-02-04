@@ -1,6 +1,5 @@
 # Welcome to `pydykit`
 
-See also the [License][license_pydykit_examples].
 
 ## What is `pydykit`?
 
@@ -46,6 +45,3 @@ and
 
 - **Julian K. Bauer** - _Code architect_ - [@JulianKarlBauer](https://github.com/JulianKarlBauer)
 - **Philipp L. Kinon** - _Core developer_ - [@plkinon](https://github.com/plkinon)
-
-
-[license_pydykit_examples]: https://github.com/pydykit/pydykit/blob/main/pydykit/LICENSE
