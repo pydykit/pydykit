@@ -1,13 +1,15 @@
 # Getting Started
 
-Each `pydykit`-simulation is composed of a `system`, `integrator`, `simulator` and a `time_stepper`. These components are determined from a config file.
+A `pydykit`-simulation contains several building blocks,
+which are at least a `system`, `integrator`, `simulator` and a `time_stepper`.
+These building blocks are defined within a config file.
 
 ## Config File
 
-Every simulation with `pydykit` gets defined in a config file,
-which sets up the different components by choosing certain parameters and methods.
-Some example config files can be found in [pydykit/example_files][source_pydykit_examples]
-and some of them are discussed in more detail in [Examples](examples/pendulum_3d.md).
+A `pydykit`-config file configures a simulation devided into several building blocks.
+Each building blocks consists of parameters and methods.
+Example config files can be found in [pydykit/example_files][source_pydykit_examples]
+and some of them are discussed in more detail in the section [examples](examples/pendulum_3d.md).
 
 ## System
 
