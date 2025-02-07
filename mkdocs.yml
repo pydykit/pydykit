@@ -57,7 +57,8 @@ extra:
       link: https://github.com/pydykit/pydykit
   generator: false
   version:
-    provider: mike # TODO: Check this when deployed
+    provider: mike
+    alias: true
 copyright: Copyright &copy; 2024 - 2025 The authors of pydykit
 markdown_extensions:
   - pymdownx.arithmatex:
