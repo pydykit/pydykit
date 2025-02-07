@@ -46,6 +46,5 @@ jobs:
           if mike list | grep -q "^$VERSION$"; then
             mike delete "$VERSION"
           fi
-          mike deploy --update-aliases "$VERSION" latest
+          mike deploy --push --update-aliases "$VERSION" latest
           mike set-default push latest
-          git push origin gh-pages
