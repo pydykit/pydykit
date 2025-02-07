@@ -30,20 +30,25 @@ jobs:
           git config user.name ci-bot
           git config user.email ci-bot@example.com
       # Deploy using mike
-      - name: Determine version
-        run: |
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/}
-          else
-            VERSION="latest"
-          fi
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Deploy documentation with mike
         run: |
-          git fetch origin gh-pages --depth=1
+          git fetch origin gh-pages --unshallow || git fetch origin gh-pages
+          git checkout gh-pages || git checkout --orphan gh-pages
+          git pull origin gh-pages || true
+
+          # Ensure we're in the gh-pages branch
+          git branch --set-upstream-to=origin/gh-pages gh-pages || true
+
+          # Remove old version if it exists
           if mike list | grep -q "^$VERSION$"; then
-            mike delete "$VERSION"
+              mike delete "$VERSION"
+              git commit -m "Remove old version $VERSION" || true
+              git push origin gh-pages
           fi
+
+          # Deploy new version
           mike deploy --update-aliases "$VERSION" latest
-          mike set-default push latest
+          mike set-default latest
+
+          # Push changes
           git push origin gh-pages
