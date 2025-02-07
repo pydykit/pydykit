@@ -46,5 +46,5 @@ jobs:
           if mike list | grep -q "^$VERSION$"; then
             mike delete "$VERSION"
           fi
-          mike deploy --push --update-aliases "$VERSION" latest
+          mike deploy --push --update-aliases "$VERSION"
           mike set-default push latest
