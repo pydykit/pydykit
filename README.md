@@ -1,15 +1,12 @@
 <p align="center">
-  <a href="https://github.com/pydykit/pydykit"><img alt="pydykit" src="https://github.com/pydykit/pydykit/blob/main/docs/assets/banner.png" width="50%"></a>
+  <a href="https://github.com/pydykit/pydykit"><img alt="pydykit" src="https://raw.githubusercontent.com/pydykit/pydykit/main/docs/assets/banner.png" width="50%"></a>
 </p>
-<!-- As soon as we have pydykit public, we can include the image in the pypi readme by exchanging the link with: https://raw.githubusercontent.com/pydykit/pydykit/main/docs/assets/banner.png -->
 
 [![Pytest](https://github.com/pydykit/pydykit/actions/workflows/pytest.yml/badge.svg)](https://github.com/pydykit/pydykit/actions/workflows/pytest.yml)
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-<!-- [![PyPI](https://img.shields.io/pypi/v/pydykit?style=flat-square)](https://pypi.org/project/pydykit)
-[![PyPI - Implementation](https://img.shields.io/pypi/implementation/pydykit?style=flat-square)](https://pypi.org/project/pydykit)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydykit?style=flat-square)](https://pypi.org/project/pydykit) -->
+[![PyPI](https://img.shields.io/pypi/v/pydykit)](https://pypi.org/project/pydykit)
+<!-- [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydykit)](https://pypi.org/project/pydykit) -->
 
 # `pydykit`: A *Py*thon-based *dy*namics simulation tool*kit*
 

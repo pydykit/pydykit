@@ -1,4 +1,14 @@
-# Welcome to `pydykit`
+
+
+# Welcome to
+<p align="center">
+  <a href="https://github.com/pydykit/pydykit"><img alt="pydykit" src="https://raw.githubusercontent.com/pydykit/pydykit/main/docs/assets/banner.png" width="50%"></a>
+</p>
+
+[![Pytest](https://github.com/pydykit/pydykit/actions/workflows/pytest.yml/badge.svg)](https://github.com/pydykit/pydykit/actions/workflows/pytest.yml)
+[![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/pydykit)](https://pypi.org/project/pydykit)
 
 
 ## What is `pydykit`?
