@@ -1,6 +1,7 @@
 site_name: pydykit - A Python-based Dynamics toolKIT
 site_url: https://pydykit.github.io/pydykit/
 repo_url: https://github.com/pydykit/pydykit
+repo_name: pydykit/pydykit
 nav:
   - About: index.md
   - Getting Started: getting_started.md
