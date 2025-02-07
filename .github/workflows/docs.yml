@@ -33,4 +33,8 @@ jobs:
       - name: Deploy documentation with mike
         run: |
           git fetch origin gh-pages --depth=1
-          mike deploy --push develop
+          if mike list | grep -q "^$VERSION$"; then
+            mike delete "$VERSION"
+          fi
+          mike deploy --push develop --update-aliases "$VERSION" latest
+          mike set-default latest
