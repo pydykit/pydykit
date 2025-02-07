@@ -45,8 +45,8 @@ theme:
     - navigation.footer
     - navigation.instant
     - navigation.instant.prefetch
-    - navigation.sections
-    - navigation.tabs
+    # - navigation.sections
+    # - navigation.tabs
     - content.code.copy
 extra_css:
   - stylesheets/extra.css
