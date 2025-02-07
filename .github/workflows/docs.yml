@@ -47,4 +47,4 @@ jobs:
             mike delete "$VERSION"
           fi
           mike deploy --push --update-aliases "$VERSION"
-          mike set-default push latest
+          mike set-default --push latest
