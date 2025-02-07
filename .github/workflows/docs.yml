@@ -27,9 +27,10 @@ jobs:
       # Extract version from tag or use "latest" for main branch
       - name: Setup Docs Deploy
         run: |
-          git config --global user.name "Philipp Kinon Docs Deploy"
-          git config --global user.email "philipp.kinon@kit.edu"
+          git config user.name ci-bot
+          git config user.email ci-bot@example.com
       # Deploy using mike
       - name: Deploy documentation with mike
         run: |
+          git fetch origin gh-pages --depth=1
           mike deploy --push develop
