@@ -6,3 +6,4 @@ markdown-exec
 pymdown-extensions
 mkdocs-print-site-plugin
 mkdocs-macros-plugin
+mike

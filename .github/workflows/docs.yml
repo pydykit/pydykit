@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - main
-      - docs_examples
+      - docs_versioning
+    tags:
+      - "*" # Triggers on any new tag
 permissions:
   contents: write
 jobs:
@@ -24,4 +26,27 @@ jobs:
             mkdocs-material-
       - run: pip install -r ./requirements_mkdocs.txt
       - run: pip install .
-      - run: mkdocs gh-deploy --force
+      # Extract version from tag or use "latest" for main branch
+      - name: Setup Docs Deploy
+        run: |
+          git config user.name ci-bot
+          git config user.email ci-bot@example.com
+      # Deploy using mike
+      - name: Determine version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          else
+            VERSION="latest"
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Debug mike list
+        run: mike list
+      - name: Deploy documentation with mike
+        run: |
+          git fetch origin gh-pages --depth=1
+          if mike list | grep -q "^$VERSION$"; then
+            mike delete "$VERSION"
+          fi
+          mike deploy --push --update-aliases "$VERSION"
+          mike set-default --push latest
