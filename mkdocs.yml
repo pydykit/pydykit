@@ -1,6 +1,6 @@
 site_name: pydykit - A Python-based Dynamics toolKIT
 site_url: https://pydykit.github.io/pydykit/
-repo_url: https://github.com/pydykit/pydykit # TODO: Check this link when deployed
+repo_url: https://github.com/pydykit/pydykit
 nav:
   - About: index.md
   - Getting Started: getting_started.md
@@ -13,7 +13,7 @@ theme:
   name: material
   language: en
   logo: assets/logo.png
-  favicon: assets/logo.png # TODO: Check this when deployed
+  favicon: assets/logo.png
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
@@ -53,7 +53,7 @@ extra:
   homepage: https://pydykit.github.io/pydykit
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/pydykit/pydykit # TODO: Check this
+      link: https://github.com/pydykit/pydykit
   generator: false
   version:
     provider: mike # TODO: Check this when deployed
