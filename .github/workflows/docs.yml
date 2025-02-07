@@ -33,8 +33,6 @@ jobs:
       - name: Deploy documentation with mike
         run: |
           git fetch origin gh-pages --depth=1
-          if mike list | grep -q "^$VERSION$"; then
-            mike delete "$VERSION"
-          fi
+          VERSION=${GITHUB_REF#refs/tags/}
           mike deploy --push develop --update-aliases "$VERSION" latest
           mike set-default latest
