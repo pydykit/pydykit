@@ -1,3 +1,7 @@
+<p align="center">
+  <a href="https://github.com/pydykit/pydykit"><img alt="pydykit" src="https://raw.githubusercontent.com/pydykit/pydykit/main/docs/assets/banner.png" width="50%"></a>
+</p>
+
 # Welcome to `pydykit`
 
 
