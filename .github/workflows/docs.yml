@@ -38,7 +38,4 @@ jobs:
       # Deploy using mike
       - name: Deploy documentation with mike
         run: |
-          mike delete "$VERSION" || true
-          mike deploy --update-aliases "$VERSION" latest
-          mike set-default latest
-          git push origin gh-pages
+          mike deploy --push develop
