@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - docs_versioning
+    tags:
+      - "*" # Triggers on any new tag
 permissions:
   contents: write
 jobs:
