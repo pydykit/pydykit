@@ -127,7 +127,6 @@ $$E(x) \dot{x} = (J(x)- R(x)) z(x) + B(x) u$$
 3. Mechanical (typically multibody) systems
 
 $$
-\begin{align}
 \dot{q} = v ,
 \dot{p} = - \nabla V(q) - D(q) v - G(q)^{\mathrm{T}} \lambda ,
 g(q)=0
