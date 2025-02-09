@@ -111,6 +111,7 @@ Each simulation is defined by a combination of the configuration file and the Py
 
 ![an image's alt text \label{fig:structure_image}](./figures/image.png){ width=70% }
 
+
 # Theoretical Background
 
 pydykit supports the simulation of a broad range of dynamical systems governed by both ordinary differential equations (ODEs) and differential-algebraic equations (DAEs). This includes
@@ -131,6 +132,8 @@ $$
 \dot{p} = - \nabla V(q) - D(q) v - G(q)^{\mathrm{T}} \lambda ,
 g(q)=0
 $$
+
+![My PDF file inserted](figures/sample.pdf)
 
 Many dynamical systems from various physical disciplines fit into the first two frameworks and thus pydykit is open for users from a plethora of application fields.
 

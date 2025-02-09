@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   sodipodi:docname="drawing.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.2641451"
+     inkscape:cx="357.55389"
+     inkscape:cy="115.09755"
+     inkscape:window-width="1496"
+     inkscape:window-height="900"
+     inkscape:window-x="8"
+     inkscape:window-y="46"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#bbcbe0;stroke:#5076a6;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;fill-opacity:1;stroke-opacity:1"
+       id="rect1"
+       width="139.58076"
+       height="80.479004"
+       x="11.63173"
+       y="11.002988"
+       ry="10.374246" />
+    <rect
+       style="fill:#eebec3;fill-opacity:1;stroke:#da6c76;stroke-width:1.03439;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1-8"
+       width="133.0202"
+       height="58.440407"
+       x="15.151283"
+       y="30.00058"
+       ry="7.5333333" />
+    <rect
+       style="fill:#e7e1b2;fill-opacity:1;stroke:#c9bb58;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1-8-7"
+       width="126.31441"
+       height="35.785595"
+       x="19.230982"
+       y="49.505962"
+       ry="4.6129866" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;fill:#213145;fill-opacity:1;stroke-width:0.264583"
+       x="15.726213"
+       y="17.679255"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#213145;fill-opacity:1;stroke-width:0.264583"
+         x="15.726213"
+         y="17.679255">qLDAEs</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;fill:#4d4719;fill-opacity:1;stroke-width:0.264583"
+       x="21.897791"
+       y="55.384113"
+       id="text1-0"><tspan
+         sodipodi:role="line"
+         id="tspan1-9"
+         style="fill:#4d4719;fill-opacity:1;stroke-width:0.264583"
+         x="21.897791"
+         y="55.384113">MBS</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;fill:#51151a;fill-opacity:1;stroke-width:0.264583"
+       x="18.722788"
+       y="36.863274"
+       id="text1-0-7"><tspan
+         sodipodi:role="line"
+         id="tspan1-9-2"
+         style="fill:#51151a;fill-opacity:1;stroke-width:0.264583"
+         x="18.722788"
+         y="36.863274">PHS</tspan></text>
+  </g>
+</svg>
