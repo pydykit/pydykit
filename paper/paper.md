@@ -116,26 +116,21 @@ Each simulation is defined by a combination of the configuration file and the Py
 pydykit supports the simulation of a broad range of dynamical systems governed by both ordinary differential equations (ODEs) and differential-algebraic equations (DAEs). This includes
 1. Very general systems can be implemented such as quasilinear DAEs of type
 
-$$
-E(x) \dot{x} = f(x),
-$$
+$$E(x) \dot{x} = f(x),$$
 
  where $E$ is a possibly singular coefficient matrix and $f$ is a general function of the unknowns $x$.
 2. DAEs with a port-Hamiltonian structure, i.e.
 
-$$
-E(x) \dot{x} = (J(x)- R(x)) z(x) + B(x) u
-$$
+$$E(x) \dot{x} = (J(x)- R(x)) z(x) + B(x) u$$
 
  , see e.g. TODO
 3. Mechanical (typically multibody) systems
 
 $$
 \begin{align}
-\dot{q} &= v ,
-\dot{p} &= - \nabla V(q) - D(q) v - G(q)^{\mathrm{T}} \lambda ,
-g(q)&=0
-\end{align}
+\dot{q} = v ,
+\dot{p} = - \nabla V(q) - D(q) v - G(q)^{\mathrm{T}} \lambda ,
+g(q)=0
 $$
 
 Many dynamical systems from various physical disciplines fit into the first two frameworks and thus pydykit is open for users from a plethora of application fields.
