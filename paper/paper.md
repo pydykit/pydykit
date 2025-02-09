@@ -18,11 +18,11 @@ authors:
   #   orcid: 0000-0002-0596-2503
   #   affiliation: "1"
 affiliations:
-  - name: Institute of Mechanics, Karlsruhe Institute of Technology (KIT), Karlsruhe, Germany
-    index: 2
   - name: Independent Researcher, Karlsruhe, Germany
     index: 1
-date: 23 Dezember 2024
+  - name: Institute of Mechanics, Karlsruhe Institute of Technology (KIT), Karlsruhe, Germany
+    index: 2
+date: 09 February 2025
 bibliography: paper.bib
 ---
 
@@ -128,10 +128,11 @@ Key theoretical concepts include:
 
 ## Usage so far
 
-`pydykit` has been recently used in the authors work TODO where discrete gradient based methods have been discussed for the class of port-Hamiltonian systems governed by differential-algebraic equations. Its predecessor `metis` has been used in three major contributions dealing with the simulation of rigid and multibody systems, focussing on structure-preserving integration, e.g. variational and energy-momentum integrators.
+`pydykit` has been recently used in the authors work TODO where discrete gradient based methods have been discussed for the class of port-Hamiltonian systems governed by differential-algebraic equations. Its predecessor `metis` has been used in three major contributions [@kinon_ggl_2023,@kinon_structure_2023,@kinon_2024_conserving] dealing with the simulation of rigid and multibody systems, focussing on structure-preserving integration, e.g. variational and energy-momentum integrators.
 
 # Acknowledgements
 
-PLK gratefully acknowledges financial support by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – project numbers TODO XX and TODO YY.
+PLK gratefully acknowledges financial support by the German Research Foundation (DFG) – project number TODO XX.
+<!-- - and by the Research Travel Grant of the Karlsruhe House of Young Scientists (KYHS) -->
 
 # References
