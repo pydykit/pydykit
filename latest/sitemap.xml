@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://pydykit.github.io/pydykit/latest/</loc>
+         <lastmod>2025-02-10</lastmod>
+    </url>
+    <url>
+         <loc>https://pydykit.github.io/pydykit/latest/getting_started/</loc>
+         <lastmod>2025-02-10</lastmod>
+    </url>
+    <url>
+         <loc>https://pydykit.github.io/pydykit/latest/examples/list/</loc>
+         <lastmod>2025-02-10</lastmod>
+    </url>
+    <url>
+         <loc>https://pydykit.github.io/pydykit/latest/examples/lorenz/</loc>
+         <lastmod>2025-02-10</lastmod>
+    </url>
+    <url>
+         <loc>https://pydykit.github.io/pydykit/latest/examples/pendulum_3d/</loc>
+         <lastmod>2025-02-10</lastmod>
+    </url>
+    <url>
+         <loc>https://pydykit.github.io/pydykit/latest/examples/reactor/</loc>
+         <lastmod>2025-02-10</lastmod>
+    </url>
+</urlset>
