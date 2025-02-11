@@ -33,19 +33,6 @@ These systems are typically described by differential and algebraic equations th
 Solving such problems numerically requires discretization techniques that translate continuous equations into a computationally feasible form.
 Our open-source Python package `pydykit` is designed to facilitate this process by providing a general, accessible and well-structured framework for the numerical treatment of dynamical systems.
 
-The motivation behind `pydykit` extends beyond its immediate functionality.
-We aim to support research publications by ensuring the reproducibility of computational experiments, thereby enhancing the transparency and credibility of numerical results.
-Moreover, `pydykit` serves as a foundation for object-oriented integration methods, fostering collaborations in research and teaching.
-By lowering the barrier for students and early-career researchers to contribute to the field,
-the software encourages engagement with structure-preserving methods and modern computational approaches.
-Additionally, we wish to share our perspective on the numerical treatment of dynamical systems and help bridge gaps in state-of-the-art structure-preserving techniques.
-
-A key decision in the development of `pydykit` was the choice of programming language.
-Python was selected due to its accessibility, widespread adoption, and extensive ecosystem of scientific computing libraries.
-Its high-level syntax facilitates ease of use, making it an attractive option for researchers, industry applicants and students.
-However, Python also presents performance limitations compared to lower-level languages like C++ or Fortran, particularly for computationally intensive tasks.
-Alternative frameworks exist in other languages, but we find that Python strikes a balance between usability and extensibility, allowing for seamless integration with high-performance libraries when needed.
-
 As the successor to the MATLAB package `metis`, `pydykit` inherits and builds upon its core features, offering a robust,
 object-oriented framework suitable for solving differential-algebraic equations (DAEs).
 With a focus on usability and modularity, `pydykit` integrates seamlessly with the Python ecosystem and
@@ -55,15 +42,21 @@ supports a variety of numerical integration schemes and postprocessing tools.
 
 # Statement of Need
 
-The analysis and simulation of constrained dynamical systems are integral to many fields,
-including robotics, electric circuits, chemical engineering, biomechanics, mechanical and civil engineering and much more.
 
-- General introduction
-- Classification of numerical time integrators:
-  - _Geometric_ or _structure-preserving_ integration [@hairer_geometric_2006].
-  - _Energy-momentum_ (EM) methods using _discrete gradients_ (see, e.g. [@gonzalez_time_1996])
-    or variational integrators [@lew2016brief], [@leyendecker_variational_2008].
-- List alternative packages and highlight what they lack, i.e., which gap is closed by `pydykit`.
+The motivation behind `pydykit` extends beyond its immediate functionality.
+We aim to support research publications by ensuring the reproducibility of computational experiments, thereby enhancing the transparency and credibility of numerical results.
+Moreover, `pydykit` serves as a foundation for object-oriented integration methods, fostering collaborations in research and teaching.
+By lowering the barrier for students and early-career researchers to contribute to the field,
+the software encourages engagement with structure-preserving methods and modern computational approaches.
+Additionally, we wish to share our perspective on the numerical treatment of dynamical systems and help bridge gaps in state-of-the-art structure-preserving techniques.
+This is why `pydykit` and its predecessor `metis` focus on geometric integration methods [@hairer_geometric_2006], be it energy-momentum schemes using _discrete gradients_ (see, e.g. [@gonzalez_time_1996]) or variational integrators [@lew2016brief], [@leyendecker_variational_2008].
+
+A key decision in the development of `pydykit` was the choice of programming language.
+Python was selected due to its accessibility, widespread adoption, and extensive ecosystem of scientific computing libraries.
+Its high-level syntax facilitates ease of use, making it an attractive option for researchers, industry applicants and students.
+However, Python also presents performance limitations compared to lower-level languages like C++ or Fortran, particularly for computationally intensive tasks.
+Alternative frameworks exist in other languages, but we find that Python strikes a balance between usability and extensibility, allowing for seamless integration with high-performance libraries when needed.
+
 
 # Features
 
