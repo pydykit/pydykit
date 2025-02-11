@@ -25,37 +25,48 @@
 %%   http://tug.ctan.org/tex-archive/info/svg-inkscape
 %%
 \begingroup%
-  \makeatletter%
-  \providecommand\color[2][]{%
-    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
-    \renewcommand\color[2][]{}%
-  }%
-  \providecommand\transparent[1]{%
-    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
-    \renewcommand\transparent[1]{}%
-  }%
-  \providecommand\rotatebox[2]{#2}%
-  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
-  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
-  \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{398.49665604bp}%
-    \ifx\svgscale\undefined%
-      \relax%
-    \else%
-      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
-    \fi%
+\makeatletter%
+\providecommand\color[2][]{%
+  \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+  \renewcommand\color[2][]{}%
+}%
+\providecommand\transparent[1]{%
+  \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+  \renewcommand\transparent[1]{}%
+}%
+\providecommand\rotatebox[2]{#2}%
+\newcommand*\fsize{\dimexpr\f@size pt\relax}%
+\newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+\ifx\svgwidth\undefined%
+  \setlength{\unitlength}{398.49665604bp}%
+  \ifx\svgscale\undefined%
+    \relax%
   \else%
-    \setlength{\unitlength}{\svgwidth}%
+    \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
   \fi%
-  \global\let\svgwidth\undefined%
-  \global\let\svgscale\undefined%
-  \makeatother%
-  \begin{picture}(1,0.57958857)%
-    \lineheight{1}%
-    \setlength\tabcolsep{0pt}%
-    \put(0,0){\includegraphics[width=\unitlength,page=1]{drawing.pdf}}%
-    \put(0.03268216,0.52854128){\color[rgb]{0.12941176,0.19215686,0.27058824}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Quasilinear DAEs\end{tabular}}}}%
-    \put(0.07658275,0.26033347){\color[rgb]{0.30196078,0.27843137,0.09803922}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Multibody systems\end{tabular}}}}%
-    \put(0.05399784,0.39207866){\color[rgb]{0.31764706,0.08235294,0.10196078}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Port-Hamiltonian systems\end{tabular}}}}%
-  \end{picture}%
+\else%
+  \setlength{\unitlength}{\svgwidth}%
+\fi%
+\global\let\svgwidth\undefined%
+\global\let\svgscale\undefined%
+\makeatother%
+\begin{picture}(1,0.57958857)%
+  \lineheight{1}%
+  \setlength\tabcolsep{0pt}%
+  \put(0,0){\includegraphics[width=\unitlength,page=1]{drawing.pdf}}%
+  \put(0.03268216,0.52854128){\color[rgb]{0.12941176,0.19215686,0.27058824}\makebox(0,0)[lt]{\lineheight{1.5}\smash{\begin{tabular}[t]{l}Quasilinear DAEs\end{tabular}}}}%
+  \put(0.46406047,0.47853686){\color[rgb]{0.12941176,0.19215686,0.27058824}
+    \makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$ E(x) \dot{x} = f(x) $\end{tabular}}}
+  }%
+  \put(0.07658275,0.26033347){\color[rgb]{0.30196078,0.27843137,0.09803922}\makebox(0,0)[lt]{\lineheight{1.5}\smash{\begin{tabular}[t]{l}Multibody systems\end{tabular}}}}%
+  \put(0.46029632,0.19998992){\color[rgb]{0.30196078,0.27843137,0.09803922}\makebox(0,0)[lt]{\lineheight{1.5}\smash{\begin{tabular}[t]{l}$
+          \dot{q} = M^{-1}p $                                                  \\
+          $\dot{p} = - \nabla V(q) - D(q) M^{-1}p - G(q)^{\mathrm{T}} \lambda$ \\
+          $0=g(q)$
+        \end{tabular}}}}%
+  \put(0.05399784,0.39207866){\color[rgb]{0.31764706,0.08235294,0.10196078}\makebox(0,0)[lt]{\lineheight{1.5}\smash{\begin{tabular}[t]{l}Port-Hamiltonian systems\end{tabular}}}}%
+  \put(0.46029632,0.37055584){\color[rgb]{0.31764706,0.08235294,0.10196078}\makebox(0,0)[lt]{\lineheight{1.5}\smash{\begin{tabular}[t]{l}$E(x) \dot{x} = (J(x)- R(x)) z(x) + B(x) u$ \\
+          $E(x)^{\mathrm{T}} z(x) = \nabla H(x)$
+        \end{tabular}}}}%
+\end{picture}%
 \endgroup%

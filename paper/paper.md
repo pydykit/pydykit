@@ -60,31 +60,18 @@ Alternative frameworks exist in other languages, but we find that Python strikes
 
 # Features
 
-![My PDF file inserted](figures/sample.pdf)
+
+![an image's alt text \label{fig:structure_image}](./figures/sample.png){width=70%}
 
 `pydykit` is a flexible framework for simulating a wide range of dynamical systems governed by ordinary differential equations (ODEs) and differential-algebraic equations (DAEs). Thus `pydykit` is open for users from a plethora of application fields. It supports the implementation of
 
-1. General quasilinear DAEs of the form
-
-$$E(x) \dot{x} = f(x),$$
-
+1. General quasilinear DAEs of the form $E(x) \dot{x} = f(x)$,
 where $E(x)$ may be singular, allowing for broad applicability in constrained dynamics and control problems [@kunkel_differential-algebraic_2006].
 
-2. port-Hamiltonian DAE systems,
+2. Port-Hamiltonian DAE systems governed by $E(x) \dot{x} = (J(x)- R(x)) z(x) + B(x) u$
+which appear in various physical modeling contexts [@duindam_modeling_2009] and highlights a direct energy-based modelling approach.
 
-$$E(x) \dot{x} = (J(x)- R(x)) z(x) + B(x) u$$
-
-which appear in various physical modeling contexts [@duindam_modeling_2009].
-
-3. Multibody systems formulated as
-
-$$
-\dot{q} = v ,
-\dot{p} = - \nabla V(q) - D(q) v - G(q)^{\mathrm{T}} \lambda ,
-g(q)=0
-$$
-
-Beyond standard multibody dynamics, pydykit supports rigid body dynamics using unit quaternions, a powerful approach for modeling rotational motion. The software is also well-suited for Hamiltonian dynamics, with or without constraints [@leimkuhler_simulating_2005], making it an effective tool for structure-preserving simulations. An extension to directors-based formulations [@betsch2001constrained] will be straightforward as it is already implemented in the predecessor framework `metis`.
+3. Multibody systems formulated as index-3 DAEs with holonomic positional constraints $g(q)$. Beyond standard multibody dynamics, pydykit supports rigid body dynamics using unit quaternions, a powerful approach for modeling rotational motion. The software is also well-suited for Hamiltonian dynamics, with or without constraints [@leimkuhler_simulating_2005], making it an effective tool for structure-preserving simulations. An extension to directors-based formulations [@betsch2001constrained] will be straightforward as it is already implemented in the predecessor framework `metis`.
 
 These formulations make pydykit a versatile tool for researchers across disciplines, from robotics and biomechanics to electrical and thermodynamic systems. The framework incorporates key theoretical concepts, including Hamiltonian dynamics and structure-preserving numerical integration techniques. By providing a unified and extensible approach to modeling and simulation, `pydykit` enables efficient and reproducible research in computational mechanics and beyond.
 
