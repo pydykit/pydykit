@@ -26,13 +26,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="1.2641451"
-     inkscape:cx="357.55389"
-     inkscape:cy="115.09755"
-     inkscape:window-width="1496"
-     inkscape:window-height="900"
-     inkscape:window-x="8"
-     inkscape:window-y="46"
+     inkscape:zoom="2.2613472"
+     inkscape:cx="303.8012"
+     inkscape:cy="95.076068"
+     inkscape:window-width="1920"
+     inkscape:window-height="1547"
+     inkscape:window-x="3432"
+     inkscape:window-y="25"
      inkscape:window-maximized="0"
      inkscape:current-layer="layer1" />
   <defs
@@ -78,6 +78,17 @@
          y="17.679255">qLDAEs</tspan></text>
     <text
        xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;fill:#213145;fill-opacity:1;stroke-width:0.264583"
+       x="76.369705"
+       y="24.708914"
+       id="text1-8"><tspan
+         sodipodi:role="line"
+         id="tspan1-0"
+         style="fill:#213145;fill-opacity:1;stroke-width:0.264583"
+         x="76.369705"
+         y="24.708914">eq1</tspan></text>
+    <text
+       xml:space="preserve"
        style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;fill:#4d4719;fill-opacity:1;stroke-width:0.264583"
        x="21.897791"
        y="55.384113"
@@ -89,6 +100,17 @@
          y="55.384113">MBS</tspan></text>
     <text
        xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;fill:#4d4719;fill-opacity:1;stroke-width:0.264583"
+       x="75.840538"
+       y="63.867256"
+       id="text1-0-8"><tspan
+         sodipodi:role="line"
+         id="tspan1-9-0"
+         style="fill:#4d4719;fill-opacity:1;stroke-width:0.264583"
+         x="75.840538"
+         y="63.867256">eq3</tspan></text>
+    <text
+       xml:space="preserve"
        style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;fill:#51151a;fill-opacity:1;stroke-width:0.264583"
        x="18.722788"
        y="36.863274"
@@ -98,5 +120,16 @@
          style="fill:#51151a;fill-opacity:1;stroke-width:0.264583"
          x="18.722788"
          y="36.863274">PHS</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;fill:#51151a;fill-opacity:1;stroke-width:0.264583"
+       x="75.840538"
+       y="42.700584"
+       id="text1-0-7-7"><tspan
+         sodipodi:role="line"
+         id="tspan1-9-2-0"
+         style="fill:#51151a;fill-opacity:1;stroke-width:0.264583"
+         x="75.840538"
+         y="42.700584">eq2</tspan></text>
   </g>
 </svg>
