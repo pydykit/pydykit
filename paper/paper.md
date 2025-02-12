@@ -35,7 +35,7 @@ Solving such problems numerically requires discretization techniques that transl
 The open-source Python package `pydykit` is designed to facilitate this process by providing a general, accessible and well-structured framework for the numerical treatment of dynamical systems.
 
 As the successor to the MATLAB package `metis`, `pydykit` inherits and builds upon its core features, offering a robust,
-object-oriented framework suitable for solving differential-algebraic equations (DAEs).
+object-oriented framework for solving differential-algebraic equations (DAEs).
 With a focus on usability and modularity, `pydykit` integrates seamlessly with the Python ecosystem and
 supports a variety of numerical integration schemes and postprocessing tools.
 
@@ -53,7 +53,7 @@ A key decision in the development of `pydykit` was the choice of programming lan
 Python was selected due to its accessibility, widespread adoption, and extensive ecosystem of scientific computing libraries.
 Its high-level syntax facilitates ease of use, making it an attractive option for researchers, industry applicants and students.
 However, Python also presents performance limitations compared to lower-level languages like C++ or Fortran, particularly for computationally intensive tasks.
-Alternative frameworks exist in other languages, but we find that Python strikes a balance between usability and extensibility, allowing for seamless integration with high-performance libraries when needed.
+Alternative frameworks exist in other languages, but Python strikes a balance between usability and extensibility, allowing for seamless integration with high-performance libraries when needed.
 
 # Features
 
