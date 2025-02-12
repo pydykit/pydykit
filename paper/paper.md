@@ -32,7 +32,7 @@ bibliography: paper.bib
 Understanding and simulating the behavior of dynamical systems is a fundamental challenge in many scientific and engineering disciplines.
 These systems are typically described by ordinary differential and differential-algebraic equations that form an initial-boundary-value problem.
 Solving such problems numerically requires discretization techniques that translate continuous equations into a computationally feasible form.
-Our open-source Python package `pydykit` is designed to facilitate this process by providing a general, accessible and well-structured framework for the numerical treatment of dynamical systems.
+The open-source Python package `pydykit` is designed to facilitate this process by providing a general, accessible and well-structured framework for the numerical treatment of dynamical systems.
 
 As the successor to the MATLAB package `metis`, `pydykit` inherits and builds upon its core features, offering a robust,
 object-oriented framework suitable for solving differential-algebraic equations (DAEs).
@@ -46,7 +46,7 @@ We aim to support research publications by ensuring the reproducibility of compu
 Moreover, `pydykit` serves as a foundation for object-oriented integration methods, fostering collaborations in research and teaching.
 By lowering the barrier for students and early-career researchers to contribute to the field,
 the software encourages engagement with structure-preserving methods and modern computational approaches.
-Additionally, we wish to share our perspective on the numerical treatment of dynamical systems and help bridge gaps in state-of-the-art structure-preserving techniques.
+Additionally, we wish to share a perspective on the numerical treatment of dynamical systems and help bridge gaps in state-of-the-art structure-preserving techniques.
 This is why `pydykit` and its predecessor `metis` focus on geometric integration methods [@hairer_geometric_2006], be it energy-momentum schemes using _discrete gradients_ (see, e.g. [@gonzalez_time_1996]), _variational integrators_ [@lew2016brief] or others.
 
 A key decision in the development of `pydykit` was the choice of programming language.
