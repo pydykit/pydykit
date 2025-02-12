@@ -6,7 +6,7 @@ See [docs][docs] for detailed instructions.
 - Navigate to directory which contains paper.md
 - Execute the command:
 
-```
+```bash
 sudo docker run --rm \
     --volume $PWD:/data \
     --user $(id -u):$(id -g) \
