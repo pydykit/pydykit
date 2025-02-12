@@ -42,11 +42,11 @@ supports a variety of numerical integration schemes and postprocessing tools.
 # Statement of Need
 
 The motivation behind `pydykit` extends beyond its immediate functionality.
-We aim to support research publications by ensuring the reproducibility of computational experiments, thereby enhancing the transparency and credibility of numerical results.
+It aims to support research publications by ensuring the reproducibility of computational experiments, thereby enhancing the transparency and credibility of numerical results.
 Moreover, `pydykit` serves as a foundation for object-oriented integration methods, fostering collaborations in research and teaching.
 By lowering the barrier for students and early-career researchers to contribute to the field,
 the software encourages engagement with structure-preserving methods and modern computational approaches.
-Additionally, we wish to share a perspective on the numerical treatment of dynamical systems and help bridge gaps in state-of-the-art structure-preserving techniques.
+Additionally, it helps to bridge gaps in state-of-the-art structure-preserving techniques.
 This is why `pydykit` and its predecessor `metis` focus on geometric integration methods [@hairer_geometric_2006], be it energy-momentum schemes using _discrete gradients_ (see, e.g. [@gonzalez_time_1996]), _variational integrators_ [@lew2016brief] or others.
 
 A key decision in the development of `pydykit` was the choice of programming language.
