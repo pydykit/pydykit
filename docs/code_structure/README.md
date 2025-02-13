@@ -44,3 +44,11 @@ pyreverse -p systems systems_dae.py systems_multi_body.py systems_port_hamiltoni
 ```bash
 pyreverse -p integrators integrators.py
 ```
+
+## From dot to png
+
+```bash
+dot -Tpng classes_systems.dot -o systems.png
+dot -Tpng classes_integrators.dot -o integrators.png
+dot -Tpng classes_pydykit.dot -o pydykit.png
+```
