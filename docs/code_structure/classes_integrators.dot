@@ -1,0 +1,15 @@
+digraph "classes_integrators" {
+rankdir=BT
+charset="utf-8"
+"pydykit.integrators.DiscreteGradientMultibody" [color="black", fontcolor="black", label=<{DiscreteGradientMultibody|discrete_gradient_type<br ALIGN="LEFT"/>increment_tolerance<br ALIGN="LEFT"/>parametrization : list<br ALIGN="LEFT"/>|get_residuum(next_state)<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+"pydykit.integrators.DiscreteGradientPHDAE" [color="black", fontcolor="black", label=<{DiscreteGradientPHDAE|discrete_gradient_type<br ALIGN="LEFT"/>increment_tolerance<br ALIGN="LEFT"/>parametrization : list<br ALIGN="LEFT"/>|dissipated_work(current_state, next_state, current_step)<br ALIGN="LEFT"/>get_discrete_costate(system_n, system_n1, system_n05)<br ALIGN="LEFT"/>get_residuum(next_state)<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+"pydykit.integrators.IntegratorCommon" [color="black", fontcolor="black", label=<{IntegratorCommon|manager<br ALIGN="LEFT"/>|get_tangent(state)<br ALIGN="LEFT"/><I>postprocess</I>(next_state)<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+"pydykit.integrators.MidpointDAE" [color="black", fontcolor="black", label=<{MidpointDAE|parametrization : list<br ALIGN="LEFT"/>|get_residuum(next_state)<br ALIGN="LEFT"/>get_tangent(state)<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+"pydykit.integrators.MidpointMultibody" [color="black", fontcolor="black", label=<{MidpointMultibody|parametrization : list<br ALIGN="LEFT"/>|get_residuum(next_state)<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+"pydykit.integrators.MidpointPH" [color="black", fontcolor="black", label=<{MidpointPH|parametrization : list<br ALIGN="LEFT"/>|dissipated_work(current_state, next_state, current_step)<br ALIGN="LEFT"/>get_discrete_costate(system_n, system_n1, system_n05)<br ALIGN="LEFT"/>get_residuum(next_state)<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+"pydykit.integrators.DiscreteGradientMultibody" -> "pydykit.integrators.IntegratorCommon" [arrowhead="empty", arrowtail="none"];
+"pydykit.integrators.DiscreteGradientPHDAE" -> "pydykit.integrators.IntegratorCommon" [arrowhead="empty", arrowtail="none"];
+"pydykit.integrators.MidpointDAE" -> "pydykit.integrators.IntegratorCommon" [arrowhead="empty", arrowtail="none"];
+"pydykit.integrators.MidpointMultibody" -> "pydykit.integrators.IntegratorCommon" [arrowhead="empty", arrowtail="none"];
+"pydykit.integrators.MidpointPH" -> "pydykit.integrators.IntegratorCommon" [arrowhead="empty", arrowtail="none"];
+}
