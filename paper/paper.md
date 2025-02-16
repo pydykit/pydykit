@@ -41,7 +41,6 @@ supports a variety of numerical integration schemes and postprocessing tools.
 
 # Statement of Need
 
-
 The motivation behind `pydykit` extends beyond its immediate functionality.
 We aim to support research publications by ensuring the reproducibility of computational experiments, thereby enhancing the transparency and credibility of numerical results.
 Moreover, `pydykit` serves as a foundation for object-oriented integration methods, fostering collaborations in research and teaching.
@@ -56,16 +55,15 @@ Its high-level syntax facilitates ease of use, making it an attractive option fo
 However, Python also presents performance limitations compared to lower-level languages like C++ or Fortran, particularly for computationally intensive tasks.
 Alternative frameworks exist in other languages, but we find that Python strikes a balance between usability and extensibility, allowing for seamless integration with high-performance libraries when needed.
 
-
 # Features
 
 `pydykit` is a flexible framework for simulating a wide range of dynamical systems governed by ordinary differential equations (ODEs) and differential-algebraic equations (DAEs). Thus `pydykit` is open for users from a plethora of application fields. It supports the implementation of
 
 1. General quasilinear DAEs of the form $E(x) \dot{x} = f(x)$,
-where $E(x)$ may be singular, allowing for broad applicability in constrained dynamics.
+   where $E(x)$ may be singular, allowing for broad applicability in constrained dynamics.
 
 2. Port-Hamiltonian DAE systems governed by $E(x) \dot{x} = (J(x)- R(x)) z(x) + B(x) u$
-which appear in various physical modeling contexts [@duindam_modeling_2009], also cover open control systems and follow an energy-based modelling approach.
+   which appear in various physical modeling contexts [@duindam_modeling_2009], also cover open control systems and follow an energy-based modelling approach.
 
 3. Multibody systems formulated as index-3 DAEs with holonomic positional constraints $g(q)$. Beyond standard multibody dynamics, pydykit supports rigid body dynamics using unit quaternions [@betsch_2009_rigid], a powerful approach for modeling rotational motion. The software is also well-suited for Hamiltonian dynamics, with or without constraints [@leimkuhler_simulating_2005], making it an effective tool for structure-preserving simulations. An extension to directors-based formulations [@betsch2001constrained] will be straightforward as it is already implemented in the predecessor framework `metis`.
 
@@ -93,7 +91,6 @@ Users can encode new systems, integrators, timesteppers, and solvers by defining
 Newly added objects can then be registered and referenced within configuration files.
 This flexibility allows users to extend `pydykit`’s functionality and tailor it to specific applications.
 
-
 ## Simulation Workflow
 
 1. Initialization: The input file is loaded, creating objects for the specified problem.
@@ -102,8 +99,9 @@ This flexibility allows users to extend `pydykit`’s functionality and tailor i
 
 ## Code structure
 
-![an image's alt text \label{fig:structure_image}](./figures/image.png){ width=80% }
-
+![Code structure 01 \label{fig:code_structure_pdydkit}](./figures/code_structure/pydykit.pdf){width=100%}
+![Code structure 02 \label{fig:code_structure_systems}](./figures/code_structure/systems.pdf){width=100%}
+![Code structure 03 \label{fig:code_structure_integrators}](./figures/code_structure/integrators.pdf){width=100%}
 
 ## Usage so far
 
@@ -112,6 +110,7 @@ This flexibility allows users to extend `pydykit`’s functionality and tailor i
 # Acknowledgements
 
 PLK gratefully acknowledges financial support by the German Research Foundation (DFG) – project number TODO XX.
+
 <!-- - and by the Research Travel Grant of the Karlsruhe House of Young Scientists (KYHS) -->
 
 # References

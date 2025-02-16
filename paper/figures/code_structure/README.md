@@ -52,3 +52,9 @@ dot -Tpng classes_systems.dot -o systems.png
 dot -Tpng classes_integrators.dot -o integrators.png
 dot -Tpng classes_pydykit.dot -o pydykit.png
 ```
+
+```bash
+dot -Tpdf classes_systems.dot -o systems.pdf
+dot -Tpdf classes_integrators.dot -o integrators.pdf
+dot -Tpdf classes_pydykit.dot -o pydykit.pdf
+```
