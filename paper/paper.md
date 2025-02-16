@@ -53,6 +53,7 @@ A key decision in the development of `pydykit` was the choice of programming lan
 Python was selected due to its accessibility, widespread adoption, and extensive ecosystem of scientific computing libraries.
 Its high-level syntax facilitates ease of use, making it an attractive option for researchers, industry applicants and students.
 However, Python also presents performance limitations compared to lower-level languages like C++ or Fortran, particularly for computationally intensive tasks.
+
 Alternative frameworks exist in other languages, but Python strikes a balance between usability and extensibility, allowing for seamless integration with high-performance libraries when needed.
 
 # Features
@@ -100,7 +101,9 @@ This flexibility allows users to extend `pydykit`’s functionality and tailor i
 
 ## Code structure
 
-![an image's alt text \label{fig:structure_image}](./figures/image.png){ width=80% }
+![Code structure 01 \label{fig:code_structure_pdydkit}](./figures/code_structure/pydykit.pdf){width=100%}
+![Code structure 02 \label{fig:code_structure_systems}](./figures/code_structure/systems.pdf){width=100%}
+![Code structure 03 \label{fig:code_structure_integrators}](./figures/code_structure/integrators.pdf){width=100%}
 
 ## Usage so far
 
