@@ -12,14 +12,17 @@ digraph "classes_pydykit" {
     "pydykit.abstract_base_classes.AbstractMultiBodySystem" -> "pydykit.abstract_base_classes.System" [arrowhead = "empty"; arrowtail = "none";];
     "pydykit.abstract_base_classes.AbstractPortHamiltonianSystem" -> "pydykit.abstract_base_classes.System" [arrowhead = "empty"; arrowtail = "none";];
     "pydykit.abstract_base_classes.AbstractQuasiLinearDAESystem" -> "pydykit.abstract_base_classes.System" [arrowhead = "empty"; arrowtail = "none";];
-    "pydykit.abstract_base_classes.Integrator" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "integrator"; style = "solid";];
-    "pydykit.abstract_base_classes.Simulator" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "simulator"; style = "solid";];
-    "pydykit.abstract_base_classes.System" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "system"; style = "solid";];
-    "pydykit.abstract_base_classes.TimeStepper" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "time_stepper"; style = "solid";];
-    "pydykit.abstract_base_classes.Manager" -> "pydykit.simulators.Simulator" [arrowhead = "odiamond"; arrowtail = "none"; fontcolor = "green"; label = "manager"; style = "solid";];
+    "pydykit.abstract_base_classes.Integrator" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "integrator"; style = "solid";];
+    "pydykit.abstract_base_classes.Simulator" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "simulator"; style = "solid";];
+    "pydykit.abstract_base_classes.System" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "system"; style = "solid";];
+    "pydykit.abstract_base_classes.TimeStepper" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "time_stepper"; style = "solid";];
+    // "pydykit.abstract_base_classes.Manager" -> "pydykit.simulators.Simulator" [arrowhead = "odiamond"; arrowtail = "none"; fontcolor = "black"; label = "manager"; style = "solid";];
 
-    "pydykit.managers.Manager" [color = "black";fontcolor = "black";label = <{Manager|configuration<br ALIGN="LEFT"/>|configure(configuration: Configuration)<br ALIGN="LEFT"/>configure_from_path(path)<br ALIGN="LEFT"/>manage(result): Result<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
-    "pydykit.managers.Manager" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "empty"; arrowtail = "none";];
+    "pydykit.results.Result" [color = "black";fontcolor = "black";label = <{Result|manager<br ALIGN="LEFT"/>results : ndarray<br ALIGN="LEFT"/>times : ndarray<br ALIGN="LEFT"/>|to_df(): pd.DataFrame<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
+    "pydykit.results.Result" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "result"; style = "solid";];
+
+    // "pydykit.managers.Manager" [color = "black";fontcolor = "black";label = <{Manager|configuration<br ALIGN="LEFT"/>|configure(configuration: Configuration)<br ALIGN="LEFT"/>configure_from_path(path)<br ALIGN="LEFT"/>manage(result): Result<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
+    // "pydykit.managers.Manager" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "empty"; arrowtail = "none";];
 
     // "pydykit.abstract_base_classes.DiscreteGradient" [color = "black";fontcolor = "black";label = <{DiscreteGradient|<br ALIGN="LEFT"/>|<I>compute</I>(system_n, system_n1, system_n05, func_name: str, jacobian_name: str, argument_n: np.ndarray, argument_n1: np.ndarray): np.ndarray<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
     // "pydykit.abstract_base_classes.Solver" [color = "black";fontcolor = "black";label = <{Solver|<br ALIGN="LEFT"/>|<I>solve</I>(func: Callable, jacobian: Callable, initial: npt.ArrayLike)<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
@@ -88,17 +91,17 @@ digraph "classes_pydykit" {
     // "pydykit.models_system_multibody.RigidBodyRotatingQuaternions" [color = "black";fontcolor = "black";label = <{RigidBodyRotatingQuaternions|class_name : Literal['RigidBodyRotatingQuaternions']<br ALIGN="LEFT"/>inertias : Annotated[list[NonNegativeFloat], Len(min_length=3, max_length=3)]<br ALIGN="LEFT"/>mass : Annotated<br ALIGN="LEFT"/>nbr_constraints : Literal[1]<br ALIGN="LEFT"/>nbr_dof : Literal[4]<br ALIGN="LEFT"/>nbr_spatial_dimensions : Literal[3]<br ALIGN="LEFT"/>state<br ALIGN="LEFT"/>|}>;shape = "record";style = "solid";];
     // "pydykit.models.SystemModel" [color = "black";fontcolor = "black";label = <{SystemModel|factory<br ALIGN="LEFT"/>|}>;shape = "record";style = "solid";];
     // "pydykit.models.TimeStepperModel" [color = "black";fontcolor = "black";label = <{TimeStepperModel|factory<br ALIGN="LEFT"/>|}>;shape = "record";style = "solid";];
-    // "pydykit.models_simulators.OneStep" -> "pydykit.configuration.Configuration" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "simulator"; style = "solid";];
-    // "pydykit.models_system_dae.State" -> "pydykit.models_system_dae.ChemicalReactor" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "state"; style = "solid";];
-    // "pydykit.models_system_dae.State" -> "pydykit.models_system_dae.Lorenz" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "state"; style = "solid";];
-    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Constraint" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "start"; style = "solid";];
-    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Constraint" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "end"; style = "solid";];
-    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Damper" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "start"; style = "solid";];
-    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Damper" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "end"; style = "solid";];
-    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Spring" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "start"; style = "solid";];
-    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Spring" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "end"; style = "solid";];
-    // "pydykit.models_system_multibody.State" -> "pydykit.models_system_multibody.RigidBodyRotatingQuaternions" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "state"; style = "solid";];
-    // "pydykit.models_system_port_hamiltonian.State" -> "pydykit.models_system_port_hamiltonian.Pendulum2D" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "state"; style = "solid";];
+    // "pydykit.models_simulators.OneStep" -> "pydykit.configuration.Configuration" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "simulator"; style = "solid";];
+    // "pydykit.models_system_dae.State" -> "pydykit.models_system_dae.ChemicalReactor" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "state"; style = "solid";];
+    // "pydykit.models_system_dae.State" -> "pydykit.models_system_dae.Lorenz" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "state"; style = "solid";];
+    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Constraint" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "start"; style = "solid";];
+    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Constraint" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "end"; style = "solid";];
+    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Damper" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "start"; style = "solid";];
+    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Damper" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "end"; style = "solid";];
+    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Spring" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "start"; style = "solid";];
+    // "pydykit.models_system_multibody.Ending" -> "pydykit.models_system_multibody.Spring" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "end"; style = "solid";];
+    // "pydykit.models_system_multibody.State" -> "pydykit.models_system_multibody.RigidBodyRotatingQuaternions" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "state"; style = "solid";];
+    // "pydykit.models_system_port_hamiltonian.State" -> "pydykit.models_system_port_hamiltonian.Pendulum2D" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "state"; style = "solid";];
 
 
     // "pydykit.systems_dae.ChemicalReactor" -> "pydykit.systems_dae.QuasiLinearDAESystem" [arrowhead = "empty"; arrowtail = "none";];
@@ -156,7 +159,7 @@ digraph "classes_pydykit" {
     // "pydykit.discrete_gradients.GonzalezDecomposedDiscreteGradient" [color = "black";fontcolor = "black";label = <{GonzalezDecomposedDiscreteGradient|<br ALIGN="LEFT"/>|compute(system_n, system_n1, system_n05, func_name: str, jacobian_name: str, argument_n: np.ndarray, argument_n1: np.ndarray, nbr_func_parts: int, func_parts_n, func_parts_n1, increment_tolerance: float): np.ndarray<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
     // "pydykit.discrete_gradients.GonzalezDiscreteGradient" [color = "black";fontcolor = "black";label = <{GonzalezDiscreteGradient|<br ALIGN="LEFT"/>|compute(system_n, system_n1, system_n05, func_name: str, jacobian_name: str, argument_n: np.ndarray, argument_n1: np.ndarray, increment_tolerance: float): np.ndarray<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
 
-    // "pydykit.postprocessors.EvaluationStrategyFactory" -> "pydykit.postprocessors.Postprocessor" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "evaluation_strategy_factory"; style = "solid";];
+    // "pydykit.postprocessors.EvaluationStrategyFactory" -> "pydykit.postprocessors.Postprocessor" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "evaluation_strategy_factory"; style = "solid";];
     // "pydykit.postprocessors.EvaluationStrategyFactory" [color = "black";fontcolor = "black";label = <{EvaluationStrategyFactory|postprocessor<br ALIGN="LEFT"/>strategies : dict<br ALIGN="LEFT"/>|get_strategy(eval_point)<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
     // "pydykit.postprocessors.Postprocessor" [color = "black";fontcolor = "black";label = <{Postprocessor|available_evaluation_points<br ALIGN="LEFT"/>evaluation_strategy_factory<br ALIGN="LEFT"/>manager<br ALIGN="LEFT"/>nbr_time_point<br ALIGN="LEFT"/>results_df : DataFrame<br ALIGN="LEFT"/>state_results_df<br ALIGN="LEFT"/>|add_sum_of(quantities, sum_name)<br ALIGN="LEFT"/>postprocess(quantities_and_evaluation_points)<br ALIGN="LEFT"/>update_system(system, index)<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
 
@@ -169,8 +172,8 @@ digraph "classes_pydykit" {
     // "pydykit.time_steppers.FixedIncrementHittingEnd" -> "pydykit.time_steppers.TimeStepper" [arrowhead = "empty"; arrowtail = "none";];
     // "pydykit.time_steppers.TimeStep" -> "pydykit.abstract_base_classes.TimeStep" [arrowhead = "empty"; arrowtail = "none";];
     // "pydykit.time_steppers.TimeStepper" -> "pydykit.abstract_base_classes.TimeStepper" [arrowhead = "empty"; arrowtail = "none";];
-    // "pydykit.time_steppers.TimeStep" -> "pydykit.time_steppers.FixedIncrement" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "_current_step"; style = "solid";];
-    // "pydykit.time_steppers.TimeStep" -> "pydykit.time_steppers.FixedIncrementHittingEnd" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "_current_step"; style = "solid";];
+    // "pydykit.time_steppers.TimeStep" -> "pydykit.time_steppers.FixedIncrement" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "_current_step"; style = "solid";];
+    // "pydykit.time_steppers.TimeStep" -> "pydykit.time_steppers.FixedIncrementHittingEnd" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "black"; label = "_current_step"; style = "solid";];
 
     // "pydykit.solvers.Iterative" -> "pydykit.abstract_base_classes.Solver" [arrowhead = "empty"; arrowtail = "none";];
     // "pydykit.solvers.NewtonPlainPython" -> "pydykit.solvers.Iterative" [arrowhead = "empty"; arrowtail = "none";];
@@ -183,9 +186,6 @@ digraph "classes_pydykit" {
     // "pydykit.simulators.Simulator" -> "pydykit.abstract_base_classes.Simulator" [arrowhead = "empty"; arrowtail = "none";];
     // "pydykit.simulators.OneStep" [color = "black";fontcolor = "black";label = <{OneStep|solver<br ALIGN="LEFT"/>|run(result)<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
     // "pydykit.simulators.Simulator" [color = "black";fontcolor = "black";label = <{Simulator|manager<br ALIGN="LEFT"/>|}>;shape = "record";style = "solid";];
-
-    // "pydykit.results.Result" [color = "black";fontcolor = "black";label = <{Result|manager<br ALIGN="LEFT"/>results : ndarray<br ALIGN="LEFT"/>times : ndarray<br ALIGN="LEFT"/>|to_df(): pd.DataFrame<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
-    // "pydykit.results.Result" -> "pydykit.abstract_base_classes.Manager" [arrowhead = "diamond"; arrowtail = "none"; fontcolor = "green"; label = "result"; style = "solid";];
 
     // "pydykit.configuration.Configuration" [color = "black";fontcolor = "black";label = <{Configuration|integrator : Union[MidpointPH, DiscreteGradientPHDAE, MidpointMultibody, DiscreteGradientMultibody, MidpointDAE]<br ALIGN="LEFT"/>simulator<br ALIGN="LEFT"/>system : Union[ParticleSystem, RigidBodyRotatingQuaternions, Pendulum2D, Lorenz, ChemicalReactor]<br ALIGN="LEFT"/>time_stepper : Union[FixedIncrement, FixedIncrementHittingEnd]<br ALIGN="LEFT"/>|}>;shape = "record";style = "solid";];
     // "pydykit.examples.ExampleManager" [color = "black";fontcolor = "black";label = <{ExampleManager|BASE_URL_EXAMPLE_FILES : str<br ALIGN="LEFT"/>examples : dict<br ALIGN="LEFT"/>|get_example(name)<br ALIGN="LEFT"/>list_examples()<br ALIGN="LEFT"/>load_examples()<br ALIGN="LEFT"/>}>;shape = "record";style = "solid";];
