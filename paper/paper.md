@@ -9,12 +9,12 @@ tags:
   - Numerical methods
   - Structure-preserving discretization
 authors:
-  - name: Julian Karl Bauer^[corresponding author]
-    orcid: 0000-0002-4931-5869
-    affiliation: "1" # (Multiple affiliations must be quoted)
   - name: Philipp Lothar Kinon
     orcid: 0000-0002-4128-5124
     affiliation: "2"
+  - name: Julian Karl Bauer^[corresponding author]
+    orcid: 0000-0002-4931-5869
+    affiliation: "1" # (Multiple affiliations must be quoted)
   # - name: Peter Betsch
   #   orcid: 0000-0002-0596-2503
   #   affiliation: "1"
