@@ -29,31 +29,32 @@ bibliography: paper.bib
 
 # Summary
 
-Understanding and simulating the behavior of dynamical systems is a fundamental challenge in many scientific and engineering disciplines.
-These systems are typically described by ordinary differential and differential-algebraic equations that form an initial-boundary-value problem.
-Solving such problems numerically requires discretization techniques that translate continuous equations into a computationally feasible form.
-Our open-source Python package `pydykit` is designed to facilitate this process by providing a general, accessible and well-structured framework for the numerical treatment of dynamical systems.
+Simulating dynamical systems is crucial in many scientific and engineering disciplines.
+Dynamical systems are typically described by ordinary differential and
+differential-algebraic equations,
+which combined with
+initial- and boundary-conditions,
+form a initial-boundary-value problem.
 
-As the successor to the MATLAB package `metis`, `pydykit` inherits and builds upon its core features, offering a robust,
-object-oriented framework suitable for solving differential-algebraic equations (DAEs).
-With a focus on usability and modularity, `pydykit` integrates seamlessly with the Python ecosystem and
-supports a variety of numerical integration schemes and postprocessing tools.
+Solving initial-boundary-value problems
+numerically requires discretization techniques
+which translate the problem into a computationally feasible form.
+The open-source Python package `pydykit`
+is a tool for academic researchers to study and
+develop discretization methods
+for small dynamic systems.
+The tool is designed to be modular and extensible.
+Existing implementations focus
+on geometric integration methods [@hairer_geometric_2006], energy-momentum schemes using _discrete gradients_ (see, e.g. [@gonzalez_time_1996])
+and _variational integrators_ [@lew2016brief].
 
 # Statement of Need
 
-The motivation behind `pydykit` extends beyond its immediate functionality.
-We aim to support research publications by ensuring the reproducibility of computational experiments, thereby enhancing the transparency and credibility of numerical results.
-Moreover, `pydykit` serves as a foundation for object-oriented integration methods, fostering collaborations in research and teaching.
-By lowering the barrier for students and early-career researchers to contribute to the field,
-the software encourages engagement with structure-preserving methods and modern computational approaches.
-Additionally, we wish to share our perspective on the numerical treatment of dynamical systems and help bridge gaps in state-of-the-art structure-preserving techniques.
-This is why `pydykit` and its predecessor `metis` focus on geometric integration methods [@hairer_geometric_2006], be it energy-momentum schemes using _discrete gradients_ (see, e.g. [@gonzalez_time_1996]), _variational integrators_ [@lew2016brief] or others.
+Existing research codes within the discipline
 
-A key decision in the development of `pydykit` was the choice of programming language.
-Python was selected due to its accessibility, widespread adoption, and extensive ecosystem of scientific computing libraries.
-Its high-level syntax facilitates ease of use, making it an attractive option for researchers, industry applicants and students.
-However, Python also presents performance limitations compared to lower-level languages like C++ or Fortran, particularly for computationally intensive tasks.
-Alternative frameworks exist in other languages, but we find that Python strikes a balance between usability and extensibility, allowing for seamless integration with high-performance libraries when needed.
+- TODO: List existing codes
+
+TODO: List drawbacks
 
 # Features
 
@@ -65,43 +66,36 @@ Alternative frameworks exist in other languages, but we find that Python strikes
 2. Port-Hamiltonian DAE systems governed by $E(x) \dot{x} = (J(x)- R(x)) z(x) + B(x) u$
    which appear in various physical modeling contexts [@duindam_modeling_2009], also cover open control systems and follow an energy-based modelling approach.
 
-3. Multibody systems formulated as index-3 DAEs with holonomic positional constraints $g(q)$. Beyond standard multibody dynamics, pydykit supports rigid body dynamics using unit quaternions [@betsch_2009_rigid], a powerful approach for modeling rotational motion. The software is also well-suited for Hamiltonian dynamics, with or without constraints [@leimkuhler_simulating_2005], making it an effective tool for structure-preserving simulations. An extension to directors-based formulations [@betsch2001constrained] will be straightforward as it is already implemented in the predecessor framework `metis`.
+3. Multibody systems formulated as index-3 DAEs with holonomic positional constraints $g(q)$. Beyond standard multibody dynamics, pydykit supports rigid body dynamics using unit quaternions [@betsch_2009_rigid], a powerful approach for modeling rotational motion. The software is also well-suited for Hamiltonian dynamics, with or without constraints [@leimkuhler_simulating_2005], making it an effective tool for structure-preserving simulations.
 
-These formulations make pydykit a versatile tool for researchers across disciplines, from robotics and biomechanics to electrical and thermodynamic systems. The framework incorporates key theoretical concepts, including Hamiltonian dynamics and structure-preserving numerical integration techniques. By providing a unified and extensible approach to modeling and simulation, `pydykit` enables efficient and reproducible research in computational mechanics and beyond.
+These formulations make pydykit a versatile tool for researchers across disciplines, from robotics and biomechanics to electrical and thermodynamic systems.
 
 ![Current system classes covered by `pydykit` \label{fig:systems}](./figures/sample.png){width=70%}
 
-`pydykit` is a Python-native framework offering an accessible and modular approach,
-and enabling users to define and solve DAEs with ease.
-The software provides enhanced flexibility for custom applications, allowing researchers and developers to tailor simulations to their specific needs.
-Built-in postprocessing tools, including animation and data export capabilities, facilitate result analysis and visualization.
-Furthermore, `pydykit` is highly extensible, supporting modifications at multiple levels, including system definitions,
-the simulator and solver, integration schemes, and time-stepping methods.
-By combining ease of use with advanced customization options, `pydykit` serves as a versatile platform for research, teaching, and collaborative development in computational mechanics.
+TODO: Define terminology:
 
-## Input Configuration
+- Klasse / abstrakte Basisklasse
+- System / Systembestandteil
+- Konifgurationsdatei
 
-Simulations are defined in terms of configuration files in combination with `pydykit`-classes.
-Within the configuration file, `pydykit`-classes are referenced
-alongside a set of parameters.
-On simulation start, `pydykit` passes these parameters to the `pydykit`-classes.
-Dependencies are injected in terms of a central manager class which represents shared state among the building blocks system, simulator, integrator and time stepper.
+TODO: Formulate the following:
 
-Users can encode new systems, integrators, timesteppers, and solvers by defining them based on the provided interface descriptions.
-Newly added objects can then be registered and referenced within configuration files.
-This flexibility allows users to extend `pydykit`’s functionality and tailor it to specific applications.
+1. pydykit definiert eine Struktur in die weitere Systembestandteilen (Integratoren, Simulatoren etc.) eingebunden werden können.
+   Umgesetzt ist diese Strukture in Form von abstrakten Basisklassen.
+2. Konkrete Parametrisierung von Systembestandteilen erfolgt durch Konfigurationsdatei...
 
-## Simulation Workflow
+## Code Structure
 
-1. Initialization: The input file is loaded, creating objects for the specified problem.
-2. Computation: Numerical integration is performed using time-stepping methods. The results are stored in terms of a dataframe.
-3. Postprocessing: Results are calculated on requested temporal resolution and can be visualized through plots and animations.
-
-## Code structure
+TODO: Liste welche Systembestandteile existieren.
+TODO: Liste welche konkreten Implementierungen existieren.
 
 ![Code structure 01 \label{fig:code_structure_pdydkit}](./figures/code_structure/pydykit.pdf){width=100%}
 ![Code structure 02 \label{fig:code_structure_systems}](./figures/code_structure/systems.pdf){width=100%}
 ![Code structure 03 \label{fig:code_structure_integrators}](./figures/code_structure/integrators.pdf){width=100%}
+
+## Usage
+
+TODO: Add pendulum example from https://pydykit.github.io/pydykit/latest/examples/pendulum_3d/
 
 ## Usage so far
 
