@@ -97,6 +97,9 @@ TODO: Define terminology:
 - Klasse / abstrakte Basisklasse
 - System / Systembestandteil
 - Konifgurationsdatei
+- Integratoren
+- time-steppers
+- Solvers
 
 TODO: Formulate the following:
 
