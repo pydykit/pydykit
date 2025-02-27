@@ -31,7 +31,8 @@ bibliography: paper.bib
 
 Simulating dynamical systems is crucial in many scientific and engineering disciplines.
 Discrete dynamical systems are typically described by ordinary differential or
-differential-algebraic equations,
+differential-algebraic equations (DAEs),
+
 which combined with
 initial conditions,
 form an initial value problem (IVP).
