@@ -125,7 +125,8 @@ TODO: Liste welche konkreten Implementierungen existieren.
 
 ![Code structure 01 \label{fig:code_structure_pdydkit}](./figures/code_structure/pydykit.pdf){width=100%}
 ![Code structure 02 \label{fig:code_structure_systems}](./figures/code_structure/systems.pdf){width=100%}
-![Code structure 03 \label{fig:code_structure_integrators}](./figures/code_structure/integrators.pdf){width=100%}
+
+<!-- ![Code structure 03 \label{fig:code_structure_integrators}](./figures/code_structure/integrators.pdf){width=100%} -->
 
 ## Usage
 
