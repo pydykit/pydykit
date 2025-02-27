@@ -90,6 +90,8 @@ from robotics and biomechanics to electrical and thermodynamic systems.
 
 ![Current system classes covered by `pydykit` \label{fig:systems}](./figures/sample.png){width=70%}
 
+Kommentar JKB: Ist die Visualisierung reif, um sie hier so zu nennen?
+
 TODO: Define terminology:
 
 - Klasse / abstrakte Basisklasse
