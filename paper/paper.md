@@ -139,8 +139,8 @@ On simulation start, `pydykit` passes these parameters to the `pydykit`-classes.
 Dependencies are injected in terms of a central manager class which represents a shared state among the building blocks system, simulator, integrator and time stepper.
 
 Users can develop new systems, integrators, timesteppers, and solvers by defining them based on the provided interface descriptions.
-Newly added objects can then be registered and referenced within configuration files.
-This flexibility allows users to extend `pydykit`’s functionality and tailor it to specific applications.
+
+This allows users to extend `pydykit`’s functionality and tailor it to their specific requirements.
 
 Workflow:
 
