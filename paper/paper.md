@@ -43,8 +43,8 @@ which translate the problem into a computationally feasible form.
 The open-source Python package `pydykit`
 is a tool for academic researchers to study and
 develop discretization methods
-for small dynamic systems.
-The tool is designed to be modular and extensible.
+for the simulation of discrete dynamical systems.
+The package is designed to be modular and extensible.
 Existing implementations focus
 on geometric integration methods [@hairer_geometric_2006], energy-momentum schemes using _discrete gradients_ (see, e.g. [@gonzalez_time_1996])
 and _variational integrators_ [@lew2016brief].
