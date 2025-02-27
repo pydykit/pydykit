@@ -104,6 +104,8 @@ TODO: Formulate the following:
    Umgesetzt ist diese Strukture in Form von abstrakten Basisklassen.
 2. Konkrete Parametrisierung von Systembestandteilen erfolgt durch Konfigurationsdatei...
 
+Built-in postprocessing tools, including animation and data export capabilities facilitate result analysis and visualization.
+
 ## Code Structure
 
 <!-- Wie ist pydykit aufgebaut:
