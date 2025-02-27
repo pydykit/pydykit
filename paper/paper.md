@@ -62,6 +62,8 @@ Existing research codes within the discipline
 
 TODO: List drawbacks
 
+<!-- In den vorheringen Bulletpoints, hattest du skizziert, dass wir die Verwendung von Python motivieren sollen. Ich würde das gerne beibehalten, dabei aber den Fokus legen warum Python in unserem Kontext nun das Mittel der Wahl war. Natürlich waren manche Sätze trivial in der Python-Welt aber nicht jeder arbeitet mit Python in der Wissenschaft. -->
+
 # Features
 
 `pydykit` is a flexible framework for simulating a wide range of dynamical systems governed by ordinary differential equations (ODEs) and differential-algebraic equations (DAEs). Thus `pydykit` is open for users from a plethora of application fields. It supports the implementation of
