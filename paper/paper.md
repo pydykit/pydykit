@@ -51,6 +51,11 @@ and _variational integrators_ [@lew2016brief].
 
 # Statement of Need
 
+<!-- Field of application:
+Präzise wissenschaftliche Abgrenzung der verschiedenen Arten von Differentialgleichungssystemen und deren Auftreten in bestimmten Disziplinen. -->
+
+<!-- In dem Abschnitt “Statement of need” passt durchaus ein bisschen blabla zu “foster research collaboration…” aber in den anderen Abschnitten aus meiner Sicht nicht.  -->
+
 Existing research codes within the discipline
 
 - TODO: List existing codes
@@ -86,6 +91,11 @@ TODO: Formulate the following:
 2. Konkrete Parametrisierung von Systembestandteilen erfolgt durch Konfigurationsdatei...
 
 ## Code Structure
+
+<!-- Wie ist pydykit aufgebaut:
+Das ist so custom und schwer in Text präzise zu beschreiben.
+Ich schlage 1-3 Sätze vor gefolgt von einem Beispiel (Anhand Config Datei), siehe Doku.
+Vielleicht kann dann noch ein Bild zur Code Struktur hinein. -->
 
 TODO: Liste welche Systembestandteile existieren.
 TODO: Liste welche konkreten Implementierungen existieren.
