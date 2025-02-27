@@ -90,8 +90,6 @@ from robotics and biomechanics to electrical and thermodynamic systems.
 
 ![Current system classes covered by `pydykit` \label{fig:systems}](./figures/sample.png){width=70%}
 
-Kommentar JKB: Ist die Visualisierung reif, um sie hier so zu nennen?
-
 Users may choose their favorite system description from this hierarchy depending on their goal:
 They can either design numerical methods for a more general system class
 or for a concrete application where additional specified requirements have to be met.
@@ -111,7 +109,7 @@ TODO: Formulate the following:
    Umgesetzt ist diese Strukture in Form von abstrakten Basisklassen.
 2. Konkrete Parametrisierung von Systembestandteilen erfolgt durch Konfigurationsdatei...
 
-Built-in postprocessing tools, including animation and data export capabilities facilitate result analysis and visualization.
+<!-- Built-in postprocessing tools, including animation and data export capabilities allow for a basic result analysis and visualization. JKB: nichts besonderes -->
 
 ## Code Structure
 
