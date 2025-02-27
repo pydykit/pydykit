@@ -92,6 +92,10 @@ from robotics and biomechanics to electrical and thermodynamic systems.
 
 Kommentar JKB: Ist die Visualisierung reif, um sie hier so zu nennen?
 
+Users may choose their favorite system description from this hierarchy depending on their goal:
+They can either design numerical methods for a more general system class
+or for a concrete application where additional specified requirements have to be met.
+
 TODO: Define terminology:
 
 - Klasse / abstrakte Basisklasse
