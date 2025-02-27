@@ -129,6 +129,26 @@ TODO: Liste welche konkreten Implementierungen existieren.
 
 ## Usage
 
+<!--
+Old:
+
+A simulation is defined in terms of a configuration file.
+Within the configuration file, `pydykit`-classes are referenced
+alongside a set of parameters.
+On simulation start, `pydykit` passes these parameters to the `pydykit`-classes.
+Dependencies are injected in terms of a central manager class which represents a shared state among the building blocks system, simulator, integrator and time stepper.
+
+Users can develop new systems, integrators, timesteppers, and solvers by defining them based on the provided interface descriptions.
+Newly added objects can then be registered and referenced within configuration files.
+This flexibility allows users to extend `pydykit`’s functionality and tailor it to specific applications.
+
+Workflow:
+
+1. Initialization: The input file is loaded, creating objects for the specified problem.
+2. Computation: Numerical integration is performed using time-stepping methods. The results are stored in terms of a dataframe.
+3. Postprocessing: Results are calculated on requested temporal resolution and can be visualized through plots and animations.
+ -->
+
 TODO: Add pendulum example from https://pydykit.github.io/pydykit/latest/examples/pendulum_3d/
 
 ## Usage so far
