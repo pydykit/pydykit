@@ -85,7 +85,8 @@ TODO: List drawbacks
 
 3. Multibody systems formulated as index-3 DAEs with holonomic positional constraints $g(q)$. Beyond standard multibody dynamics, pydykit supports rigid body dynamics using unit quaternions [@betsch_2009_rigid], a powerful approach for modeling rotational motion. The software is also well-suited for Hamiltonian dynamics, with or without constraints [@leimkuhler_simulating_2005], making it an effective tool for structure-preserving simulations.
 
-These formulations make pydykit a versatile tool for researchers across disciplines, from robotics and biomechanics to electrical and thermodynamic systems.
+Thus `pydykit` can be helpful for users from various application fields,
+from robotics and biomechanics to electrical and thermodynamic systems.
 
 ![Current system classes covered by `pydykit` \label{fig:systems}](./figures/sample.png){width=70%}
 
