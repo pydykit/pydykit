@@ -30,13 +30,13 @@ bibliography: paper.bib
 # Summary
 
 Simulating dynamical systems is crucial in many scientific and engineering disciplines.
-Dynamical systems are typically described by ordinary differential and
+Discrete dynamical systems are typically described by ordinary differential or
 differential-algebraic equations,
 which combined with
-initial- and boundary-conditions,
-form a initial-boundary-value problem.
+initial conditions,
+form an initial value problem (IVP).
 
-Solving initial-boundary-value problems
+Solving IVPs
 numerically requires discretization techniques
 which translate the problem into a computationally feasible form.
 The open-source Python package `pydykit`
