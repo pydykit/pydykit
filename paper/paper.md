@@ -30,7 +30,7 @@ bibliography: paper.bib
 # Summary
 
 Simulating dynamical systems is crucial in many scientific and engineering disciplines.
-Discrete dynamical systems are typically governed by ordinary differential or
+Discrete dynamical systems are typically governed by ordinary differential equations (ODEs) or
 differential-algebraic equations (DAEs),
 which describe the evolution of the unknown quantities in a finite-dimensional state space.
 Combined with
@@ -75,7 +75,7 @@ TODO: List drawbacks
 
 # Features
 
-`pydykit` is a flexible framework for simulating a wide range of dynamical systems governed by ordinary differential equations (ODEs) and differential-algebraic equations (DAEs). Thus `pydykit` is open for users from a plethora of application fields. It supports the implementation of
+`pydykit` is a package for simulating a wide range of dynamical systems governed by ODEs and DAEs. It supports the implementation of
 
 1. General quasilinear DAEs of the form $E(x) \dot{x} = f(x)$,
    where $E(x)$ may be singular, allowing for broad applicability in constrained dynamics.
