@@ -30,12 +30,12 @@ bibliography: paper.bib
 # Summary
 
 Simulating dynamical systems is crucial in many scientific and engineering disciplines.
-Discrete dynamical systems are typically described by ordinary differential or
+Discrete dynamical systems are typically governed by ordinary differential or
 differential-algebraic equations (DAEs),
-
-which combined with
+which describe the evolution of the unknown quantities in a finite-dimensional state space.
+Combined with
 initial conditions,
-form an initial value problem (IVP).
+these equations form an initial value problem (IVP).
 
 Solving IVPs
 numerically requires discretization techniques
