@@ -56,6 +56,15 @@ Präzise wissenschaftliche Abgrenzung der verschiedenen Arten von Differentialgl
 
 <!-- In dem Abschnitt “Statement of need” passt durchaus ein bisschen blabla zu “foster research collaboration…” aber in den anderen Abschnitten aus meiner Sicht nicht.  -->
 
+Reproducibility and transparency of numerical results is not yet the standard in all scientific engineering disciplines.
+The goal of `pydykit` is to support research publications by ensuring the FAIR requirements for computational experiments.
+Moreover, `pydykit` can serve as a foundation for the prototyping of object-oriented integration methods,
+fostering collaborations in research and teaching.
+The choice to use the Python environment may lower the barrier for students
+and early-career researchers due to its accessibility, widespread adoption, and extensive ecosystem of scientific computing libraries.
+Meanwhile, the package encourages engagement with structure-preserving methods
+and could help bridge gaps in state-of-the-art numerical techniques.
+
 Existing research codes within the discipline
 
 - TODO: List existing codes
