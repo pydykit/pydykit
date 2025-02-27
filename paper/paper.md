@@ -83,7 +83,7 @@ TODO: List drawbacks
 2. Port-Hamiltonian DAE systems governed by $E(x) \dot{x} = (J(x)- R(x)) z(x) + B(x) u$
    which appear in various physical modeling contexts [@duindam_modeling_2009], also cover open control systems and follow an energy-based modelling approach.
 
-3. Multibody systems formulated as index-3 DAEs with holonomic positional constraints $g(q)$. Beyond standard multibody dynamics, pydykit supports rigid body dynamics using unit quaternions [@betsch_2009_rigid], a powerful approach for modeling rotational motion. The software is also well-suited for Hamiltonian dynamics, with or without constraints [@leimkuhler_simulating_2005], making it an effective tool for structure-preserving simulations.
+3. Multibody systems formulated as index-3 DAEs with holonomic positional constraints $g(q)$. Beyond standard multibody dynamics, pydykit supports rigid body dynamics using unit quaternions [@betsch_2009_rigid], a powerful approach for modeling rotational motion. The package is also well-suited for Hamiltonian dynamics, with or without constraints [@leimkuhler_simulating_2005], making it an effective tool for structure-preserving simulations.
 
 Thus `pydykit` can be helpful for users from various application fields,
 from robotics and biomechanics to electrical and thermodynamic systems.
