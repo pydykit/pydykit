@@ -111,44 +111,99 @@ TODO: Formulate the following:
 
 <!-- Built-in postprocessing tools, including animation and data export capabilities allow for a basic result analysis and visualization. JKB: nichts besonderes -->
 
-## Code Structure
-
-<!-- Wie ist pydykit aufgebaut:
-Das ist so custom und schwer in Text präzise zu beschreiben.
-Ich schlage 1-3 Sätze vor gefolgt von einem Beispiel (Anhand Config Datei), siehe Doku.
-Vielleicht kann dann noch ein Bild zur Code Struktur hinein. -->
-
-TODO: Liste welche Systembestandteile existieren.
-TODO: Liste welche konkreten Implementierungen existieren.
-
-![Code structure 01 \label{fig:code_structure_pdydkit}](./figures/code_structure/pydykit.pdf){width=100%}
-![Code structure 02 \label{fig:code_structure_systems}](./figures/code_structure/systems.pdf){width=100%}
-
-<!-- ![Code structure 03 \label{fig:code_structure_integrators}](./figures/code_structure/integrators.pdf){width=100%} -->
-
-## Usage
+## Code Structure and Usage
 
 <!--
-Old:
+- Users describe a system in terms of code and
+- Parametrize the system and solution process in terms of a configuration file.
+- A simulation contains components, which are
+  - a system,
+  - an integrator,
+  - a simulator (mostly containing a solve) and
+  - a time-stepper.
+- Abstract base classes exist for each component and define an interface, i.e., methods a given component implementation has to have.
+- Systems encode the dynamical system to be simulated and are split into three groups:
+  - DAEs
+  - Port-Hamiltonian systems
+  - Multibody systems, see figure 1.
+- The system might be implemented generic like "particleSystem" or specific like Lorenz (DAE) or Pendulum2D (PortHamiltonianSystem)
+- Combination of integrator, simulator, solver define the discretization method and solution process, whereas the time-stepper define the resolution of the solution.
+- Example:
+  - sperical pendulum represented in terms of particle system, parametrized with config file: `pendulum_3d.yml`
+  - system class deifnes what to simulate, i.e., spherical pendulum is parametrized using class xy
+-->
 
-A simulation is defined in terms of a configuration file.
-Within the configuration file, `pydykit`-classes are referenced
-alongside a set of parameters.
-On simulation start, `pydykit` passes these parameters to the `pydykit`-classes.
-Dependencies are injected in terms of a central manager class which represents a shared state among the building blocks system, simulator, integrator and time stepper.
+The Python package `pydykit` solves initial boundary value problems for dynamically solved systems.
+Users of the package specify both the system to be simulated and the procedure for solving the initial boundary value problem in terms of Python classes
+which can be grouped into class types `system`, `integrator`, `simulator`, and `time-stepper`.
+The class type `system` defines the system to be simulated and following
+Figure \ref{fig:systems}
+contains three subtypes: `DAE`, `Port-Hamiltonian system`, and `Multibody system`.
+The class types `integrator`, `simulator` and `times-stepper` specify the procedure for solving an initial boundary value problem of a dynamical system.
+Each of these class types is defined in terms of an abstract base class, i.e., an interphase specifying the methods a given class has to have.
 
-Users can develop new systems, integrators, timesteppers, and solvers by defining them based on the provided interface descriptions.
+An overview of the existing classes, their relation and interfaces is given in
+TODO: Create and add nice images.
 
-This allows users to extend `pydykit`’s functionality and tailor it to their specific requirements.
+<!-- ![Code structure 01 \label{fig:code_structure_pdydkit}](./figures/code_structure/pydykit.pdf){width=100%} -->
+<!-- ![Code structure 02 \label{fig:code_structure_systems}](./figures/code_structure/systems.pdf){width=100%} -->
+<!-- ![Code structure 03 \label{fig:code_structure_integrators}](./figures/code_structure/integrators.pdf){width=100%} -->
 
-Workflow:
+Developers can extend the functionality of pydykit by developing new Python classes within the given class types.
+A particular simulation can be encoded in a configuration file.
+This file specifies which Python classes should be combined with each other
+and contains parameters which are passed to the classes at runtime, defining the system and the solution process.
 
-1. Initialization: The input file is loaded, creating objects for the specified problem.
-2. Computation: Numerical integration is performed using time-stepping methods. The results are stored in terms of a dataframe.
-3. Postprocessing: Results are calculated on requested temporal resolution and can be visualized through plots and animations.
- -->
+This approach is explained using a concrete example, a spherical pendulum.
+Based on the Python class `pydykit.systems_multi_body.ParticleSystem`, a single particle with concentrated mass in a three-dimensional space is simulated.
+The initial position of the particle is (1,0, 0,0, 0,0) and its initial velocity points in the y-direction.
+The distance of the particle to a fixed support at (0,0, 0,0, 0,0) is limited to the length 1.0 and there is a gravitational field in the negative z-direction.
 
-TODO: Add pendulum example from https://pydykit.github.io/pydykit/latest/examples/pendulum_3d/
+The configuration file for the spherical pendulum is given in Listing \ref{lst:spherical_pendulum}.
+TODO: Nutze listing Referenz
+
+```yaml
+name: pendulum_3d
+system:
+  class_name: ParticleSystem
+  nbr_spatial_dimensions: 3
+  particles:
+    - index: 0
+      initial_position: [1.0, 0.0, 0.0]
+      initial_momentum: [0.0, 1.0, 0.0]
+      mass: 1.0
+  supports:
+    - index: 0
+      type: fixed
+      position: [0.0, 0.0, 0.0]
+  springs: []
+  dampers: []
+  constraints:
+    - start:
+        type: support
+        index: 0
+      end:
+        type: particle
+        index: 0
+      length: 1.0
+  gravity: [0.0, 0.0, -9.81]
+integrator:
+  class_name: MidpointMultibody
+simulator:
+  class_name: OneStep
+  solver_name: NewtonPlainPython
+  newton_epsilon: 1.e-07
+  max_iterations: 40
+time_stepper:
+  class_name: FixedIncrementHittingEnd
+  step_size: 0.08
+  start: 0.0
+  end: 1.3
+```
+
+Parameters listed within the `system` section are passed to the Python class `pydykit.systems_multi_body.ParticleSystem` at runtime
+and specify the particle, its initial conditions and the physical properties of the spherical pendulum.
+The combination of the classes `integrator`, `simulator`, and `time-stepper` parameters define the discretization method and the solution process.
 
 ## Usage so far
 
