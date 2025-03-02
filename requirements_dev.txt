@@ -30,5 +30,5 @@ tenacity==8.5.0
 traitlets==5.14.3
 typing_extensions==4.12.2
 tzdata==2024.1
-virtualenv==20.26.3
+virtualenv==20.26.6
 wcwidth==0.2.13
