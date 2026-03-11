@@ -1,0 +1,25 @@
+\newcommand{\datafile}{../../test/reference_results/four_particle_system_ph_discrete_gradient.csv}
+% Define the dynamic label and column strings
+\newcommand{\xcolumn}{time}             % X-axis column in CSV
+\newcommand{\ycolumn}{hamiltonian}      % Y-axis column in CSV
+\newcommand{\xlabeltext}{\xcolumn}          % X-axis label
+\newcommand{\ylabeltext}{\ycolumn}   % Y-axis label
+
+\begin{tikzpicture}
+    \begin{axis}[
+            xlabel={\xlabeltext},
+            ylabel={\ylabeltext},
+            ymin = 0,
+            ymax = 2,
+            xmin = 0,
+            xmax = 0.09,
+            grid=major,
+        ]
+        % Use \edef to expand the column names in the addplot command
+        \addplot table [
+                x=\xcolumn,
+                y=\ycolumn,
+                col sep=comma
+            ] {\datafile};
+    \end{axis}
+\end{tikzpicture}
